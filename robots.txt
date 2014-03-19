@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://KinoAndWorld.github.io/sitemap.xml 
+Sitemap: http://KinoAndWorld.github.com/sitemap.xml 

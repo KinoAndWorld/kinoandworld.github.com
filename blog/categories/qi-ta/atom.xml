@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[奇诺の世界]]></title>
-  <link href="http://KinoAndWorld.github.com/atom.xml" rel="self"/>
+  <title><![CDATA[Category: 其他 | 奇诺の世界]]></title>
+  <link href="http://KinoAndWorld.github.com/blog/categories/qi-ta/atom.xml" rel="self"/>
   <link href="http://KinoAndWorld.github.com/"/>
   <updated>2014-03-19T10:02:37+08:00</updated>
   <id>http://KinoAndWorld.github.com/</id>
