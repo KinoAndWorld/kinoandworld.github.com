@@ -4,7 +4,7 @@
 
 url: http://KinoAndWorld.github.com
 title: 奇诺の世界
-subtitle: A blogging framework for hackers.
+subtitle: 我唯一所知即是我一无所知
 author: Kino
 simple_search: https://www.google.com/search
 description:
@@ -19,7 +19,7 @@ date_format: "ordinal"
 subscribe_rss: /atom.xml
 subscribe_email:
 # RSS feeds can list your email address if you like
-email:
+email: kinoandworld@gmail.com
 
 # ----------------------- #
 #    Jekyll & Plugins     #
@@ -63,8 +63,8 @@ default_asides: [asides/recent_posts.html, asides/github.html, asides/delicious.
 # ----------------------- #
 
 # Github repositories
-github_user:
-github_repo_count: 0
+github_user: KinoAndWorld
+github_repo_count: 3
 github_show_profile_link: true
 github_skip_forks: true
 
@@ -90,8 +90,8 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
-disqus_show_comment_count: false
+disqus_short_name: kinoHasABlog
+disqus_show_comment_count: true
 
 # Google Analytics
 google_analytics_tracking_id:
