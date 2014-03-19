@@ -7,7 +7,7 @@
 	<meta name="author" content="Kino">
 
 	
-	<meta name="description" content="Mar 19th, 2014 其他 Comments 博客成功迁移到Octopress 经过三番几次的努力- -终于成功迁移。 噢，就这么多。 Feb 28th, 2014 墨迹 Comments V for Vendetta Comment 每个人心里都有抗争的种子(V字仇杀队 影评) &hellip;">
+	<meta name="description" content="Feb 28th, 2014 墨迹 Comments V for Vendetta Comment 每个人心里都有抗争的种子(V字仇杀队 影评) 单从标题来看,这是一部关于仇恨(vendetta 仇杀,正是V字头)的故事,而整部影片,也确实在讲述一个失败的病毒实验体,或者说受害者V的复仇故事. &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -85,45 +85,6 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-03-19T09:49:23+08:00" data-updated="true" itemprop="datePublished">Mar 19<span>th</span>, 2014</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/qi-ta/'>其他</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2014/03/19/first-blog-with-octopress/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2014/03/19/first-blog-with-octopress/" itemprop="url">博客成功迁移到Octopress</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<h2>经过三番几次的努力- -终于成功迁移。</h2>
-
-<p>噢，就这么多。</p>
-
-		
-		
-	</div>
-
-</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -996,6 +957,215 @@ symbols = my_array.select(&amp;symbol_filter)
 <p><code>attr_accessor</code>  <code>attr_reader</code> <code>attr_writer</code> 三种属性，或者说访问器，也就是给变量加上一些访问设置，主要用在类里边的~</p>
 
 <p>先到这里，以后慢慢补充~</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-29T09:49:23+08:00" data-updated="true" itemprop="datePublished">Jun 29<span>th</span>, 2013</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/bi-ji/'>笔记</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2013/06/29/ruby-study-note-01/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2013/06/29/ruby-study-note-01/" itemprop="url">Ruby学习笔记-初步涉猎</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>闲来无事，上codecademy学下Ruby。
+尊贵的红宝石，美好而瑰丽，让人不忍一睹风采……好吧我太废话了。
+根据codecademy的介绍，Ruby的特性非常明显:
+&ndash; 高级语言（High-level）
+&ndash; 解释型语言（Interpreted）
+&ndash; 面向对象（Object-oriented）
+&ndash; 简单易用（Easy to use）</p>
+
+<p>当然……作为一种面向对象的语言，这些特点几乎是必须的……
+话说……我不知道ruby算不算脚本语言。</p>
+
+<p>&mdash;</p>
+
+<h2>变量</h2>
+
+<p>ruby的变量定义和数据类型真是轻便快捷，比较类似javascript吧，弱类型。
+变量是无需定义的，抑或称之为动态数据类型吧。
+比如</p>
+
+<pre><code>i = 1
+s = "string"
+arr = [1,2,3]
+</code></pre>
+
+<p>真是方便得要死。=_=</p>
+
+<p>跟其他面向对象语言类似，ruby的所有数据类型都是对象。</p>
+
+<h2>操作符</h2>
+
+<p>操作符基本跟其他语言相似。有几个不同的地方，记录一下：
+10 ** 2  #相当于10的2次方 这种写法也挺好的</p>
+
+<h2>字符串（string）</h2>
+
+<p>有两种形式： <code>"string"</code> 和 <code>'string'</code>
+比较方便的是，字符串内变量的引用：</p>
+
+<pre><code>favorite_language = "Ruby"
+puts "My favorite language is #{favorite_language}!"
+My favorite language is Ruby!
+</code></pre>
+
+<p>另外，字符串带了很多函数，可以方便的对字符串进行各类操作：</p>
+
+<pre><code>my_name = "eric"
+my_name.upcase #转换大小写
+=&gt; "ERIC"
+my_name.capitalize
+=&gt; "Eric"
+my_name.reverse #反转
+=&gt; "cire"
+</code></pre>
+
+<p>puts（put string的简写）和print的区别：</p>
+
+<pre><code>3.times { puts "Hello!" }
+Hello!
+Hello!
+Hello!
+3.times { print "Hello!" }
+Hello!Hello!Hello!
+</code></pre>
+
+<p>也就是一个是带换行的一个不带。</p>
+
+<h1>逻辑运算</h1>
+
+<p>我发现Ruby的很多基本语句都要以<code>End</code>结尾的……感觉似乎不太有必要吧。</p>
+
+<p>最基本的IF语句：</p>
+
+<pre><code>if condition
+  # Do something
+end
+</code></pre>
+
+<p>除了elsif比较奇怪外……其他的还是很规矩</p>
+
+<pre><code>if x &gt; y
+  puts "x is greater than y!"
+elsif x &lt; y
+  puts "x is less than y!"
+else
+  puts "x equals y!"
+end
+</code></pre>
+
+<p>然后是比较奇特的unless语法</p>
+
+<pre><code>unless x == 10   #其实就等同于 if x!=10 感觉没少几个字- -不解为什么要加入这个语法。
+  puts "I get printed!"
+end
+</code></pre>
+
+<h2>方法</h2>
+
+<p>方法定义跟其他语言也大同小异</p>
+
+<pre><code>def method_name(arguments)
+  # Code to be executed
+end
+</code></pre>
+
+<p>比较困惑的是返回值的问题，不过找到了<a href="http://imshanks.com/ruby-methods-return-valu/">答案</a></p>
+
+<h2>循环语句</h2>
+
+<p>ruby的循环方式还是很多的：
+-while</p>
+
+<pre><code>while true
+  puts "I'm an infinite loop!"
+end
+</code></pre>
+
+<p>-until</p>
+
+<pre><code>until counter == 0
+  puts "Counter currently at #{counter}."
+  counter -= 1
+end
+</code></pre>
+
+<p>-for</p>
+
+<pre><code>for number in (0..5) #这里，..表示包括5，...表示不包括
+  puts number
+end
+</code></pre>
+
+<p>还有遍历数组</p>
+
+<pre><code>for item in my_array
+  puts item
+end
+</code></pre>
+
+<p>&ndash;.times</p>
+
+<pre><code>3.times { puts "Chunky bacon!" }
+</code></pre>
+
+<p>这样就实现了输出三个字符串，方便得要死</p>
+
+<p>&ndash;.each</p>
+
+<pre><code>one_to_ten.each do |num|
+  print (num**2).to_s + " "
+end
+</code></pre>
+
+<h2>其他</h2>
+
+<p>-数组的操作：</p>
+
+<pre><code>y.push("cartoon foxes") #增加一个元素
+
+z = Array.new(3, "Matz!") #构造方法更灵活地创建数组
+</code></pre>
+
+<p>-哈希（hash）</p>
+
+<pre><code>my_hash = {
+  :key1 =&gt; "First value!",
+  :key2 =&gt; "Second value!",
+  :key3 =&gt; "Third value!"
+}
+my_hash[:key2]
+=&gt; "Second value!"
+</code></pre>
+
+<p>所谓哈希……其实就是字典吧，键值对的数据结构。</p>
 
 		
 		
