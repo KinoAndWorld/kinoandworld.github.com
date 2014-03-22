@@ -7,7 +7,8 @@
 	<meta name="author" content="Kino">
 
 	
-	<meta name="description" content="Feb 28th, 2014 墨迹 Comments V for Vendetta Comment 每个人心里都有抗争的种子(V字仇杀队 影评) 单从标题来看,这是一部关于仇恨(vendetta 仇杀,正是V字头)的故事,而整部影片,也确实在讲述一个失败的病毒实验体,或者说受害者V的复仇故事. &hellip;">
+	<meta name="description" content="Mar 20th, 2014 Comments ZXingObjC-addition 二维码扫描库ZXingObjC功能完善 对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。
+还有不知道什么原因， &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -85,6 +86,159 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-20T16:10:20+08:00" data-updated="true" itemprop="datePublished">Mar 20<span>th</span>, 2014</time></div>
+		<div class="tags">
+
+</div>
+		
+			<span class="comments"><a href="/blog/2014/03/20/zxingobjc-addition/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2014/03/20/zxingobjc-addition/" itemprop="url">ZXingObjC-addition</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<h2>二维码扫描库ZXingObjC功能完善</h2>
+
+<p>对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。
+还有不知道什么原因，ZXing的iOS库在最新发布版本不见了。 <code>还是我找不到？</code>
+总之因为种种原因，<a href="" title="https://github.com/TheLevelUp/ZXingObjC">ZXingObjC</a> 作为良好的替代方案粗线了。</p>
+
+<p>顺带一提，支持 cocoapods => &lsquo;ZXingObjC&rsquo;, &lsquo;~> 2.2.6&rsquo;</p>
+
+<p>好吧，现在进入主题，这个库很好用，但是我们在做二维码的时候一般会有一个需求，让二维码进入一个区域方才扫描，即是<code>扫描区域</code>
+让我比较郁闷的是，这么完善的库居然貌似没有实现这个很常见的功能。</p>
+
+<p>然后上GitHub上看了一下这个<a href="" title="https://github.com/TheLevelUp/ZXingObjC/issues/100">Issue</a> , 以为终于找到解决方案……却发现是个坑。具体怎么坑就不说了……也许是我不会用吧。</p>
+
+<p>然后重新阅读了源码，发现了一个更简单的设置裁剪区域的方法。</p>
+
+<p>&mdash;</p>
+
+<h3>Let&rsquo;s go</h3>
+
+<p>首先，进入<code>ZXCapture.h</code> ，添加一个property</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">)</span> <span class="n">CGRect</span> <span class="n">scanCrop</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后进入<code>ZXCapture.m</code> 的这个方法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'>  <span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">captureOutput:</span><span class="p">(</span><span class="n">ZXCaptureOutput</span> <span class="o">*</span><span class="p">)</span><span class="n">captureOutput</span>
+</span><span class='line'><span class="n">ZXQT</span><span class="p">(</span><span class="nl">didOutputVideoFrame:</span><span class="p">(</span><span class="n">CVImageBufferRef</span><span class="p">)</span><span class="n">videoFrame</span>
+</span><span class='line'>     <span class="nl">withSampleBuffer:</span><span class="p">(</span><span class="n">QTSampleBuffer</span> <span class="o">*</span><span class="p">)</span><span class="n">sampleBuffer</span><span class="p">)</span>
+</span><span class='line'><span class="n">ZXAV</span><span class="p">(</span><span class="nl">didOutputSampleBuffer:</span><span class="p">(</span><span class="n">CMSampleBufferRef</span><span class="p">)</span><span class="n">sampleBuffer</span><span class="p">)</span>
+</span><span class='line'>       <span class="nl">fromConnection:</span><span class="p">(</span><span class="n">ZXCaptureConnection</span> <span class="o">*</span><span class="p">)</span><span class="n">connection</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将大概570行位置的代码修改为</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">CGImageRef</span> <span class="n">videoFrameImage</span> <span class="o">=</span> <span class="nb">NULL</span> <span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">CGRectEqualToRect</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">scanCrop</span><span class="p">,</span><span class="n">CGRectZero</span><span class="p">)){</span>
+</span><span class='line'>      <span class="n">videoFrameImage</span> <span class="o">=</span> <span class="p">[</span><span class="n">ZXCGImageLuminanceSource</span> <span class="nl">createImageFromBuffer:</span><span class="n">videoFrame</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+</span><span class='line'>      <span class="n">videoFrameImage</span> <span class="o">=</span> <span class="p">[</span><span class="n">ZXCGImageLuminanceSource</span> <span class="nl">createImageFromBuffer:</span><span class="n">videoFrame</span>
+</span><span class='line'>                                                                   <span class="nl">left:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span>
+</span><span class='line'>                                                                    <span class="nl">top:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span>
+</span><span class='line'>                                                                  <span class="nl">width:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span>
+</span><span class='line'>                                                                 <span class="nl">height:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>就这么简单。。。最后只要在客户端做类似这样的设置就好</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">self</span><span class="p">.</span><span class="n">capture</span><span class="p">.</span><span class="n">scanCrop</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span><span class="p">,</span>
+</span><span class='line'>                                   <span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span><span class="p">,</span>
+</span><span class='line'>                                   <span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">,</span>
+</span><span class='line'>                                   <span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>唯一需要注意的是，这个frame的 x 和 y 需要颠倒，具体原因应该跟capture的rotation有关。</p>
+
+<p>暂时这么多吧- -虽然没人看~默默记录。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-19T09:49:23+08:00" data-updated="true" itemprop="datePublished">Mar 19<span>th</span>, 2014</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/qi-ta/'>其他</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2014/03/19/first-blog-with-octopress/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2014/03/19/first-blog-with-octopress/" itemprop="url">博客成功迁移到Octopress</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<h2>经过三番几次的努力- -终于成功迁移。</h2>
+
+<p>噢，就这么多。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -879,293 +1033,6 @@ if([observer respondsToSelector:@selector(imageLoaderDidCountLoadData:)]) {
 
 <p>大功告成。
 <img src="" /></p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-12T09:49:23+08:00" data-updated="true" itemprop="datePublished">Jul 12<span>th</span>, 2013</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/bi-ji/'>笔记</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2013/07/12/ruby-study-note-02/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2013/07/12/ruby-study-note-02/" itemprop="url">Ruby学习笔记-杂记</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>比较零散的记录</p>
-
-<p>&mdash;</p>
-
-<h2>array操作</h2>
-
-<p><code>.push</code> 很明显就是添加一个元素</p>
-
-<p><code>&lt;&lt;</code> 添加元素另一种写法</p>
-
-<pre><code>    "Yukihiro " &lt;&lt; "Matsumoto"
-    # ==&gt; "Yukihiro Matsumoto"
-</code></pre>
-
-<p><code>||=</code> 这个语法也挺奇怪，意思如下</p>
-
-<pre><code>prime_array ||= [] 这句的意思等于 
-prime_array = [] if prime_array.nil?
-</code></pre>
-
-<p><code>yield</code>关键字 算是占位符，或者有说类似虚函数，后面才实现</p>
-
-<pre><code>def greeter #
-    yield
-end
-phrase = Proc.new {puts "Hello there!"}
-greeter(&amp;phrase)
-</code></pre>
-
-<p><code>collect</code> or <code>map</code> or <code>select</code> 这三个的作用。。算是迭代器吧c操作数字数组等，map操作字符串数组……不过我暂时不知道他们的区别。</p>
-
-<p><code>lambda</code> 匿名函数，相当于一个block
-<code>is_a?[类型名]</code> 这个语法就是判断一个变量是否是某种类型 有种isSubClass的概念</p>
-
-<pre><code>my_array = ["raindrops", :kettles, "whiskers", :mittens, :packages]
-symbol_filter = lambda {|x| x.is_a? Symbol}
-symbols = my_array.select(&amp;symbol_filter)
-</code></pre>
-
-<p><code>attr_accessor</code>  <code>attr_reader</code> <code>attr_writer</code> 三种属性，或者说访问器，也就是给变量加上一些访问设置，主要用在类里边的~</p>
-
-<p>先到这里，以后慢慢补充~</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-29T09:49:23+08:00" data-updated="true" itemprop="datePublished">Jun 29<span>th</span>, 2013</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/bi-ji/'>笔记</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2013/06/29/ruby-study-note-01/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2013/06/29/ruby-study-note-01/" itemprop="url">Ruby学习笔记-初步涉猎</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>闲来无事，上codecademy学下Ruby。
-尊贵的红宝石，美好而瑰丽，让人不忍一睹风采……好吧我太废话了。
-根据codecademy的介绍，Ruby的特性非常明显:
-&ndash; 高级语言（High-level）
-&ndash; 解释型语言（Interpreted）
-&ndash; 面向对象（Object-oriented）
-&ndash; 简单易用（Easy to use）</p>
-
-<p>当然……作为一种面向对象的语言，这些特点几乎是必须的……
-话说……我不知道ruby算不算脚本语言。</p>
-
-<p>&mdash;</p>
-
-<h2>变量</h2>
-
-<p>ruby的变量定义和数据类型真是轻便快捷，比较类似javascript吧，弱类型。
-变量是无需定义的，抑或称之为动态数据类型吧。
-比如</p>
-
-<pre><code>i = 1
-s = "string"
-arr = [1,2,3]
-</code></pre>
-
-<p>真是方便得要死。=_=</p>
-
-<p>跟其他面向对象语言类似，ruby的所有数据类型都是对象。</p>
-
-<h2>操作符</h2>
-
-<p>操作符基本跟其他语言相似。有几个不同的地方，记录一下：
-10 ** 2  #相当于10的2次方 这种写法也挺好的</p>
-
-<h2>字符串（string）</h2>
-
-<p>有两种形式： <code>"string"</code> 和 <code>'string'</code>
-比较方便的是，字符串内变量的引用：</p>
-
-<pre><code>favorite_language = "Ruby"
-puts "My favorite language is #{favorite_language}!"
-My favorite language is Ruby!
-</code></pre>
-
-<p>另外，字符串带了很多函数，可以方便的对字符串进行各类操作：</p>
-
-<pre><code>my_name = "eric"
-my_name.upcase #转换大小写
-=&gt; "ERIC"
-my_name.capitalize
-=&gt; "Eric"
-my_name.reverse #反转
-=&gt; "cire"
-</code></pre>
-
-<p>puts（put string的简写）和print的区别：</p>
-
-<pre><code>3.times { puts "Hello!" }
-Hello!
-Hello!
-Hello!
-3.times { print "Hello!" }
-Hello!Hello!Hello!
-</code></pre>
-
-<p>也就是一个是带换行的一个不带。</p>
-
-<h1>逻辑运算</h1>
-
-<p>我发现Ruby的很多基本语句都要以<code>End</code>结尾的……感觉似乎不太有必要吧。</p>
-
-<p>最基本的IF语句：</p>
-
-<pre><code>if condition
-  # Do something
-end
-</code></pre>
-
-<p>除了elsif比较奇怪外……其他的还是很规矩</p>
-
-<pre><code>if x &gt; y
-  puts "x is greater than y!"
-elsif x &lt; y
-  puts "x is less than y!"
-else
-  puts "x equals y!"
-end
-</code></pre>
-
-<p>然后是比较奇特的unless语法</p>
-
-<pre><code>unless x == 10   #其实就等同于 if x!=10 感觉没少几个字- -不解为什么要加入这个语法。
-  puts "I get printed!"
-end
-</code></pre>
-
-<h2>方法</h2>
-
-<p>方法定义跟其他语言也大同小异</p>
-
-<pre><code>def method_name(arguments)
-  # Code to be executed
-end
-</code></pre>
-
-<p>比较困惑的是返回值的问题，不过找到了<a href="http://imshanks.com/ruby-methods-return-valu/">答案</a></p>
-
-<h2>循环语句</h2>
-
-<p>ruby的循环方式还是很多的：
--while</p>
-
-<pre><code>while true
-  puts "I'm an infinite loop!"
-end
-</code></pre>
-
-<p>-until</p>
-
-<pre><code>until counter == 0
-  puts "Counter currently at #{counter}."
-  counter -= 1
-end
-</code></pre>
-
-<p>-for</p>
-
-<pre><code>for number in (0..5) #这里，..表示包括5，...表示不包括
-  puts number
-end
-</code></pre>
-
-<p>还有遍历数组</p>
-
-<pre><code>for item in my_array
-  puts item
-end
-</code></pre>
-
-<p>&ndash;.times</p>
-
-<pre><code>3.times { puts "Chunky bacon!" }
-</code></pre>
-
-<p>这样就实现了输出三个字符串，方便得要死</p>
-
-<p>&ndash;.each</p>
-
-<pre><code>one_to_ten.each do |num|
-  print (num**2).to_s + " "
-end
-</code></pre>
-
-<h2>其他</h2>
-
-<p>-数组的操作：</p>
-
-<pre><code>y.push("cartoon foxes") #增加一个元素
-
-z = Array.new(3, "Matz!") #构造方法更灵活地创建数组
-</code></pre>
-
-<p>-哈希（hash）</p>
-
-<pre><code>my_hash = {
-  :key1 =&gt; "First value!",
-  :key2 =&gt; "Second value!",
-  :key3 =&gt; "Third value!"
-}
-my_hash[:key2]
-=&gt; "Second value!"
-</code></pre>
-
-<p>所谓哈希……其实就是字典吧，键值对的数据结构。</p>
 
 		
 		

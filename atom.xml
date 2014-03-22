@@ -4,7 +4,7 @@
   <title><![CDATA[奇诺の世界]]></title>
   <link href="http://KinoAndWorld.github.com/atom.xml" rel="self"/>
   <link href="http://KinoAndWorld.github.com/"/>
-  <updated>2014-03-19T10:26:54+08:00</updated>
+  <updated>2014-03-23T02:13:44+08:00</updated>
   <id>http://KinoAndWorld.github.com/</id>
   <author>
     <name><![CDATA[Kino]]></name>
@@ -12,6 +12,107 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ZXingObjC-addition]]></title>
+    <link href="http://KinoAndWorld.github.com/blog/2014/03/20/zxingobjc-addition/"/>
+    <updated>2014-03-20T16:10:20+08:00</updated>
+    <id>http://KinoAndWorld.github.com/blog/2014/03/20/zxingobjc-addition</id>
+    <content type="html"><![CDATA[<h2>二维码扫描库ZXingObjC功能完善</h2>
+
+<p>对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。
+还有不知道什么原因，ZXing的iOS库在最新发布版本不见了。 <code>还是我找不到？</code>
+总之因为种种原因，<a href="" title="https://github.com/TheLevelUp/ZXingObjC">ZXingObjC</a> 作为良好的替代方案粗线了。</p>
+
+<p>顺带一提，支持 cocoapods => &lsquo;ZXingObjC&rsquo;, &lsquo;~> 2.2.6&rsquo;</p>
+
+<p>好吧，现在进入主题，这个库很好用，但是我们在做二维码的时候一般会有一个需求，让二维码进入一个区域方才扫描，即是<code>扫描区域</code>
+让我比较郁闷的是，这么完善的库居然貌似没有实现这个很常见的功能。</p>
+
+<p>然后上GitHub上看了一下这个<a href="" title="https://github.com/TheLevelUp/ZXingObjC/issues/100">Issue</a> , 以为终于找到解决方案……却发现是个坑。具体怎么坑就不说了……也许是我不会用吧。</p>
+
+<p>然后重新阅读了源码，发现了一个更简单的设置裁剪区域的方法。</p>
+
+<p>&mdash;</p>
+
+<h3>Let&rsquo;s go</h3>
+
+<p>首先，进入<code>ZXCapture.h</code> ，添加一个property</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">)</span> <span class="n">CGRect</span> <span class="n">scanCrop</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后进入<code>ZXCapture.m</code> 的这个方法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'>  <span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">captureOutput:</span><span class="p">(</span><span class="n">ZXCaptureOutput</span> <span class="o">*</span><span class="p">)</span><span class="n">captureOutput</span>
+</span><span class='line'><span class="n">ZXQT</span><span class="p">(</span><span class="nl">didOutputVideoFrame:</span><span class="p">(</span><span class="n">CVImageBufferRef</span><span class="p">)</span><span class="n">videoFrame</span>
+</span><span class='line'>     <span class="nl">withSampleBuffer:</span><span class="p">(</span><span class="n">QTSampleBuffer</span> <span class="o">*</span><span class="p">)</span><span class="n">sampleBuffer</span><span class="p">)</span>
+</span><span class='line'><span class="n">ZXAV</span><span class="p">(</span><span class="nl">didOutputSampleBuffer:</span><span class="p">(</span><span class="n">CMSampleBufferRef</span><span class="p">)</span><span class="n">sampleBuffer</span><span class="p">)</span>
+</span><span class='line'>       <span class="nl">fromConnection:</span><span class="p">(</span><span class="n">ZXCaptureConnection</span> <span class="o">*</span><span class="p">)</span><span class="n">connection</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将大概570行位置的代码修改为</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">CGImageRef</span> <span class="n">videoFrameImage</span> <span class="o">=</span> <span class="nb">NULL</span> <span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">CGRectEqualToRect</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">scanCrop</span><span class="p">,</span><span class="n">CGRectZero</span><span class="p">)){</span>
+</span><span class='line'>      <span class="n">videoFrameImage</span> <span class="o">=</span> <span class="p">[</span><span class="n">ZXCGImageLuminanceSource</span> <span class="nl">createImageFromBuffer:</span><span class="n">videoFrame</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+</span><span class='line'>      <span class="n">videoFrameImage</span> <span class="o">=</span> <span class="p">[</span><span class="n">ZXCGImageLuminanceSource</span> <span class="nl">createImageFromBuffer:</span><span class="n">videoFrame</span>
+</span><span class='line'>                                                                   <span class="nl">left:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span>
+</span><span class='line'>                                                                    <span class="nl">top:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span>
+</span><span class='line'>                                                                  <span class="nl">width:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span>
+</span><span class='line'>                                                                 <span class="nl">height:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>就这么简单。。。最后只要在客户端做类似这样的设置就好</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">self</span><span class="p">.</span><span class="n">capture</span><span class="p">.</span><span class="n">scanCrop</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span><span class="p">,</span>
+</span><span class='line'>                                   <span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span><span class="p">,</span>
+</span><span class='line'>                                   <span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">,</span>
+</span><span class='line'>                                   <span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>唯一需要注意的是，这个frame的 x 和 y 需要颠倒，具体原因应该跟capture的rotation有关。</p>
+
+<p>暂时这么多吧- -虽然没人看~默默记录。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[博客成功迁移到Octopress]]></title>
+    <link href="http://KinoAndWorld.github.com/blog/2014/03/19/first-blog-with-octopress/"/>
+    <updated>2014-03-19T09:49:23+08:00</updated>
+    <id>http://KinoAndWorld.github.com/blog/2014/03/19/first-blog-with-octopress</id>
+    <content type="html"><![CDATA[<h2>经过三番几次的努力- -终于成功迁移。</h2>
+
+<p>噢，就这么多。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[V for Vendetta comment]]></title>
