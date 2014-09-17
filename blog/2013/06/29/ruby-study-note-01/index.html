@@ -1,0 +1,332 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Ruby学习笔记-初步涉猎 - 奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="Ruby学习笔记-初步涉猎 闲来无事，上codecademy学下Ruby。
+尊贵的红宝石，美好而瑰丽，让人不忍一睹风采……好吧我太废话了。
+根据codecademy的介绍，Ruby的特性非常明显:
+&ndash; 高级语言（High-level）
+&ndash; 解释型语言（ &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.com/blog/2013/06/29/ruby-study-note-01/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Ruby学习笔记-初步涉猎</h1>
+	<div class="entry-content" itemprop="articleBody"><p>闲来无事，上codecademy学下Ruby。
+尊贵的红宝石，美好而瑰丽，让人不忍一睹风采……好吧我太废话了。
+根据codecademy的介绍，Ruby的特性非常明显:
+&ndash; 高级语言（High-level）
+&ndash; 解释型语言（Interpreted）
+&ndash; 面向对象（Object-oriented）
+&ndash; 简单易用（Easy to use）</p>
+
+<p>当然……作为一种面向对象的语言，这些特点几乎是必须的……
+话说……我不知道ruby算不算脚本语言。</p>
+
+<p>&mdash;</p>
+
+<h2>变量</h2>
+
+<p>ruby的变量定义和数据类型真是轻便快捷，比较类似javascript吧，弱类型。
+变量是无需定义的，抑或称之为动态数据类型吧。
+比如</p>
+
+<pre><code>i = 1
+s = "string"
+arr = [1,2,3]
+</code></pre>
+
+<p>真是方便得要死。=_=</p>
+
+<p>跟其他面向对象语言类似，ruby的所有数据类型都是对象。</p>
+
+<h2>操作符</h2>
+
+<p>操作符基本跟其他语言相似。有几个不同的地方，记录一下：
+10 ** 2  #相当于10的2次方 这种写法也挺好的</p>
+
+<h2>字符串（string）</h2>
+
+<p>有两种形式： <code>"string"</code> 和 <code>'string'</code>
+比较方便的是，字符串内变量的引用：</p>
+
+<pre><code>favorite_language = "Ruby"
+puts "My favorite language is #{favorite_language}!"
+My favorite language is Ruby!
+</code></pre>
+
+<p>另外，字符串带了很多函数，可以方便的对字符串进行各类操作：</p>
+
+<pre><code>my_name = "eric"
+my_name.upcase #转换大小写
+=&gt; "ERIC"
+my_name.capitalize
+=&gt; "Eric"
+my_name.reverse #反转
+=&gt; "cire"
+</code></pre>
+
+<p>puts（put string的简写）和print的区别：</p>
+
+<pre><code>3.times { puts "Hello!" }
+Hello!
+Hello!
+Hello!
+3.times { print "Hello!" }
+Hello!Hello!Hello!
+</code></pre>
+
+<p>也就是一个是带换行的一个不带。</p>
+
+<h1>逻辑运算</h1>
+
+<p>我发现Ruby的很多基本语句都要以<code>End</code>结尾的……感觉似乎不太有必要吧。</p>
+
+<p>最基本的IF语句：</p>
+
+<pre><code>if condition
+  # Do something
+end
+</code></pre>
+
+<p>除了elsif比较奇怪外……其他的还是很规矩</p>
+
+<pre><code>if x &gt; y
+  puts "x is greater than y!"
+elsif x &lt; y
+  puts "x is less than y!"
+else
+  puts "x equals y!"
+end
+</code></pre>
+
+<p>然后是比较奇特的unless语法</p>
+
+<pre><code>unless x == 10   #其实就等同于 if x!=10 感觉没少几个字- -不解为什么要加入这个语法。
+  puts "I get printed!"
+end
+</code></pre>
+
+<h2>方法</h2>
+
+<p>方法定义跟其他语言也大同小异</p>
+
+<pre><code>def method_name(arguments)
+  # Code to be executed
+end
+</code></pre>
+
+<p>比较困惑的是返回值的问题，不过找到了<a href="http://imshanks.com/ruby-methods-return-valu/">答案</a></p>
+
+<h2>循环语句</h2>
+
+<p>ruby的循环方式还是很多的：
+-while</p>
+
+<pre><code>while true
+  puts "I'm an infinite loop!"
+end
+</code></pre>
+
+<p>-until</p>
+
+<pre><code>until counter == 0
+  puts "Counter currently at #{counter}."
+  counter -= 1
+end
+</code></pre>
+
+<p>-for</p>
+
+<pre><code>for number in (0..5) #这里，..表示包括5，...表示不包括
+  puts number
+end
+</code></pre>
+
+<p>还有遍历数组</p>
+
+<pre><code>for item in my_array
+  puts item
+end
+</code></pre>
+
+<p>&ndash;.times</p>
+
+<pre><code>3.times { puts "Chunky bacon!" }
+</code></pre>
+
+<p>这样就实现了输出三个字符串，方便得要死</p>
+
+<p>&ndash;.each</p>
+
+<pre><code>one_to_ten.each do |num|
+  print (num**2).to_s + " "
+end
+</code></pre>
+
+<h2>其他</h2>
+
+<p>-数组的操作：</p>
+
+<pre><code>y.push("cartoon foxes") #增加一个元素
+
+z = Array.new(3, "Matz!") #构造方法更灵活地创建数组
+</code></pre>
+
+<p>-哈希（hash）</p>
+
+<pre><code>my_hash = {
+  :key1 =&gt; "First value!",
+  :key2 =&gt; "Second value!",
+  :key3 =&gt; "Third value!"
+}
+my_hash[:key2]
+=&gt; "Second value!"
+</code></pre>
+
+<p>所谓哈希……其实就是字典吧，键值对的数据结构。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.com/blog/2013/06/29/ruby-study-note-01/';
+        var disqus_url = 'http://KinoAndWorld.github.com/blog/2013/06/29/ruby-study-note-01/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>

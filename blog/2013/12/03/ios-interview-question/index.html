@@ -1,0 +1,206 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>亲历的iOS面试题 - 奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="亲历的iOS面试题 上个星期在V2EX上看到一个酷工作然后挺心动的，俗话说心动不如行动，所以我二话不说当基(机)立断地把简历投了去~
+然后马不停蹄地跑去广州面试了~ 说实话面试官江哥给我感觉很亲切……完全没有紧张的氛围~当然内心还是有点小紧张的~
+好吧进入正题， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.com/blog/2013/12/03/ios-interview-question/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">亲历的iOS面试题</h1>
+	<div class="entry-content" itemprop="articleBody"><p>上个星期在V2EX上看到一个酷工作然后挺心动的，俗话说心动不如行动，所以我二话不说当基(机)立断地把简历投了去~
+然后马不停蹄地跑去广州面试了~</p>
+
+<p>说实话面试官江哥给我感觉很亲切……完全没有紧张的氛围~当然内心还是有点小紧张的~
+好吧进入正题，主要是有几个问题我感觉自己理解的还是不够透彻，趁着面试暴露出来，现在就加深一下了解。</p>
+
+<h2>block到底是什么东西</h2>
+
+<p>按照我的理解，block类似一个函数指针，主要应用场景总结下就是：
+&ndash; 当调用其他的功能模块，或者自己写一个通用的功能模块的时候，代替delegate去做回调，这样的好处是不用再去声明回调函数，再去函数里面处理，而是直接把处理结果传进去，直接而优雅。
+&ndash; 使用多线程（GCD）的时候，因为GCD的语法是直接用block的，所以这两个好搭档可谓是天衣无缝，举个栗子：</p>
+
+<pre><code>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    //进行异步操作
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //回到主线程
+    });
+});
+</code></pre>
+
+<p>短短几行代码就可以线程安全地玩转在新创建的线程和主线程之间，这种便利的愉悦是不言而喻的~</p>
+
+<p>因为我自己理解也不是很深~所以还需要慢慢学习</p>
+
+<p>关于语法描述 <a href="http://fuckingblocksyntax.com/">看这里</a>
+还有个很好地资料 <a href="http://onevcat.com/2011/11/objective-c%E4%B8%AD%E7%9A%84block/">看这里</a></p>
+
+<h2>多线程的几种实现方式</h2>
+
+<ul>
+<li><p>NSTheard</p></li>
+<li><p>NSOperation</p></li>
+<li><p>GCD</p></li>
+</ul>
+
+
+<p>具体使用栗子：<a href="http://www.uml.org.cn/mobiledev/201210262.asp">http://www.uml.org.cn/mobiledev/201210262.asp</a></p>
+
+<h2>页面动画的几种实现方式</h2>
+
+<ul>
+<li><p>UIView animation 动画</p></li>
+<li><p>CoreAnimation 动画  参考：<a href="http://www.dreamingwish.com/dream-2012/the-concept-of-coreanimation-programming-guide.html">iOS核心动画编程指南</a></p></li>
+<li><p>简单粗暴地用 OpenGL ES实现</p></li>
+</ul>
+
+
+<p>这是我的答案……不知道是否正确或者全面
+目前我也就第一个用得比较多，CoreAnimation还在慢慢学 ╮(╯▽╰)╭</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.com/blog/2013/12/03/ios-interview-question/';
+        var disqus_url = 'http://KinoAndWorld.github.com/blog/2013/12/03/ios-interview-question/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>

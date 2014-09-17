@@ -1,0 +1,197 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Ruby学习笔记-杂记 - 奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="Ruby学习笔记-杂记 比较零散的记录 &mdash; array操作 .push 很明显就是添加一个元素 &lt;&lt; 添加元素另一种写法 "Yukihiro " &lt;&lt; "Matsumoto" # ==&gt; "Yukihiro Matsumoto" ||= 这个语法也挺奇怪 &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.com/blog/2013/07/12/ruby-study-note-02/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Ruby学习笔记-杂记</h1>
+	<div class="entry-content" itemprop="articleBody"><p>比较零散的记录</p>
+
+<p>&mdash;</p>
+
+<h2>array操作</h2>
+
+<p><code>.push</code> 很明显就是添加一个元素</p>
+
+<p><code>&lt;&lt;</code> 添加元素另一种写法</p>
+
+<pre><code>    "Yukihiro " &lt;&lt; "Matsumoto"
+    # ==&gt; "Yukihiro Matsumoto"
+</code></pre>
+
+<p><code>||=</code> 这个语法也挺奇怪，意思如下</p>
+
+<pre><code>prime_array ||= [] 这句的意思等于 
+prime_array = [] if prime_array.nil?
+</code></pre>
+
+<p><code>yield</code>关键字 算是占位符，或者有说类似虚函数，后面才实现</p>
+
+<pre><code>def greeter #
+    yield
+end
+phrase = Proc.new {puts "Hello there!"}
+greeter(&amp;phrase)
+</code></pre>
+
+<p><code>collect</code> or <code>map</code> or <code>select</code> 这三个的作用。。算是迭代器吧c操作数字数组等，map操作字符串数组……不过我暂时不知道他们的区别。</p>
+
+<p><code>lambda</code> 匿名函数，相当于一个block
+<code>is_a?[类型名]</code> 这个语法就是判断一个变量是否是某种类型 有种isSubClass的概念</p>
+
+<pre><code>my_array = ["raindrops", :kettles, "whiskers", :mittens, :packages]
+symbol_filter = lambda {|x| x.is_a? Symbol}
+symbols = my_array.select(&amp;symbol_filter)
+</code></pre>
+
+<p><code>attr_accessor</code>  <code>attr_reader</code> <code>attr_writer</code> 三种属性，或者说访问器，也就是给变量加上一些访问设置，主要用在类里边的~</p>
+
+<p>先到这里，以后慢慢补充~</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.com/blog/2013/07/12/ruby-study-note-02/';
+        var disqus_url = 'http://KinoAndWorld.github.com/blog/2013/07/12/ruby-study-note-02/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>

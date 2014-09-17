@@ -1,0 +1,661 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="Aug 5th, 2013 iOS Comments 给EGOImageView增加下载进度功能 给EGOImageView异步加载图片增加下载进度功能 &mdash; 做网络图片相关的项目时，离不开缓存和异步加载。于是找到了一个很好用的第三方控件 EGOImageView 灰常简单好用~ &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.com/blog/page/2/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-05T09:49:23+08:00" data-updated="true" itemprop="datePublished">Aug 5<span>th</span>, 2013</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/ios/'>iOS</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2013/08/05/egoimage-addition/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2013/08/05/egoimage-addition/" itemprop="url">给EGOImageView增加下载进度功能</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<h3>给EGOImageView异步加载图片增加下载进度功能</h3>
+
+<p>&mdash;</p>
+
+<p>做网络图片相关的项目时，离不开缓存和异步加载。于是找到了一个很好用的第三方控件
+ <a href="https://github.com/enormego/EGOImageLoading">EGOImageView</a></p>
+
+<p>灰常简单好用~</p>
+
+<p>但是呢，随着项目的进一步展开，弱弱地发现这个控件并没有<code>获取图片加载进度</code>这么个功能，而且一般我们等待图片加载时需要有一个显示进度的进度条，这样就无法实现了。</p>
+
+<p>于是我上网找到了获取进度的方法，然后自己改造了一下EGOImageView，写这篇博客，仅做一下记录。</p>
+
+<h3>首先，找到EGOImageLoadConnection这个类</h3>
+
+<p>在它的.h文件加上下面两个自定义的委托</p>
+
+<pre><code>@protocol EGOImageLoadConnectionDelegate&lt;NSObject&gt;
+- (void)imageLoadConnectionDidFinishLoading:(EGOImageLoadConnection *)connection;
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didFailWithError:(NSError *)error;
+//进度委托
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didDownLoadData:(long long)btyes;
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection countDownLoadData:(long long)btyes;
+@end
+</code></pre>
+
+<p>紧接着，进入.m文件，找到这两个方法，这两个方法是关键。</p>
+
+<pre><code>didReceiveResponse是得到一个有效图片URL后返回的信息，里面就包含了图片的大小
+didReceiveData则是在一张图片下载过程中，不断传输过来的数据，因此这个方法可能会调用不止一次
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    if(connection != _connection) return;
+    [_responseData appendData:data];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    if(connection != _connection) return;
+    self.response = response;
+}
+</code></pre>
+
+<p>网上找了方法，加进去，变成下面这样</p>
+
+<pre><code>- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    if(connection != _connection) return;
+    [_responseData appendData:data];
+    //NSLog(@"%lld",(long long)[data length]);
+    if([self.delegate respondsToSelector:@selector(imageLoadConnection:didDownLoadData:)]) {
+        [self.delegate imageLoadConnection:self didDownLoadData:(long long)[data length]];
+    }
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+
+    long long total_;
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+    if(httpResponse &amp;&amp; [httpResponse respondsToSelector:@selector(allHeaderFields)]){
+        NSDictionary *httpResponseHeaderFields = [httpResponse allHeaderFields];
+
+        total_ = [[httpResponseHeaderFields objectForKey:@"Content-Length"] longLongValue];
+        if([self.delegate respondsToSelector:@selector(imageLoadConnection:countDownLoadData:)]) {
+            [self.delegate imageLoadConnection:self countDownLoadData:total_];
+        }
+        //NSLog(@"total:%lld", total_);
+    }
+    if(connection != _connection) return;
+    self.response = response;
+}
+</code></pre>
+
+<p>理论上，现在已经获取到了数据的大小和每次传输的数据量，接着进入EGOImageLoader.m文件。
+然后我遵循它原本的模式（观察者），添加两个宏定义:</p>
+
+<pre><code>#if __EGOIL_USE_NOTIF
+    #define kImageNotificationLoaded(s) [@"kEGOImageLoaderNotificationLoaded-" stringByAppendingString:keyForURL(s, nil)]
+    #define kImageNotificationLoadFailed(s) [@"kEGOImageLoaderNotificationLoadFailed-" stringByAppendingString:keyForURL(s, nil)]
+    //下载进度
+    #define kImageNotificationLoadData(s) [@"kEGOImageLoaderNotificationLoadedData-" stringByAppendingString:keyForURL(s, nil)]
+    #define kImageNotificationCountLoadData(s) [@"kEGOImageLoaderNotificationCountLoadData-" stringByAppendingString:keyForURL(s, nil)]
+#endif
+</code></pre>
+
+<p>接着同样在 <code>-(void)loadImageForURL:(NSURL*)aURL observer:(id&lt;EGOImageLoaderObserver&gt;)observer;</code>
+方法添加观察者</p>
+
+<pre><code>//进度的观察
+if([observer respondsToSelector:@selector(imageLoaderDidLoadData:)]) {
+    [[NSNotificationCenter defaultCenter] addObserver:observer selector:@selector(imageLoaderDidLoadData:) name:kImageNotificationLoadData(aURL) object:self];
+}
+if([observer respondsToSelector:@selector(imageLoaderDidCountLoadData:)]) {
+    [[NSNotificationCenter defaultCenter] addObserver:observer selector:@selector(imageLoaderDidCountLoadData:) name:kImageNotificationCountLoadData(aURL) object:self];
+}
+</code></pre>
+
+<p>和在 <code>-(void)removeObserver:(id&lt;EGOImageLoaderObserver&gt;)observer forURL:(NSURL*)aURL;</code>
+方法删除观察者</p>
+
+<pre><code>// 移除下载进度观察者
+[[NSNotificationCenter defaultCenter] removeObserver:observer name:kImageNotificationCountLoadData(aURL) object:self];
+[[NSNotificationCenter defaultCenter] removeObserver:observer name:kImageNotificationLoadData(aURL) object:self];
+</code></pre>
+
+<p>接着，该实现刚刚写的那两个委托了</p>
+
+<pre><code>#pragma mark URL Connection delegate methods
+//下载进度
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didDownLoadData:(long long)btyes{
+#if __EGOIL_USE_NOTIF
+    NSNotification* notification = [NSNotification notificationWithName:kImageNotificationLoadData(connection.imageURL)
+                                                                 object:self
+                                                               userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                         [NSNumber numberWithLongLong:btyes],@"btyes",
+                                                                         connection.imageURL,@"imageURL",nil]];
+
+    [[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:YES];
+#endif
+}
+
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection countDownLoadData:(long long)btyes{
+#if __EGOIL_USE_NOTIF
+    NSNotification* notification = [NSNotification notificationWithName:kImageNotificationCountLoadData(connection.imageURL)
+                                                                 object:self
+                                                               userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                         [NSNumber numberWithLongLong:btyes],@"btyes",
+                                                                         connection.imageURL,@"imageURL",nil]];
+
+    [[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:YES];
+#endif
+}
+</code></pre>
+
+<p>最后呢，我们再给EGOImageView.h文件加两个委托</p>
+
+<pre><code>//图片进度
+- (void)imageViewImageProgress:(long long)bytes;
+- (void)imageViewImageProgressCount:(long long)bytes;
+</code></pre>
+
+<p>还记得我刚刚加的两个通知么，现在派上用场了，在.m文件加上如下代码</p>
+
+<pre><code>//进度处理
+- (void)imageLoaderDidLoadData:(NSNotification*)notification {
+    if(![[[notification userInfo] objectForKey:@"imageURL"] isEqual:self.imageURL]) return;
+    long long bytes = [[[notification userInfo] objectForKey:@"btyes"] longLongValue];
+
+    //NSLog(@"sub:%lld",bytes);
+    if([self.delegate respondsToSelector:@selector(imageViewImageProgress:)]) {
+        [self.delegate imageViewImageProgress:bytes];
+    }
+}
+
+- (void)imageLoaderDidCountLoadData:(NSNotification*)notification {
+
+    if(![[[notification userInfo] objectForKey:@"imageURL"] isEqual:self.imageURL]) return;
+    long long bytes = [[[notification userInfo] objectForKey:@"btyes"] longLongValue];
+
+    if([self.delegate respondsToSelector:@selector(imageViewImageProgressCount:)]) {
+        [self.delegate imageViewImageProgressCount:bytes];
+    }
+}
+</code></pre>
+
+<p>大功告成。
+<img src="" /></p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-12T09:49:23+08:00" data-updated="true" itemprop="datePublished">Jul 12<span>th</span>, 2013</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/bi-ji/'>笔记</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2013/07/12/ruby-study-note-02/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2013/07/12/ruby-study-note-02/" itemprop="url">Ruby学习笔记-杂记</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>比较零散的记录</p>
+
+<p>&mdash;</p>
+
+<h2>array操作</h2>
+
+<p><code>.push</code> 很明显就是添加一个元素</p>
+
+<p><code>&lt;&lt;</code> 添加元素另一种写法</p>
+
+<pre><code>    "Yukihiro " &lt;&lt; "Matsumoto"
+    # ==&gt; "Yukihiro Matsumoto"
+</code></pre>
+
+<p><code>||=</code> 这个语法也挺奇怪，意思如下</p>
+
+<pre><code>prime_array ||= [] 这句的意思等于 
+prime_array = [] if prime_array.nil?
+</code></pre>
+
+<p><code>yield</code>关键字 算是占位符，或者有说类似虚函数，后面才实现</p>
+
+<pre><code>def greeter #
+    yield
+end
+phrase = Proc.new {puts "Hello there!"}
+greeter(&amp;phrase)
+</code></pre>
+
+<p><code>collect</code> or <code>map</code> or <code>select</code> 这三个的作用。。算是迭代器吧c操作数字数组等，map操作字符串数组……不过我暂时不知道他们的区别。</p>
+
+<p><code>lambda</code> 匿名函数，相当于一个block
+<code>is_a?[类型名]</code> 这个语法就是判断一个变量是否是某种类型 有种isSubClass的概念</p>
+
+<pre><code>my_array = ["raindrops", :kettles, "whiskers", :mittens, :packages]
+symbol_filter = lambda {|x| x.is_a? Symbol}
+symbols = my_array.select(&amp;symbol_filter)
+</code></pre>
+
+<p><code>attr_accessor</code>  <code>attr_reader</code> <code>attr_writer</code> 三种属性，或者说访问器，也就是给变量加上一些访问设置，主要用在类里边的~</p>
+
+<p>先到这里，以后慢慢补充~</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-29T09:49:23+08:00" data-updated="true" itemprop="datePublished">Jun 29<span>th</span>, 2013</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/bi-ji/'>笔记</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2013/06/29/ruby-study-note-01/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2013/06/29/ruby-study-note-01/" itemprop="url">Ruby学习笔记-初步涉猎</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>闲来无事，上codecademy学下Ruby。
+尊贵的红宝石，美好而瑰丽，让人不忍一睹风采……好吧我太废话了。
+根据codecademy的介绍，Ruby的特性非常明显:
+&ndash; 高级语言（High-level）
+&ndash; 解释型语言（Interpreted）
+&ndash; 面向对象（Object-oriented）
+&ndash; 简单易用（Easy to use）</p>
+
+<p>当然……作为一种面向对象的语言，这些特点几乎是必须的……
+话说……我不知道ruby算不算脚本语言。</p>
+
+<p>&mdash;</p>
+
+<h2>变量</h2>
+
+<p>ruby的变量定义和数据类型真是轻便快捷，比较类似javascript吧，弱类型。
+变量是无需定义的，抑或称之为动态数据类型吧。
+比如</p>
+
+<pre><code>i = 1
+s = "string"
+arr = [1,2,3]
+</code></pre>
+
+<p>真是方便得要死。=_=</p>
+
+<p>跟其他面向对象语言类似，ruby的所有数据类型都是对象。</p>
+
+<h2>操作符</h2>
+
+<p>操作符基本跟其他语言相似。有几个不同的地方，记录一下：
+10 ** 2  #相当于10的2次方 这种写法也挺好的</p>
+
+<h2>字符串（string）</h2>
+
+<p>有两种形式： <code>"string"</code> 和 <code>'string'</code>
+比较方便的是，字符串内变量的引用：</p>
+
+<pre><code>favorite_language = "Ruby"
+puts "My favorite language is #{favorite_language}!"
+My favorite language is Ruby!
+</code></pre>
+
+<p>另外，字符串带了很多函数，可以方便的对字符串进行各类操作：</p>
+
+<pre><code>my_name = "eric"
+my_name.upcase #转换大小写
+=&gt; "ERIC"
+my_name.capitalize
+=&gt; "Eric"
+my_name.reverse #反转
+=&gt; "cire"
+</code></pre>
+
+<p>puts（put string的简写）和print的区别：</p>
+
+<pre><code>3.times { puts "Hello!" }
+Hello!
+Hello!
+Hello!
+3.times { print "Hello!" }
+Hello!Hello!Hello!
+</code></pre>
+
+<p>也就是一个是带换行的一个不带。</p>
+
+<h1>逻辑运算</h1>
+
+<p>我发现Ruby的很多基本语句都要以<code>End</code>结尾的……感觉似乎不太有必要吧。</p>
+
+<p>最基本的IF语句：</p>
+
+<pre><code>if condition
+  # Do something
+end
+</code></pre>
+
+<p>除了elsif比较奇怪外……其他的还是很规矩</p>
+
+<pre><code>if x &gt; y
+  puts "x is greater than y!"
+elsif x &lt; y
+  puts "x is less than y!"
+else
+  puts "x equals y!"
+end
+</code></pre>
+
+<p>然后是比较奇特的unless语法</p>
+
+<pre><code>unless x == 10   #其实就等同于 if x!=10 感觉没少几个字- -不解为什么要加入这个语法。
+  puts "I get printed!"
+end
+</code></pre>
+
+<h2>方法</h2>
+
+<p>方法定义跟其他语言也大同小异</p>
+
+<pre><code>def method_name(arguments)
+  # Code to be executed
+end
+</code></pre>
+
+<p>比较困惑的是返回值的问题，不过找到了<a href="http://imshanks.com/ruby-methods-return-valu/">答案</a></p>
+
+<h2>循环语句</h2>
+
+<p>ruby的循环方式还是很多的：
+-while</p>
+
+<pre><code>while true
+  puts "I'm an infinite loop!"
+end
+</code></pre>
+
+<p>-until</p>
+
+<pre><code>until counter == 0
+  puts "Counter currently at #{counter}."
+  counter -= 1
+end
+</code></pre>
+
+<p>-for</p>
+
+<pre><code>for number in (0..5) #这里，..表示包括5，...表示不包括
+  puts number
+end
+</code></pre>
+
+<p>还有遍历数组</p>
+
+<pre><code>for item in my_array
+  puts item
+end
+</code></pre>
+
+<p>&ndash;.times</p>
+
+<pre><code>3.times { puts "Chunky bacon!" }
+</code></pre>
+
+<p>这样就实现了输出三个字符串，方便得要死</p>
+
+<p>&ndash;.each</p>
+
+<pre><code>one_to_ten.each do |num|
+  print (num**2).to_s + " "
+end
+</code></pre>
+
+<h2>其他</h2>
+
+<p>-数组的操作：</p>
+
+<pre><code>y.push("cartoon foxes") #增加一个元素
+
+z = Array.new(3, "Matz!") #构造方法更灵活地创建数组
+</code></pre>
+
+<p>-哈希（hash）</p>
+
+<pre><code>my_hash = {
+  :key1 =&gt; "First value!",
+  :key2 =&gt; "Second value!",
+  :key3 =&gt; "Third value!"
+}
+my_hash[:key2]
+=&gt; "Second value!"
+</code></pre>
+
+<p>所谓哈希……其实就是字典吧，键值对的数据结构。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-24T09:49:23+08:00" data-updated="true" itemprop="datePublished">Jun 24<span>th</span>, 2013</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/mo-ji/'>墨迹</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2013/06/24/my-first-blog/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2013/06/24/my-first-blog/" itemprop="url">博客成功迁移到Octopress</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<h2>我的第一篇博客</h2>
+
+<p>嗯。我写完了。</p>
+
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+        <a href="/" class="prev">Prev</a>
+    
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>
