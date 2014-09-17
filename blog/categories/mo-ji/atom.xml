@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 墨迹 | 奇诺の世界]]></title>
-  <link href="http://KinoAndWorld.github.com/blog/categories/mo-ji/atom.xml" rel="self"/>
-  <link href="http://KinoAndWorld.github.com/"/>
-  <updated>2014-09-17T11:20:50+08:00</updated>
-  <id>http://KinoAndWorld.github.com/</id>
+  <link href="http://KinoAndWorld.github.io/blog/categories/mo-ji/atom.xml" rel="self"/>
+  <link href="http://KinoAndWorld.github.io/"/>
+  <updated>2014-09-17T18:17:54+08:00</updated>
+  <id>http://KinoAndWorld.github.io/</id>
   <author>
     <name><![CDATA[Kino]]></name>
     <email><![CDATA[kinoandworld@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[V for Vendetta Comment]]></title>
-    <link href="http://KinoAndWorld.github.com/blog/2014/02/28/v-for-vendetta-comment/"/>
+    <link href="http://KinoAndWorld.github.io/blog/2014/02/28/v-for-vendetta-comment/"/>
     <updated>2014-02-28T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.com/blog/2014/02/28/v-for-vendetta-comment</id>
+    <id>http://KinoAndWorld.github.io/blog/2014/02/28/v-for-vendetta-comment</id>
     <content type="html"><![CDATA[<h2>每个人心里都有抗争的种子(V字仇杀队 影评)</h2>
 
 <p>单从标题来看,这是一部关于仇恨(vendetta 仇杀,正是V字头)的故事,而整部影片,也确实在讲述一个失败的病毒实验体,或者说受害者V的复仇故事. V潇洒,凌然而深邃,永远戴着一副小丑似的玩世不恭的面具,而隐藏在背后的确是伤痕累累的心,和如同深渊一般噬骨的仇恨.</p>
@@ -48,9 +48,9 @@
   
   <entry>
     <title type="html"><![CDATA[博客成功迁移到Octopress]]></title>
-    <link href="http://KinoAndWorld.github.com/blog/2013/06/24/my-first-blog/"/>
+    <link href="http://KinoAndWorld.github.io/blog/2013/06/24/my-first-blog/"/>
     <updated>2013-06-24T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.com/blog/2013/06/24/my-first-blog</id>
+    <id>http://KinoAndWorld.github.io/blog/2013/06/24/my-first-blog</id>
     <content type="html"><![CDATA[<h2>我的第一篇博客</h2>
 
 <p>嗯。我写完了。</p>

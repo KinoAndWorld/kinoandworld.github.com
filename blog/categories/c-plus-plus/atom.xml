@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: C++ | 奇诺の世界]]></title>
-  <link href="http://KinoAndWorld.github.com/blog/categories/c-plus-plus/atom.xml" rel="self"/>
-  <link href="http://KinoAndWorld.github.com/"/>
-  <updated>2014-09-17T11:20:50+08:00</updated>
-  <id>http://KinoAndWorld.github.com/</id>
+  <link href="http://KinoAndWorld.github.io/blog/categories/c-plus-plus/atom.xml" rel="self"/>
+  <link href="http://KinoAndWorld.github.io/"/>
+  <updated>2014-09-17T18:17:54+08:00</updated>
+  <id>http://KinoAndWorld.github.io/</id>
   <author>
     <name><![CDATA[Kino]]></name>
     <email><![CDATA[kinoandworld@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[How to Use Delegate in Cocos2d X]]></title>
-    <link href="http://KinoAndWorld.github.com/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x/"/>
+    <link href="http://KinoAndWorld.github.io/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x/"/>
     <updated>2013-12-13T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.com/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x</id>
+    <id>http://KinoAndWorld.github.io/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x</id>
     <content type="html"><![CDATA[<p>近来弄了下Coco2d-X，这个框架真的很棒，让游戏开发变得简单多了，以至于让我这样搞应用的都能很快上手。
 熟悉objective-C编程的肯定都知道COCOA中的<code>protocol（协议）-delegate（委托）模式</code>
 习惯了这种编程方式，然后在写cocos2d-x的时候发现没相关语法，感觉不太爽儿~</p>
