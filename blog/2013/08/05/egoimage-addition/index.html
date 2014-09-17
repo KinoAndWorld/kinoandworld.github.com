@@ -1,0 +1,329 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>给EGOImageView增加下载进度功能 - 奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="给EGOImageView增加下载进度功能 给EGOImageView异步加载图片增加下载进度功能 &mdash; 做网络图片相关的项目时，离不开缓存和异步加载。于是找到了一个很好用的第三方控件 EGOImageView 灰常简单好用~ 但是呢，随着项目的进一步展开， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.io/blog/2013/08/05/egoimage-addition/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?cf1125831693ae208e5e3993116c42db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<!-- <hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+ -->
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">给EGOImageView增加下载进度功能</h1>
+	<div class="entry-content" itemprop="articleBody"><h3>给EGOImageView异步加载图片增加下载进度功能</h3>
+
+<p>&mdash;</p>
+
+<p>做网络图片相关的项目时，离不开缓存和异步加载。于是找到了一个很好用的第三方控件
+ <a href="https://github.com/enormego/EGOImageLoading">EGOImageView</a></p>
+
+<p>灰常简单好用~</p>
+
+<p>但是呢，随着项目的进一步展开，弱弱地发现这个控件并没有<code>获取图片加载进度</code>这么个功能，而且一般我们等待图片加载时需要有一个显示进度的进度条，这样就无法实现了。</p>
+
+<p>于是我上网找到了获取进度的方法，然后自己改造了一下EGOImageView，写这篇博客，仅做一下记录。</p>
+
+<h3>首先，找到EGOImageLoadConnection这个类</h3>
+
+<p>在它的.h文件加上下面两个自定义的委托</p>
+
+<pre><code>@protocol EGOImageLoadConnectionDelegate&lt;NSObject&gt;
+- (void)imageLoadConnectionDidFinishLoading:(EGOImageLoadConnection *)connection;
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didFailWithError:(NSError *)error;
+//进度委托
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didDownLoadData:(long long)btyes;
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection countDownLoadData:(long long)btyes;
+@end
+</code></pre>
+
+<p>紧接着，进入.m文件，找到这两个方法，这两个方法是关键。</p>
+
+<pre><code>didReceiveResponse是得到一个有效图片URL后返回的信息，里面就包含了图片的大小
+didReceiveData则是在一张图片下载过程中，不断传输过来的数据，因此这个方法可能会调用不止一次
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    if(connection != _connection) return;
+    [_responseData appendData:data];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    if(connection != _connection) return;
+    self.response = response;
+}
+</code></pre>
+
+<p>网上找了方法，加进去，变成下面这样</p>
+
+<pre><code>- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    if(connection != _connection) return;
+    [_responseData appendData:data];
+    //NSLog(@"%lld",(long long)[data length]);
+    if([self.delegate respondsToSelector:@selector(imageLoadConnection:didDownLoadData:)]) {
+        [self.delegate imageLoadConnection:self didDownLoadData:(long long)[data length]];
+    }
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+
+    long long total_;
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+    if(httpResponse &amp;&amp; [httpResponse respondsToSelector:@selector(allHeaderFields)]){
+        NSDictionary *httpResponseHeaderFields = [httpResponse allHeaderFields];
+
+        total_ = [[httpResponseHeaderFields objectForKey:@"Content-Length"] longLongValue];
+        if([self.delegate respondsToSelector:@selector(imageLoadConnection:countDownLoadData:)]) {
+            [self.delegate imageLoadConnection:self countDownLoadData:total_];
+        }
+        //NSLog(@"total:%lld", total_);
+    }
+    if(connection != _connection) return;
+    self.response = response;
+}
+</code></pre>
+
+<p>理论上，现在已经获取到了数据的大小和每次传输的数据量，接着进入EGOImageLoader.m文件。
+然后我遵循它原本的模式（观察者），添加两个宏定义:</p>
+
+<pre><code>#if __EGOIL_USE_NOTIF
+    #define kImageNotificationLoaded(s) [@"kEGOImageLoaderNotificationLoaded-" stringByAppendingString:keyForURL(s, nil)]
+    #define kImageNotificationLoadFailed(s) [@"kEGOImageLoaderNotificationLoadFailed-" stringByAppendingString:keyForURL(s, nil)]
+    //下载进度
+    #define kImageNotificationLoadData(s) [@"kEGOImageLoaderNotificationLoadedData-" stringByAppendingString:keyForURL(s, nil)]
+    #define kImageNotificationCountLoadData(s) [@"kEGOImageLoaderNotificationCountLoadData-" stringByAppendingString:keyForURL(s, nil)]
+#endif
+</code></pre>
+
+<p>接着同样在 <code>-(void)loadImageForURL:(NSURL*)aURL observer:(id&lt;EGOImageLoaderObserver&gt;)observer;</code>
+方法添加观察者</p>
+
+<pre><code>//进度的观察
+if([observer respondsToSelector:@selector(imageLoaderDidLoadData:)]) {
+    [[NSNotificationCenter defaultCenter] addObserver:observer selector:@selector(imageLoaderDidLoadData:) name:kImageNotificationLoadData(aURL) object:self];
+}
+if([observer respondsToSelector:@selector(imageLoaderDidCountLoadData:)]) {
+    [[NSNotificationCenter defaultCenter] addObserver:observer selector:@selector(imageLoaderDidCountLoadData:) name:kImageNotificationCountLoadData(aURL) object:self];
+}
+</code></pre>
+
+<p>和在 <code>-(void)removeObserver:(id&lt;EGOImageLoaderObserver&gt;)observer forURL:(NSURL*)aURL;</code>
+方法删除观察者</p>
+
+<pre><code>// 移除下载进度观察者
+[[NSNotificationCenter defaultCenter] removeObserver:observer name:kImageNotificationCountLoadData(aURL) object:self];
+[[NSNotificationCenter defaultCenter] removeObserver:observer name:kImageNotificationLoadData(aURL) object:self];
+</code></pre>
+
+<p>接着，该实现刚刚写的那两个委托了</p>
+
+<pre><code>#pragma mark URL Connection delegate methods
+//下载进度
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didDownLoadData:(long long)btyes{
+#if __EGOIL_USE_NOTIF
+    NSNotification* notification = [NSNotification notificationWithName:kImageNotificationLoadData(connection.imageURL)
+                                                                 object:self
+                                                               userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                         [NSNumber numberWithLongLong:btyes],@"btyes",
+                                                                         connection.imageURL,@"imageURL",nil]];
+
+    [[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:YES];
+#endif
+}
+
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection countDownLoadData:(long long)btyes{
+#if __EGOIL_USE_NOTIF
+    NSNotification* notification = [NSNotification notificationWithName:kImageNotificationCountLoadData(connection.imageURL)
+                                                                 object:self
+                                                               userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                         [NSNumber numberWithLongLong:btyes],@"btyes",
+                                                                         connection.imageURL,@"imageURL",nil]];
+
+    [[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:YES];
+#endif
+}
+</code></pre>
+
+<p>最后呢，我们再给EGOImageView.h文件加两个委托</p>
+
+<pre><code>//图片进度
+- (void)imageViewImageProgress:(long long)bytes;
+- (void)imageViewImageProgressCount:(long long)bytes;
+</code></pre>
+
+<p>还记得我刚刚加的两个通知么，现在派上用场了，在.m文件加上如下代码</p>
+
+<pre><code>//进度处理
+- (void)imageLoaderDidLoadData:(NSNotification*)notification {
+    if(![[[notification userInfo] objectForKey:@"imageURL"] isEqual:self.imageURL]) return;
+    long long bytes = [[[notification userInfo] objectForKey:@"btyes"] longLongValue];
+
+    //NSLog(@"sub:%lld",bytes);
+    if([self.delegate respondsToSelector:@selector(imageViewImageProgress:)]) {
+        [self.delegate imageViewImageProgress:bytes];
+    }
+}
+
+- (void)imageLoaderDidCountLoadData:(NSNotification*)notification {
+
+    if(![[[notification userInfo] objectForKey:@"imageURL"] isEqual:self.imageURL]) return;
+    long long bytes = [[[notification userInfo] objectForKey:@"btyes"] longLongValue];
+
+    if([self.delegate respondsToSelector:@selector(imageViewImageProgressCount:)]) {
+        [self.delegate imageViewImageProgressCount:bytes];
+    }
+}
+</code></pre>
+
+<p>大功告成。
+<img src="" /></p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.io/blog/2013/08/05/egoimage-addition/';
+        var disqus_url = 'http://KinoAndWorld.github.io/blog/2013/08/05/egoimage-addition/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>

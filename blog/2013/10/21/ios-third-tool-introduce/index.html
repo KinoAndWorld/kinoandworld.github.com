@@ -1,0 +1,210 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>iOS常用第三方库的备忘和介绍 - 奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="iOS常用第三方库的备忘和介绍 俗话说不要重复造轮子~身为一个IOS开发者我们有必要知道一些先进好用的第三方开源库，
+不仅可以在项目中加快开发进度，更可以通过研究这些开源库提高自己的水平~ 下面介绍自己用过和流行的一些开源库 视图 MBProgressHUD 很常用的模态等待窗口~使用简单明了 &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.io/blog/2013/10/21/ios-third-tool-introduce/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?cf1125831693ae208e5e3993116c42db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<!-- <hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+ -->
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">iOS常用第三方库的备忘和介绍</h1>
+	<div class="entry-content" itemprop="articleBody"><p>俗话说不要重复造轮子~身为一个IOS开发者我们有必要知道一些先进好用的第三方开源库，
+不仅可以在项目中加快开发进度，更可以通过研究这些开源库提高自己的水平~</p>
+
+<p>下面介绍自己用过和流行的一些开源库</p>
+
+<h2>视图</h2>
+
+<ul>
+<li><a href="https://github.com/jdg/MBProgressHUD">MBProgressHUD</a> 很常用的模态等待窗口~使用简单明了</li>
+<li><a href="https://github.com/brennanMKE/PhotoZoom">PZPhotoView</a> 一个封装的比较好的滚动视图</li>
+<li><a href="https://github.com/rs/SDWebImage">SDWebImage</a> 替代UIImageView，支持异步加载网络图片和自动缓存</li>
+<li><a href="https://github.com/enormego/EGOImageLoading">EGOImageView</a> 同上</li>
+<li><a href="https://github.com/Inferis/ViewDeck">ViewDeck</a> 仿Path和Facebook的左右侧滑视图</li>
+<li><a href="https://github.com/Grouper/FlatUIKit">FlatUIKit</a> 看起来很棒的UI组件 正如名字一样 扁平风</li>
+<li><a href="https://github.com/enormego/EGOTableViewPullRefresh">EGOTableViewPullRefresh</a> 下拉刷新 上拉加载更多的功能集成 很常用</li>
+</ul>
+
+
+<h2>网络</h2>
+
+<ul>
+<li><a href="https://github.com/AFNetworking/AFNetworking">AFNetworking</a> 最受欢迎的网络框架 集成得很好而且易于扩展</li>
+<li><a href="https://github.com/MugunthKumar/MKNetworkKit">MKNetworkKit</a> 这个我比较常用 因为使用简单方便~</li>
+</ul>
+
+
+<h2>数据</h2>
+
+<ul>
+<li><a href="https://github.com/johnezang/JSONKit">JSONKit</a> 简单易用的JSON解析库</li>
+<li><a href="https://github.com/ccgus/fmdb">FMDB</a> 很知名的SQLITE操作封装库</li>
+<li><a href="https://github.com/kelp404/CocoaSecurity">CocoaSecurity</a> 提供了 AES加解密和Hash(MD5, HmacMD5, SHA1~SHA512, HmacSHA1~HmacSHA512)的加密</li>
+</ul>
+
+
+<h2>综合</h2>
+
+<ul>
+<li><a href="https://github.com/jverkoey/nimbus">nimbus</a> 一个替代THREE20的框架 功能集成了蛮多的</li>
+<li><a href="https://github.com/devinross/tapkulibrary">tapkulibrary</a> 封装了常用的UI控件和功能</li>
+<li><a href="https://github.com/soffes/sstoolkit">sstoolkit</a> 这个也比较知名 提供了很多常用的扩展和UI控件</li>
+</ul>
+
+
+<p>先想到这么多……有空再补充吧~</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.io/blog/2013/10/21/ios-third-tool-introduce/';
+        var disqus_url = 'http://KinoAndWorld.github.io/blog/2013/10/21/ios-third-tool-introduce/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>

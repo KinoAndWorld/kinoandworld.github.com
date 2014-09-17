@@ -1,0 +1,248 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>ZXingObjC-addition - 奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="ZXingObjC-addition 二维码扫描库ZXingObjC功能完善 对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。
+还有不知道什么原因，ZXing的iOS库在最新发布版本不见了。 还是我找不到？
+总之因为种种原因， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.io/blog/2014/03/20/zxingobjc-addition/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?cf1125831693ae208e5e3993116c42db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<!-- <hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+ -->
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">ZXingObjC-addition</h1>
+	<div class="entry-content" itemprop="articleBody"><h2>二维码扫描库ZXingObjC功能完善</h2>
+
+<p>对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。
+还有不知道什么原因，ZXing的iOS库在最新发布版本不见了。 <code>还是我找不到？</code>
+总之因为种种原因，<a href="" title="https://github.com/TheLevelUp/ZXingObjC">ZXingObjC</a> 作为良好的替代方案粗线了。</p>
+
+<p>顺带一提，支持 cocoapods => &lsquo;ZXingObjC&rsquo;, &lsquo;~> 2.2.6&rsquo;</p>
+
+<p>好吧，现在进入主题，这个库很好用，但是我们在做二维码的时候一般会有一个需求，让二维码进入一个区域方才扫描，即是<code>扫描区域</code>
+让我比较郁闷的是，这么完善的库居然貌似没有实现这个很常见的功能。</p>
+
+<p>然后上GitHub上看了一下这个<a href="" title="https://github.com/TheLevelUp/ZXingObjC/issues/100">Issue</a> , 以为终于找到解决方案……却发现是个坑。具体怎么坑就不说了……也许是我不会用吧。</p>
+
+<p>然后重新阅读了源码，发现了一个更简单的设置裁剪区域的方法。</p>
+
+<p>&mdash;</p>
+
+<h3>Let&rsquo;s go</h3>
+
+<p>首先，进入<code>ZXCapture.h</code> ，添加一个property</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">)</span> <span class="n">CGRect</span> <span class="n">scanCrop</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后进入<code>ZXCapture.m</code> 的这个方法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'>  <span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">captureOutput:</span><span class="p">(</span><span class="n">ZXCaptureOutput</span> <span class="o">*</span><span class="p">)</span><span class="n">captureOutput</span>
+</span><span class='line'><span class="n">ZXQT</span><span class="p">(</span><span class="nl">didOutputVideoFrame:</span><span class="p">(</span><span class="n">CVImageBufferRef</span><span class="p">)</span><span class="n">videoFrame</span>
+</span><span class='line'>     <span class="nl">withSampleBuffer:</span><span class="p">(</span><span class="n">QTSampleBuffer</span> <span class="o">*</span><span class="p">)</span><span class="n">sampleBuffer</span><span class="p">)</span>
+</span><span class='line'><span class="n">ZXAV</span><span class="p">(</span><span class="nl">didOutputSampleBuffer:</span><span class="p">(</span><span class="n">CMSampleBufferRef</span><span class="p">)</span><span class="n">sampleBuffer</span><span class="p">)</span>
+</span><span class='line'>       <span class="nl">fromConnection:</span><span class="p">(</span><span class="n">ZXCaptureConnection</span> <span class="o">*</span><span class="p">)</span><span class="n">connection</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将大概570行位置的代码修改为</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">CGImageRef</span> <span class="n">videoFrameImage</span> <span class="o">=</span> <span class="nb">NULL</span> <span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">CGRectEqualToRect</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">scanCrop</span><span class="p">,</span><span class="n">CGRectZero</span><span class="p">)){</span>
+</span><span class='line'>      <span class="n">videoFrameImage</span> <span class="o">=</span> <span class="p">[</span><span class="n">ZXCGImageLuminanceSource</span> <span class="nl">createImageFromBuffer:</span><span class="n">videoFrame</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+</span><span class='line'>      <span class="n">videoFrameImage</span> <span class="o">=</span> <span class="p">[</span><span class="n">ZXCGImageLuminanceSource</span> <span class="nl">createImageFromBuffer:</span><span class="n">videoFrame</span>
+</span><span class='line'>                                                                   <span class="nl">left:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span>
+</span><span class='line'>                                                                    <span class="nl">top:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span>
+</span><span class='line'>                                                                  <span class="nl">width:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span>
+</span><span class='line'>                                                                 <span class="nl">height:</span><span class="n">_scanCrop</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>就这么简单。。。最后只要在客户端做类似这样的设置就好</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">self</span><span class="p">.</span><span class="n">capture</span><span class="p">.</span><span class="n">scanCrop</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span><span class="p">,</span>
+</span><span class='line'>                                   <span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span><span class="p">,</span>
+</span><span class='line'>                                   <span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">,</span>
+</span><span class='line'>                                   <span class="n">_scanImageView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>唯一需要注意的是，这个frame的 x 和 y 需要颠倒，具体原因应该跟capture的rotation有关。</p>
+
+<p>暂时这么多吧- -虽然没人看~默默记录。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.io/blog/2014/03/20/zxingobjc-addition/';
+        var disqus_url = 'http://KinoAndWorld.github.io/blog/2014/03/20/zxingobjc-addition/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>
