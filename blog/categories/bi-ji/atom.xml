@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 笔记 | 奇诺の世界]]></title>
-  <link href="http://KinoAndWorld.github.io/blog/categories/bi-ji/atom.xml" rel="self"/>
-  <link href="http://KinoAndWorld.github.io/"/>
-  <updated>2014-09-17T17:08:52+08:00</updated>
-  <id>http://KinoAndWorld.github.io/</id>
+  <link href="http://KinoAndWorld.github.com/blog/categories/bi-ji/atom.xml" rel="self"/>
+  <link href="http://KinoAndWorld.github.com/"/>
+  <updated>2014-09-17T11:20:50+08:00</updated>
+  <id>http://KinoAndWorld.github.com/</id>
   <author>
     <name><![CDATA[Kino]]></name>
     <email><![CDATA[kinoandworld@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[一些iOS面试题的探索]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/12/17/some-ios-question-study/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/12/17/some-ios-question-study/"/>
     <updated>2013-12-17T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/12/17/some-ios-question-study</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/12/17/some-ios-question-study</id>
     <content type="html"><![CDATA[<p>其实就是因为cocosachina的<a href="http://www.cocoachina.com/gamedev/misc/2013/1209/7499.html">一篇文章</a>
 看了之后发现自己好多objective-C的细节都没弄清楚，所以记录一下，会的不会的都写一下~</p>
 
@@ -101,9 +101,9 @@
   
   <entry>
     <title type="html"><![CDATA[亲历的iOS面试题]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/12/03/ios-interview-question/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/12/03/ios-interview-question/"/>
     <updated>2013-12-03T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/12/03/ios-interview-question</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/12/03/ios-interview-question</id>
     <content type="html"><![CDATA[<p>上个星期在V2EX上看到一个酷工作然后挺心动的，俗话说心动不如行动，所以我二话不说当基(机)立断地把简历投了去~
 然后马不停蹄地跑去广州面试了~</p>
 
@@ -158,9 +158,9 @@
   
   <entry>
     <title type="html"><![CDATA[iOS常用第三方库的备忘和介绍]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/10/21/ios-third-tool-introduce/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/10/21/ios-third-tool-introduce/"/>
     <updated>2013-10-21T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/10/21/ios-third-tool-introduce</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/10/21/ios-third-tool-introduce</id>
     <content type="html"><![CDATA[<p>俗话说不要重复造轮子~身为一个IOS开发者我们有必要知道一些先进好用的第三方开源库，
 不仅可以在项目中加快开发进度，更可以通过研究这些开源库提高自己的水平~</p>
 
@@ -211,9 +211,9 @@
   
   <entry>
     <title type="html"><![CDATA[常用书签 and 开发资料]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/08/21/bookmark-collection/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/08/21/bookmark-collection/"/>
     <updated>2013-08-21T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/08/21/bookmark-collection</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/08/21/bookmark-collection</id>
     <content type="html"><![CDATA[<ul>
 <li><p><a href="http://ruby-china.org/wiki/install_ruby_guide">如何快速正确的安装 Ruby, Rails 运行环境</a></p></li>
 <li><p><a href="http://wuyuans.com/2012/09/cpp-operator-overload/">c++运算符重载总结</a></p></li>
@@ -228,9 +228,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ruby学习笔记-杂记]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/07/12/ruby-study-note-02/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/07/12/ruby-study-note-02/"/>
     <updated>2013-07-12T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/07/12/ruby-study-note-02</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/07/12/ruby-study-note-02</id>
     <content type="html"><![CDATA[<p>比较零散的记录</p>
 
 <p>&mdash;</p>

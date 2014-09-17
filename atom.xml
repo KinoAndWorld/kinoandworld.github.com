@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[奇诺の世界]]></title>
-  <link href="http://KinoAndWorld.github.io/atom.xml" rel="self"/>
-  <link href="http://KinoAndWorld.github.io/"/>
-  <updated>2014-09-17T17:08:52+08:00</updated>
-  <id>http://KinoAndWorld.github.io/</id>
+  <link href="http://KinoAndWorld.github.com/atom.xml" rel="self"/>
+  <link href="http://KinoAndWorld.github.com/"/>
+  <updated>2014-09-17T11:20:50+08:00</updated>
+  <id>http://KinoAndWorld.github.com/</id>
   <author>
     <name><![CDATA[Kino]]></name>
     <email><![CDATA[kinoandworld@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[微信支付的小坑]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2014/09/17/weixinpayforios/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2014/09/17/weixinpayforios/"/>
     <updated>2014-09-17T00:08:59+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2014/09/17/weixinpayforios</id>
+    <id>http://KinoAndWorld.github.com/blog/2014/09/17/weixinpayforios</id>
     <content type="html"><![CDATA[<h2>先说点题外话</h2>
 
 <p>貌似很久很久没更新博客，有半年了吧，这半年忙着毕业的各种事情，忙着小或者比较大的项目，感受着初入职场的艰辛与喜悦，以及过着平淡无奇的小日子————好吧虽然这些都可以成为懒惰的理由，但是回顾一些自己这半年真的过于放松，许多学习的时间被游戏动漫日剧所占据，如果平时不用上班恐怕要变成废宅了吧╮(╯_╰)╭，so，确定一下今后的目标：<code>多写代码、多锻炼、多阅读、多写博客</code>，写博客主要为了思考，因为要在脑中整理语言，沉淀思想，一方面可以巩固记忆，另一方面也算是[热爱生活]的一种方式吧。</p>
@@ -90,9 +90,9 @@
   
   <entry>
     <title type="html"><![CDATA[ZXingObjC-addition]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2014/03/20/zxingobjc-addition/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2014/03/20/zxingobjc-addition/"/>
     <updated>2014-03-20T16:10:20+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2014/03/20/zxingobjc-addition</id>
+    <id>http://KinoAndWorld.github.com/blog/2014/03/20/zxingobjc-addition</id>
     <content type="html"><![CDATA[<h2>二维码扫描库ZXingObjC功能完善</h2>
 
 <p>对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。
@@ -180,9 +180,9 @@
   
   <entry>
     <title type="html"><![CDATA[博客成功迁移到Octopress]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2014/03/19/first-blog-with-octopress/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2014/03/19/first-blog-with-octopress/"/>
     <updated>2014-03-19T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2014/03/19/first-blog-with-octopress</id>
+    <id>http://KinoAndWorld.github.com/blog/2014/03/19/first-blog-with-octopress</id>
     <content type="html"><![CDATA[<h2>经过三番几次的努力- -终于成功迁移。</h2>
 
 <p>噢，就这么多。</p>
@@ -191,9 +191,9 @@
   
   <entry>
     <title type="html"><![CDATA[V for Vendetta comment]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2014/02/28/v-for-vendetta-comment/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2014/02/28/v-for-vendetta-comment/"/>
     <updated>2014-02-28T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2014/02/28/v-for-vendetta-comment</id>
+    <id>http://KinoAndWorld.github.com/blog/2014/02/28/v-for-vendetta-comment</id>
     <content type="html"><![CDATA[<h2>每个人心里都有抗争的种子(V字仇杀队 影评)</h2>
 
 <p>单从标题来看,这是一部关于仇恨(vendetta 仇杀,正是V字头)的故事,而整部影片,也确实在讲述一个失败的病毒实验体,或者说受害者V的复仇故事. V潇洒,凌然而深邃,永远戴着一副小丑似的玩世不恭的面具,而隐藏在背后的确是伤痕累累的心,和如同深渊一般噬骨的仇恨.</p>
@@ -224,9 +224,9 @@
   
   <entry>
     <title type="html"><![CDATA[一些iOS面试题的探索]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/12/17/some-ios-question-study/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/12/17/some-ios-question-study/"/>
     <updated>2013-12-17T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/12/17/some-ios-question-study</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/12/17/some-ios-question-study</id>
     <content type="html"><![CDATA[<p>其实就是因为cocosachina的<a href="http://www.cocoachina.com/gamedev/misc/2013/1209/7499.html">一篇文章</a>
 看了之后发现自己好多objective-C的细节都没弄清楚，所以记录一下，会的不会的都写一下~</p>
 
@@ -310,9 +310,9 @@
   
   <entry>
     <title type="html"><![CDATA[how to use delegate in cocos2d x]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x/"/>
     <updated>2013-12-13T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x</id>
     <content type="html"><![CDATA[<p>近来弄了下Coco2d-X，这个框架真的很棒，让游戏开发变得简单多了，以至于让我这样搞应用的都能很快上手。
 熟悉objective-C编程的肯定都知道COCOA中的<code>protocol（协议）-delegate（委托）模式</code>
 习惯了这种编程方式，然后在写cocos2d-x的时候发现没相关语法，感觉不太爽儿~</p>
@@ -372,9 +372,9 @@
   
   <entry>
     <title type="html"><![CDATA[亲历的iOS面试题]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/12/03/ios-interview-question/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/12/03/ios-interview-question/"/>
     <updated>2013-12-03T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/12/03/ios-interview-question</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/12/03/ios-interview-question</id>
     <content type="html"><![CDATA[<p>上个星期在V2EX上看到一个酷工作然后挺心动的，俗话说心动不如行动，所以我二话不说当基(机)立断地把简历投了去~
 然后马不停蹄地跑去广州面试了~</p>
 
@@ -429,9 +429,9 @@
   
   <entry>
     <title type="html"><![CDATA[iOS常用第三方库的备忘和介绍]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/10/21/ios-third-tool-introduce/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/10/21/ios-third-tool-introduce/"/>
     <updated>2013-10-21T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/10/21/ios-third-tool-introduce</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/10/21/ios-third-tool-introduce</id>
     <content type="html"><![CDATA[<p>俗话说不要重复造轮子~身为一个IOS开发者我们有必要知道一些先进好用的第三方开源库，
 不仅可以在项目中加快开发进度，更可以通过研究这些开源库提高自己的水平~</p>
 
@@ -482,9 +482,9 @@
   
   <entry>
     <title type="html"><![CDATA[常用书签 and 开发资料]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/08/21/bookmark-collection/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/08/21/bookmark-collection/"/>
     <updated>2013-08-21T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/08/21/bookmark-collection</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/08/21/bookmark-collection</id>
     <content type="html"><![CDATA[<ul>
 <li><p><a href="http://ruby-china.org/wiki/install_ruby_guide">如何快速正确的安装 Ruby, Rails 运行环境</a></p></li>
 <li><p><a href="http://wuyuans.com/2012/09/cpp-operator-overload/">c++运算符重载总结</a></p></li>
@@ -499,9 +499,9 @@
   
   <entry>
     <title type="html"><![CDATA[我自己常常用到的第三方控件]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/08/20/userful-third-controls/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/08/20/userful-third-controls/"/>
     <updated>2013-08-20T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/08/20/userful-third-controls</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/08/20/userful-third-controls</id>
     <content type="html"><![CDATA[<ul>
 <li>EGOTableViewPullRefresh（下拉刷新控件)
 <a href="https://github.com/emreberge/EGOTableViewPullRefresh">Github地址</a></li>
@@ -594,9 +594,9 @@ MMDrawerController * drawerController = [[MMDrawerController alloc]
   
   <entry>
     <title type="html"><![CDATA[给EGOImageView增加下载进度功能]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/08/05/egoimage-addition/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/08/05/egoimage-addition/"/>
     <updated>2013-08-05T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/08/05/egoimage-addition</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/08/05/egoimage-addition</id>
     <content type="html"><![CDATA[<h3>给EGOImageView异步加载图片增加下载进度功能</h3>
 
 <p>&mdash;</p>
@@ -767,9 +767,9 @@ if([observer respondsToSelector:@selector(imageLoaderDidCountLoadData:)]) {
   
   <entry>
     <title type="html"><![CDATA[Ruby学习笔记-杂记]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/07/12/ruby-study-note-02/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/07/12/ruby-study-note-02/"/>
     <updated>2013-07-12T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/07/12/ruby-study-note-02</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/07/12/ruby-study-note-02</id>
     <content type="html"><![CDATA[<p>比较零散的记录</p>
 
 <p>&mdash;</p>
@@ -817,9 +817,9 @@ symbols = my_array.select(&amp;symbol_filter)
   
   <entry>
     <title type="html"><![CDATA[Ruby学习笔记-初步涉猎]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/06/29/ruby-study-note-01/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/06/29/ruby-study-note-01/"/>
     <updated>2013-06-29T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/06/29/ruby-study-note-01</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/06/29/ruby-study-note-01</id>
     <content type="html"><![CDATA[<p>闲来无事，上codecademy学下Ruby。
 尊贵的红宝石，美好而瑰丽，让人不忍一睹风采……好吧我太废话了。
 根据codecademy的介绍，Ruby的特性非常明显:
@@ -998,9 +998,9 @@ my_hash[:key2]
   
   <entry>
     <title type="html"><![CDATA[博客成功迁移到Octopress]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/06/24/my-first-blog/"/>
+    <link href="http://KinoAndWorld.github.com/blog/2013/06/24/my-first-blog/"/>
     <updated>2013-06-24T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/06/24/my-first-blog</id>
+    <id>http://KinoAndWorld.github.com/blog/2013/06/24/my-first-blog</id>
     <content type="html"><![CDATA[<h2>我的第一篇博客</h2>
 
 <p>嗯。我写完了。</p>
