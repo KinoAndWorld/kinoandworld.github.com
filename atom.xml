@@ -4,7 +4,11 @@
   <title><![CDATA[奇诺の世界]]></title>
   <link href="http://KinoAndWorld.github.com/atom.xml" rel="self"/>
   <link href="http://KinoAndWorld.github.com/"/>
+<<<<<<< HEAD
   <updated>2014-09-17T11:20:50+08:00</updated>
+=======
+  <updated>2014-03-23T02:13:44+08:00</updated>
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
   <id>http://KinoAndWorld.github.com/</id>
   <author>
     <name><![CDATA[Kino]]></name>
@@ -14,6 +18,7 @@
 
   
   <entry>
+<<<<<<< HEAD
     <title type="html"><![CDATA[微信支付的小坑]]></title>
     <link href="http://KinoAndWorld.github.com/blog/2014/09/17/weixinpayforios/"/>
     <updated>2014-09-17T00:08:59+08:00</updated>
@@ -89,6 +94,8 @@
   </entry>
   
   <entry>
+=======
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
     <title type="html"><![CDATA[ZXingObjC-addition]]></title>
     <link href="http://KinoAndWorld.github.com/blog/2014/03/20/zxingobjc-addition/"/>
     <updated>2014-03-20T16:10:20+08:00</updated>

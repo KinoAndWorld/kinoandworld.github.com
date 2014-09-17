@@ -7,7 +7,12 @@
 	<meta name="author" content="Kino">
 
 	
+<<<<<<< HEAD
 	<meta name="description" content="Sep 17th, 2014 iOS Comments 微信支付的小坑 先说点题外话 貌似很久很久没更新博客，有半年了吧，这半年忙着毕业的各种事情，忙着小或者比较大的项目，感受着初入职场的艰辛与喜悦，以及过着平淡无奇的小日子————好吧虽然这些都可以成为懒惰的理由， &hellip;">
+=======
+	<meta name="description" content="Mar 20th, 2014 Comments ZXingObjC-addition 二维码扫描库ZXingObjC功能完善 对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。
+还有不知道什么原因， &hellip;">
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +26,11 @@
 	<link href="/favicon.png" rel="shortcut icon">
 	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+<<<<<<< HEAD
 	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+=======
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
 	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
@@ -101,6 +110,7 @@
   
 
 
+<<<<<<< HEAD
 <time datetime="2014-09-17T00:08:59+08:00" data-updated="true" itemprop="datePublished">Sep 17<span>th</span>, 2014</time></div>
 		<div class="tags">
 
@@ -204,6 +214,8 @@
   
 
 
+=======
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
 <time datetime="2014-03-20T16:10:20+08:00" data-updated="true" itemprop="datePublished">Mar 20<span>th</span>, 2014</time></div>
 		<div class="tags">
 
@@ -941,6 +953,210 @@ MMDrawerController * drawerController = [[MMDrawerController alloc]
 
 </article>
 
+<<<<<<< HEAD
+=======
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-05T09:49:23+08:00" data-updated="true" itemprop="datePublished">Aug 5<span>th</span>, 2013</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/ios/'>iOS</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2013/08/05/egoimage-addition/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2013/08/05/egoimage-addition/" itemprop="url">给EGOImageView增加下载进度功能</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<h3>给EGOImageView异步加载图片增加下载进度功能</h3>
+
+<p>&mdash;</p>
+
+<p>做网络图片相关的项目时，离不开缓存和异步加载。于是找到了一个很好用的第三方控件
+ <a href="https://github.com/enormego/EGOImageLoading">EGOImageView</a></p>
+
+<p>灰常简单好用~</p>
+
+<p>但是呢，随着项目的进一步展开，弱弱地发现这个控件并没有<code>获取图片加载进度</code>这么个功能，而且一般我们等待图片加载时需要有一个显示进度的进度条，这样就无法实现了。</p>
+
+<p>于是我上网找到了获取进度的方法，然后自己改造了一下EGOImageView，写这篇博客，仅做一下记录。</p>
+
+<h3>首先，找到EGOImageLoadConnection这个类</h3>
+
+<p>在它的.h文件加上下面两个自定义的委托</p>
+
+<pre><code>@protocol EGOImageLoadConnectionDelegate&lt;NSObject&gt;
+- (void)imageLoadConnectionDidFinishLoading:(EGOImageLoadConnection *)connection;
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didFailWithError:(NSError *)error;
+//进度委托
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didDownLoadData:(long long)btyes;
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection countDownLoadData:(long long)btyes;
+@end
+</code></pre>
+
+<p>紧接着，进入.m文件，找到这两个方法，这两个方法是关键。</p>
+
+<pre><code>didReceiveResponse是得到一个有效图片URL后返回的信息，里面就包含了图片的大小
+didReceiveData则是在一张图片下载过程中，不断传输过来的数据，因此这个方法可能会调用不止一次
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    if(connection != _connection) return;
+    [_responseData appendData:data];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    if(connection != _connection) return;
+    self.response = response;
+}
+</code></pre>
+
+<p>网上找了方法，加进去，变成下面这样</p>
+
+<pre><code>- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    if(connection != _connection) return;
+    [_responseData appendData:data];
+    //NSLog(@"%lld",(long long)[data length]);
+    if([self.delegate respondsToSelector:@selector(imageLoadConnection:didDownLoadData:)]) {
+        [self.delegate imageLoadConnection:self didDownLoadData:(long long)[data length]];
+    }
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+
+    long long total_;
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+    if(httpResponse &amp;&amp; [httpResponse respondsToSelector:@selector(allHeaderFields)]){
+        NSDictionary *httpResponseHeaderFields = [httpResponse allHeaderFields];
+
+        total_ = [[httpResponseHeaderFields objectForKey:@"Content-Length"] longLongValue];
+        if([self.delegate respondsToSelector:@selector(imageLoadConnection:countDownLoadData:)]) {
+            [self.delegate imageLoadConnection:self countDownLoadData:total_];
+        }
+        //NSLog(@"total:%lld", total_);
+    }
+    if(connection != _connection) return;
+    self.response = response;
+}
+</code></pre>
+
+<p>理论上，现在已经获取到了数据的大小和每次传输的数据量，接着进入EGOImageLoader.m文件。
+然后我遵循它原本的模式（观察者），添加两个宏定义:</p>
+
+<pre><code>#if __EGOIL_USE_NOTIF
+    #define kImageNotificationLoaded(s) [@"kEGOImageLoaderNotificationLoaded-" stringByAppendingString:keyForURL(s, nil)]
+    #define kImageNotificationLoadFailed(s) [@"kEGOImageLoaderNotificationLoadFailed-" stringByAppendingString:keyForURL(s, nil)]
+    //下载进度
+    #define kImageNotificationLoadData(s) [@"kEGOImageLoaderNotificationLoadedData-" stringByAppendingString:keyForURL(s, nil)]
+    #define kImageNotificationCountLoadData(s) [@"kEGOImageLoaderNotificationCountLoadData-" stringByAppendingString:keyForURL(s, nil)]
+#endif
+</code></pre>
+
+<p>接着同样在 <code>-(void)loadImageForURL:(NSURL*)aURL observer:(id&lt;EGOImageLoaderObserver&gt;)observer;</code>
+方法添加观察者</p>
+
+<pre><code>//进度的观察
+if([observer respondsToSelector:@selector(imageLoaderDidLoadData:)]) {
+    [[NSNotificationCenter defaultCenter] addObserver:observer selector:@selector(imageLoaderDidLoadData:) name:kImageNotificationLoadData(aURL) object:self];
+}
+if([observer respondsToSelector:@selector(imageLoaderDidCountLoadData:)]) {
+    [[NSNotificationCenter defaultCenter] addObserver:observer selector:@selector(imageLoaderDidCountLoadData:) name:kImageNotificationCountLoadData(aURL) object:self];
+}
+</code></pre>
+
+<p>和在 <code>-(void)removeObserver:(id&lt;EGOImageLoaderObserver&gt;)observer forURL:(NSURL*)aURL;</code>
+方法删除观察者</p>
+
+<pre><code>// 移除下载进度观察者
+[[NSNotificationCenter defaultCenter] removeObserver:observer name:kImageNotificationCountLoadData(aURL) object:self];
+[[NSNotificationCenter defaultCenter] removeObserver:observer name:kImageNotificationLoadData(aURL) object:self];
+</code></pre>
+
+<p>接着，该实现刚刚写的那两个委托了</p>
+
+<pre><code>#pragma mark URL Connection delegate methods
+//下载进度
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didDownLoadData:(long long)btyes{
+#if __EGOIL_USE_NOTIF
+    NSNotification* notification = [NSNotification notificationWithName:kImageNotificationLoadData(connection.imageURL)
+                                                                 object:self
+                                                               userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                         [NSNumber numberWithLongLong:btyes],@"btyes",
+                                                                         connection.imageURL,@"imageURL",nil]];
+
+    [[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:YES];
+#endif
+}
+
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection countDownLoadData:(long long)btyes{
+#if __EGOIL_USE_NOTIF
+    NSNotification* notification = [NSNotification notificationWithName:kImageNotificationCountLoadData(connection.imageURL)
+                                                                 object:self
+                                                               userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                         [NSNumber numberWithLongLong:btyes],@"btyes",
+                                                                         connection.imageURL,@"imageURL",nil]];
+
+    [[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:YES];
+#endif
+}
+</code></pre>
+
+<p>最后呢，我们再给EGOImageView.h文件加两个委托</p>
+
+<pre><code>//图片进度
+- (void)imageViewImageProgress:(long long)bytes;
+- (void)imageViewImageProgressCount:(long long)bytes;
+</code></pre>
+
+<p>还记得我刚刚加的两个通知么，现在派上用场了，在.m文件加上如下代码</p>
+
+<pre><code>//进度处理
+- (void)imageLoaderDidLoadData:(NSNotification*)notification {
+    if(![[[notification userInfo] objectForKey:@"imageURL"] isEqual:self.imageURL]) return;
+    long long bytes = [[[notification userInfo] objectForKey:@"btyes"] longLongValue];
+
+    //NSLog(@"sub:%lld",bytes);
+    if([self.delegate respondsToSelector:@selector(imageViewImageProgress:)]) {
+        [self.delegate imageViewImageProgress:bytes];
+    }
+}
+
+- (void)imageLoaderDidCountLoadData:(NSNotification*)notification {
+
+    if(![[[notification userInfo] objectForKey:@"imageURL"] isEqual:self.imageURL]) return;
+    long long bytes = [[[notification userInfo] objectForKey:@"btyes"] longLongValue];
+
+    if([self.delegate respondsToSelector:@selector(imageViewImageProgressCount:)]) {
+        [self.delegate imageViewImageProgressCount:bytes];
+    }
+}
+</code></pre>
+
+<p>大功告成。
+<img src="" /></p>
+
+		
+		
+	</div>
+
+</article>
+
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
 </div>
 <nav id="pagenavi">
     

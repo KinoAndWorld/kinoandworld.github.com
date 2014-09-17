@@ -4,7 +4,11 @@
   <title><![CDATA[Category: iOS | 奇诺の世界]]></title>
   <link href="http://KinoAndWorld.github.com/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://KinoAndWorld.github.com/"/>
+<<<<<<< HEAD
   <updated>2014-09-17T11:20:50+08:00</updated>
+=======
+  <updated>2014-03-23T02:13:44+08:00</updated>
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
   <id>http://KinoAndWorld.github.com/</id>
   <author>
     <name><![CDATA[Kino]]></name>
@@ -14,6 +18,7 @@
 
   
   <entry>
+<<<<<<< HEAD
     <title type="html"><![CDATA[微信支付的小坑]]></title>
     <link href="http://KinoAndWorld.github.com/blog/2014/09/17/weixinpayforios/"/>
     <updated>2014-09-17T00:08:59+08:00</updated>
@@ -85,6 +90,8 @@ NSMutableDictionary params = [NSMutableDictionary dictionary];
   </entry>
   
   <entry>
+=======
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
     <title type="html"><![CDATA[我自己常常用到的第三方控件]]></title>
     <link href="http://KinoAndWorld.github.com/blog/2013/08/20/userful-third-controls/"/>
     <updated>2013-08-20T09:49:23+08:00</updated>

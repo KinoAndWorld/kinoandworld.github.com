@@ -2,6 +2,7 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://KinoAndWorld.github.com/blog/2013/06/24/my-first-blog/</loc>
+<<<<<<< HEAD
         <lastmod>2014-09-16T23:18:02+08:00</lastmod>
     </url>
     <url>
@@ -31,11 +32,43 @@
     <url>
         <loc>http://KinoAndWorld.github.com/blog/2013/12/03/ios-interview-question/</loc>
         <lastmod>2014-09-16T23:18:02+08:00</lastmod>
+=======
+        <lastmod>2014-03-19T10:16:26+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2013/06/29/ruby-study-note-01/</loc>
+        <lastmod>2014-03-19T10:17:15+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2013/07/12/ruby-study-note-02/</loc>
+        <lastmod>2014-03-19T10:17:53+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2013/08/05/egoimage-addition/</loc>
+        <lastmod>2014-03-19T10:18:46+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2013/08/20/userful-third-controls/</loc>
+        <lastmod>2014-03-19T10:19:16+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2013/08/21/bookmark-collection/</loc>
+        <lastmod>2014-03-19T10:19:49+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2013/10/21/ios-third-tool-introduce/</loc>
+        <lastmod>2014-03-19T10:20:16+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2013/12/03/ios-interview-question/</loc>
+        <lastmod>2014-03-19T10:20:52+08:00</lastmod>
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
     </url>
     <url>
         <loc>
             http://KinoAndWorld.github.com/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x/
         </loc>
+<<<<<<< HEAD
         <lastmod>2014-09-16T23:18:02+08:00</lastmod>
     </url>
     <url>
@@ -69,5 +102,36 @@
     <url>
         <loc>http://KinoAndWorld.github.com/robots.txt</loc>
         <lastmod>2014-09-16T23:18:02+08:00</lastmod>
+=======
+        <lastmod>2014-03-19T10:22:15+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2013/12/17/some-ios-question-study/</loc>
+        <lastmod>2014-03-19T10:22:46+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2014/02/28/v-for-vendetta-comment/</loc>
+        <lastmod>2014-03-19T10:23:29+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2014/03/19/first-blog-with-octopress/</loc>
+        <lastmod>2014-03-19T10:28:27+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/2014/03/20/zxingobjc-addition/</loc>
+        <lastmod>2014-03-23T02:13:35+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/blog/archives/</loc>
+        <lastmod>2014-03-23T02:13:35+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/</loc>
+        <lastmod>2014-03-23T02:13:35+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://KinoAndWorld.github.com/robots.txt</loc>
+        <lastmod>2014-03-19T09:36:35+08:00</lastmod>
+>>>>>>> d0c1157275eb88733e19db3df7c57f61b6785bf7
     </url>
 </urlset>
