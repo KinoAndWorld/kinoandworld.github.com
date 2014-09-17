@@ -17,6 +17,7 @@ categories: iOS
 
 - 吐槽1：微信支付为啥没有iOS的官方demo……实在想不通，服务端有，Android甚至WindowsPhone都有，微信这是对iOS平台歧视的节奏- -
 幸好我大天朝人才辈出，早有人根据`渣成翔`的官方文档写了微信支付的[非官方demo](https://github.com/gbammc/WechatPayDemo)
+
 里面用了cocoapods， 需要下载的话好好看下说明。
 
 - 吐槽2：微信官方文档
@@ -30,20 +31,17 @@ categories: iOS
 	request.prepayId= _prapayid;
 	Request.package = _package;
 	request.nonceStr= _noncestr;
-``` objc
-
+``` 
 
 第三行好好的request突然变成Request了……当时看到整个人都不太好
 
 And
 
-
 ``` objc
 	// 构造参数列表
 	NSMutableDictionary params = [NSMutableDictionary dictionary]; 
 	[params setObject:@"1234567" forKey:@"appid"];
-``` objc
-
+```
 
 NSMutableDictionary params。。。原来NSMutableDictionary不是引用类型啊T.T
 
@@ -53,7 +51,9 @@ NSMutableDictionary params。。。原来NSMutableDictionary不是引用类型�
 
 处于安全便捷考虑，几乎所有的操作都在服务端完成，然后今天服务端给出API，也跟Android调通了。我本以为既然Android端都OK了，那iOS端应该也没多大问题……但是，我错了，我发现iOS端调用微信支付不成功，马上弹回原应用，拿到的是`errCode = -1`的错误。这些我就思密达了，然后一直在找是不是自己哪里调用不对。弄了一个多小时，未果。
 然后很郁闷地吃了个饭，回去之后我跟服务端一步步联调……才发现问题出在PayReq的`sign`变量和`package`变量不对应。
-在深入纠结原因，发现……Android的PayReq类比iOS的PayReq类多了一个appID变量，而这个变量参与到了sign变量的生成，并且，服务端是按照安卓的文档来进行编写的，因此我就蛋疼了。
+
+再深入纠结原因，发现原来Android的文档或者SDK和iOS的处理是不一样的，而服务端是参考了Android的文档来做，我当场就呵呵了。
+如果两端的处理方法不一样，至少也该说明一下吧。
 
 - - -
 
