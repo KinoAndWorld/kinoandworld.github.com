@@ -1,0 +1,252 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>我自己常常用到的第三方控件 - 奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="我自己常常用到的第三方控件 EGOTableViewPullRefresh（下拉刷新控件)
+Github地址 只需要实现PullTableViewDelegate的这两个委托: - (void)pullTableViewDidTriggerRefresh:(PullTableView *) &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.io/blog/2013/08/20/userful-third-controls/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?cf1125831693ae208e5e3993116c42db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<!-- <hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+ -->
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">我自己常常用到的第三方控件</h1>
+	<div class="entry-content" itemprop="articleBody"><ul>
+<li>EGOTableViewPullRefresh（下拉刷新控件)
+<a href="https://github.com/emreberge/EGOTableViewPullRefresh">Github地址</a></li>
+</ul>
+
+
+<p>只需要实现<code>PullTableViewDelegate</code>的这两个委托:</p>
+
+<pre><code>- (void)pullTableViewDidTriggerRefresh:(PullTableView *)pullTableView
+{
+    [self performSelector:@selector(refreshTable) withObject:nil afterDelay:3.0f];
+}
+
+- (void)pullTableViewDidTriggerLoadMore:(PullTableView *)pullTableView
+{
+    [self performSelector:@selector(loadMoreDataToTable) withObject:nil afterDelay:3.0f];
+}
+</code></pre>
+
+<p>这里面指向的具体方法是数据请求完成后进行处理和显示的操作，比如一般在里面reloadData之类：</p>
+
+<pre><code>- (void) refreshTable
+{
+    /*
+     Code to actually refresh goes here.
+     */
+    self.pullTableView.pullLastRefreshDate = [NSDate date];
+    self.pullTableView.pullTableIsRefreshing = NO;
+}
+
+- (void) loadMoreDataToTable
+{
+    /*
+     Code to actually load more data goes here.
+     */
+    self.pullTableView.pullTableIsLoadingMore = NO;
+}
+</code></pre>
+
+<p>几乎就这么多，在注释部分进行逻辑处理，就好了。
+注:这不是原版的，但我感觉是最完善的（上拉加载更多以及更自由的定制（背景颜色）等等），而且使用也更加简化。</p>
+
+<ul>
+<li>MMDrawerController(抽屉视图)
+<a href="https://github.com/mutualmobile/MMDrawerController">Github地址</a></li>
+</ul>
+
+
+<p>抽屉式布局一直很火，应用也很广泛，相关控件也很多，感觉这个控件封装得比较好，而且功能也强大的很。
+核心调用代码就几行：</p>
+
+<pre><code>UIViewController * leftDrawer = [[UIViewController alloc] init];
+UIViewController * center = [[UIViewController alloc] init];
+UIViewController * rightDrawer = [[UIViewController alloc] init];
+MMDrawerController * drawerController = [[MMDrawerController alloc]
+                                       initWithCenterViewController:center
+                                           leftDrawerViewController:leftDrawer
+                                           rightDrawerViewController:rightDrawer];
+</code></pre>
+
+<p>其他的下载官方的demo。十分灰常详细。</p>
+
+<ul>
+<li>EGOImageView(异步加载图片)</li>
+</ul>
+
+
+<p>这个控件的使用非常简单，不用介绍过多~
+而关于这个控件我有一篇专门的博客，可戳<a href="http://kinoandworld.github.io/2013/08/05/egoimage-addition/">这里</a></p>
+
+<ul>
+<li>PZPagingScrollView(延迟加载的滚动视图)
+[额……地址暂时找不到了。]</li>
+</ul>
+
+
+<p>用这个控件可以很方便地做一个相册，提供的委托挺多的，有点类似UITableView委托的写法：</p>
+
+<pre><code>- (Class)pagingScrollView:(PZPagingScrollView *)pagingScrollView classForIndex:(NSUInteger)index;
+- (NSUInteger)pagingScrollViewPagingViewCount:(PZPagingScrollView *)pagingScrollView;
+- (UIView *)pagingScrollView:(PZPagingScrollView *)pagingScrollView pageViewForIndex:(NSUInteger)index;
+- (void)pagingScrollView:(PZPagingScrollView *)pagingScrollView preparePageViewForDisplay:(UIView *)pageView forIndex:(NSUInteger)index;
+</code></pre>
+
+<p>对这个控件我也做了一些修改，具体使用还是看例子吧。我都集成好放进一个demo里面了~</p>
+
+<p>感兴趣的可以<a href="https://github.com/KinoAndWorld/UsefulThirdsControlsDemo">看看</a></p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.io/blog/2013/08/20/userful-third-controls/';
+        var disqus_url = 'http://KinoAndWorld.github.io/blog/2013/08/20/userful-third-controls/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>
