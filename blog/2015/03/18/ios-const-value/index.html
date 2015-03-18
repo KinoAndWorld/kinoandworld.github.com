@@ -1,0 +1,262 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>iOS开发中一些常量数值 - 奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="iOS开发中一些常量数值 先说CGFloat 几乎众所周知CGFloat其实是float和double的大一统，32位与64位浮点的联姻 那么具体有什么不同？先来看看 CGFloat的一些常量， CGFLOAT_TYPE
+CGFLOAT_MAX
+CGFLOAT_MIN &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.io/blog/2015/03/18/ios-const-value/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?cf1125831693ae208e5e3993116c42db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<!-- <hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+ -->
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">iOS开发中一些常量数值</h1>
+	<div class="entry-content" itemprop="articleBody"><h3>先说CGFloat</h3>
+
+<p><em>几乎众所周知CGFloat其实是float和double的大一统，32位与64位浮点的联姻</em></p>
+
+<p>那么具体有什么不同？先来看看  CGFloat的一些常量，</p>
+
+<pre><code>CGFLOAT_TYPE
+CGFLOAT_MAX
+CGFLOAT_MIN
+CGFLOAT_DEFINED
+CGFLOAT_IS_DOUBLE
+</code></pre>
+
+<p>好奇心使然，看了下源码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cm">/* Definition of `CGFLOAT_TYPE&#39;, `CGFLOAT_IS_DOUBLE&#39;, `CGFLOAT_MIN&#39;, and</span>
+</span><span class='line'><span class="cm">   `CGFLOAT_MAX&#39;. */</span>
+</span><span class='line'><span class="cp">#if defined(__LP64__) &amp;&amp; __LP64__</span>
+</span><span class='line'><span class="cp"># define CGFLOAT_TYPE double</span>
+</span><span class='line'><span class="cp"># define CGFLOAT_IS_DOUBLE 1</span>
+</span><span class='line'><span class="cp"># define CGFLOAT_MIN DBL_MIN</span>
+</span><span class='line'><span class="cp"># define CGFLOAT_MAX DBL_MAX</span>
+</span><span class='line'><span class="cp">#else</span>
+</span><span class='line'><span class="cp"># define CGFLOAT_TYPE float</span>
+</span><span class='line'><span class="cp"># define CGFLOAT_IS_DOUBLE 0</span>
+</span><span class='line'><span class="cp"># define CGFLOAT_MIN FLT_MIN</span>
+</span><span class='line'><span class="cp"># define CGFLOAT_MAX FLT_MAX</span>
+</span><span class='line'><span class="cp">#endif</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* Definition of the `CGFloat&#39; type and `CGFLOAT_DEFINED&#39;. */</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">typedef</span> <span class="n">CGFLOAT_TYPE</span> <span class="n">CGFloat</span><span class="p">;</span>
+</span><span class='line'><span class="cp">#define CGFLOAT_DEFINED 1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后很清晰地看到</p>
+
+<pre><code>CGFLOAT_TYPE         64位下是double 否则float
+CGFLOAT_MAX          64位下是double的max 否则float的max
+CGFLOAT_MIN          64位下是double的min 否则float的min
+CGFLOAT_DEFINED      就是1 为定义而定义，暂时不知道用来判断什么
+CGFLOAT_IS_DOUBLE    64位下是1 否则0
+</code></pre>
+
+<p><em>(:з」∠)</em>我是不是很无聊</p>
+
+<p>还有一个，当一个浮点型除以0的时候，有的语言会抛出异常，而oc会返回一个“非正常”的值+INF，我们可以用INFINITY常量判断。ex:(aFloat== INFINITY)</p>
+
+<h3>NSInteger</h3>
+
+<p>类似的， NSInteger也是囊括了int和long的大一统（还有NSUInteger，多个unsigned），定义跟上面的浮点型是一个模子的。
+下面说说我踩过的一个坑。</p>
+
+<p>在很久很久以前，我还是习惯用C语言的变量类型int，在5S出来以前大家相安无事，直到有一天一个bug袭击了我。</p>
+
+<p>代码是这样的：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSArray</span> <span class="n">array</span><span class="p">];</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">foundIndex</span> <span class="o">=</span> <span class="p">[</span><span class="n">array</span> <span class="nl">indexOfObject:</span><span class="s">@&quot;&quot;</span><span class="p">];</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">NSNotFound</span> <span class="o">==</span> <span class="n">foundIndex</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;not found,handle it&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>为什么iPhone4s，5之流都没问题，到5s上就不对了呢。</p>
+
+<p>刚准备烧柱香拜一拜的时候，我点开了NSNotFound的定义，发现它==NSIntegerMax，而NSIntegerMax==LONG_MAX。</p>
+
+<p>64位下，foundIndex因为超过表示范围会被截断成-1，因此它!=NSNotFound。</p>
+
+<p>类似的还有很多，我们应该多多jump到源码，即使只是头文件，也能发现关于Objective-C的一些底层细节。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2015 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.io/blog/2015/03/18/ios-const-value/';
+        var disqus_url = 'http://KinoAndWorld.github.io/blog/2015/03/18/ios-const-value/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>
