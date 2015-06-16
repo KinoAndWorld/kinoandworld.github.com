@@ -1,0 +1,198 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>iOS测试流程简化：通过脚本导出ipa包与上传到Fir - 奇诺の世界</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="iOS测试流程简化：通过脚本导出ipa包与上传到Fir 前言 在我们当前的开发流程中，大致分为 开发-测试-修复Bugs-测试反馈 这样的循环中，特别是在功能需求频繁修改和UI细节不断调整的节奏中，我们通常需要不停地在Xcode上build-选择profile-archive，然后等待几分钟， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="奇诺の世界" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.io/blog/2015/06/16/ios-archive-and-post-to-fir-script/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?cf1125831693ae208e5e3993116c42db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">奇诺の世界</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<!-- <hgroup>
+  <h1><a href="/">奇诺の世界</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+ -->
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">iOS测试流程简化：通过脚本导出ipa包与上传到Fir</h1>
+	<div class="entry-content" itemprop="articleBody"><h3>前言</h3>
+
+<p>在我们当前的开发流程中，大致分为 <strong>开发-测试-修复Bugs-测试反馈</strong> 这样的循环中，特别是在功能需求频繁修改和UI细节不断调整的节奏中，我们通常需要不停地在Xcode上build-选择profile-archive，然后等待几分钟，导出ipa的包，然后再把包上传到一个版本仓库中，这个仓库或许是自己搭建的服务器，或许是TestFlight、Fir等更专业的内测版本平台，总之通常都需要几个步骤才能全部完成。倘若一日之内需要上传3到4个包，对工作效率的影响尚且不谈，重复同样的事情本身心情就不舒畅。</p>
+
+<h3>祭出利器</h3>
+
+<p>要如何做到把上述的N个步骤简化成一步呢，其实很简单。拿Fir为例，Fir提供了可供调用的app上传接口（其他平台我暂时不知道，如果是自己搭建的服务器肯定可以提供上传接口），而且还有好心人把接口写成了脚本（参考资源1），非常nice。但是这样的话还是要自己导出ipa，还是有些繁琐，于是我又找了些许资料，熟悉了<code>xcodebuild</code>的用法，还顺带找到了别人写好的另一个脚本（参考资源2），剩下的事情就非常简单了，我合并了二者的脚本，做了一些代码修改，详细的代码可以戳<a href="https://gist.github.com/ec0d8072d3389a9f3b02.git">这里</a></p>
+
+<p>这里边有些参数要修改成自己的项目，譬如</p>
+
+<ul>
+<li>workspace name</li>
+<li>provisioningProfile</li>
+<li>scheme name</li>
+<li>还有Fir需要的AppID和UserToken</li>
+</ul>
+
+
+<p>配置好之后，把这个脚本放在xcworkspace同级目录，然后终端运行 <code>./archive_to_upload_fir.sh</code>
+这时候你可以去喝杯咖啡奶茶美年达或者来一套广播体操，在一片宁静中完成了所有繁琐。</p>
+
+<h3>缺点与改进</h3>
+
+<p>当然我相信这并不是最终的解决方案，因为脚本还是存在着输出信息不够友好，如果出现编译错误还是要自己另外调试等不便，而且脚本本身还存在可以优化的地方，例如一些变量的参数化，让它变得更通用一些。</p>
+
+<hr />
+
+<p>参考资源：</p>
+
+<ul>
+<li><p><a href="https://gist.github.com/ggshily/8594b69a266a410d82a0/download#">&ldquo;https://gist.github.com/ggshily/8594b69a266a410d82a0/download#&rdquo;</a></p></li>
+<li><p><a href="http://blog.csdn.net/vieri_ch/article/details/45147027">&ldquo;http://blog.csdn.net/vieri_ch/article/details/45147027&rdquo;</a></p></li>
+</ul>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2015 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.io/blog/2015/06/16/ios-archive-and-post-to-fir-script/';
+        var disqus_url = 'http://KinoAndWorld.github.io/blog/2015/06/16/ios-archive-and-post-to-fir-script/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>

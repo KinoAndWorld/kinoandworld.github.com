@@ -7,7 +7,7 @@
 	<meta name="author" content="Kino">
 
 	
-	<meta name="description" content="Mar 18th, 2015 iOS Comments iOS开发中一些常量数值 先说CGFloat 几乎众所周知CGFloat其实是float和double的大一统，32位与64位浮点的联姻 那么具体有什么不同？先来看看 CGFloat的一些常量， CGFLOAT_TYPE &hellip;">
+	<meta name="description" content="Jun 16th, 2015 iOS Comments iOS测试流程简化：通过脚本导出ipa包与上传到Fir 前言 在我们当前的开发流程中，大致分为 开发-测试-修复Bugs-测试反馈 这样的循环中，特别是在功能需求频繁修改和UI细节不断调整的节奏中，我们通常需要不停地在Xcode上build &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -94,6 +94,76 @@ var _hmt = _hmt || [];
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-06-16T14:01:47+08:00" data-updated="true" itemprop="datePublished">Jun 16<span>th</span>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/ios/'>iOS</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/06/16/ios-archive-and-post-to-fir-script/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/06/16/ios-archive-and-post-to-fir-script/" itemprop="url">iOS测试流程简化：通过脚本导出ipa包与上传到Fir</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<h3>前言</h3>
+
+<p>在我们当前的开发流程中，大致分为 <strong>开发-测试-修复Bugs-测试反馈</strong> 这样的循环中，特别是在功能需求频繁修改和UI细节不断调整的节奏中，我们通常需要不停地在Xcode上build-选择profile-archive，然后等待几分钟，导出ipa的包，然后再把包上传到一个版本仓库中，这个仓库或许是自己搭建的服务器，或许是TestFlight、Fir等更专业的内测版本平台，总之通常都需要几个步骤才能全部完成。倘若一日之内需要上传3到4个包，对工作效率的影响尚且不谈，重复同样的事情本身心情就不舒畅。</p>
+
+<h3>祭出利器</h3>
+
+<p>要如何做到把上述的N个步骤简化成一步呢，其实很简单。拿Fir为例，Fir提供了可供调用的app上传接口（其他平台我暂时不知道，如果是自己搭建的服务器肯定可以提供上传接口），而且还有好心人把接口写成了脚本（参考资源1），非常nice。但是这样的话还是要自己导出ipa，还是有些繁琐，于是我又找了些许资料，熟悉了<code>xcodebuild</code>的用法，还顺带找到了别人写好的另一个脚本（参考资源2），剩下的事情就非常简单了，我合并了二者的脚本，做了一些代码修改，详细的代码可以戳<a href="https://gist.github.com/ec0d8072d3389a9f3b02.git">这里</a></p>
+
+<p>这里边有些参数要修改成自己的项目，譬如</p>
+
+<ul>
+<li>workspace name</li>
+<li>provisioningProfile</li>
+<li>scheme name</li>
+<li>还有Fir需要的AppID和UserToken</li>
+</ul>
+
+
+<p>配置好之后，把这个脚本放在xcworkspace同级目录，然后终端运行 <code>./archive_to_upload_fir.sh</code>
+这时候你可以去喝杯咖啡奶茶美年达或者来一套广播体操，在一片宁静中完成了所有繁琐。</p>
+
+<h3>缺点与改进</h3>
+
+<p>当然我相信这并不是最终的解决方案，因为脚本还是存在着输出信息不够友好，如果出现编译错误还是要自己另外调试等不便，而且脚本本身还存在可以优化的地方，例如一些变量的参数化，让它变得更通用一些。</p>
+
+<hr />
+
+<p>参考资源：</p>
+
+<ul>
+<li><p><a href="https://gist.github.com/ggshily/8594b69a266a410d82a0/download#">&ldquo;https://gist.github.com/ggshily/8594b69a266a410d82a0/download#&rdquo;</a></p></li>
+<li><p><a href="http://blog.csdn.net/vieri_ch/article/details/45147027">&ldquo;http://blog.csdn.net/vieri_ch/article/details/45147027&rdquo;</a></p></li>
+</ul>
+
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -879,87 +949,6 @@ CGFLOAT_IS_DOUBLE    64位下是1 否则0
 
 <p>这是我的答案……不知道是否正确或者全面
 目前我也就第一个用得比较多，CoreAnimation还在慢慢学 ╮(╯▽╰)╭</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-21T09:49:23+08:00" data-updated="true" itemprop="datePublished">Oct 21<span>st</span>, 2013</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/bi-ji/'>笔记</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2013/10/21/ios-third-tool-introduce/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2013/10/21/ios-third-tool-introduce/" itemprop="url">iOS常用第三方库的备忘和介绍</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>俗话说不要重复造轮子~身为一个IOS开发者我们有必要知道一些先进好用的第三方开源库，
-不仅可以在项目中加快开发进度，更可以通过研究这些开源库提高自己的水平~</p>
-
-<p>下面介绍自己用过和流行的一些开源库</p>
-
-<h2>视图</h2>
-
-<ul>
-<li><a href="https://github.com/jdg/MBProgressHUD">MBProgressHUD</a> 很常用的模态等待窗口~使用简单明了</li>
-<li><a href="https://github.com/brennanMKE/PhotoZoom">PZPhotoView</a> 一个封装的比较好的滚动视图</li>
-<li><a href="https://github.com/rs/SDWebImage">SDWebImage</a> 替代UIImageView，支持异步加载网络图片和自动缓存</li>
-<li><a href="https://github.com/enormego/EGOImageLoading">EGOImageView</a> 同上</li>
-<li><a href="https://github.com/Inferis/ViewDeck">ViewDeck</a> 仿Path和Facebook的左右侧滑视图</li>
-<li><a href="https://github.com/Grouper/FlatUIKit">FlatUIKit</a> 看起来很棒的UI组件 正如名字一样 扁平风</li>
-<li><a href="https://github.com/enormego/EGOTableViewPullRefresh">EGOTableViewPullRefresh</a> 下拉刷新 上拉加载更多的功能集成 很常用</li>
-</ul>
-
-
-<h2>网络</h2>
-
-<ul>
-<li><a href="https://github.com/AFNetworking/AFNetworking">AFNetworking</a> 最受欢迎的网络框架 集成得很好而且易于扩展</li>
-<li><a href="https://github.com/MugunthKumar/MKNetworkKit">MKNetworkKit</a> 这个我比较常用 因为使用简单方便~</li>
-</ul>
-
-
-<h2>数据</h2>
-
-<ul>
-<li><a href="https://github.com/johnezang/JSONKit">JSONKit</a> 简单易用的JSON解析库</li>
-<li><a href="https://github.com/ccgus/fmdb">FMDB</a> 很知名的SQLITE操作封装库</li>
-<li><a href="https://github.com/kelp404/CocoaSecurity">CocoaSecurity</a> 提供了 AES加解密和Hash(MD5, HmacMD5, SHA1~SHA512, HmacSHA1~HmacSHA512)的加密</li>
-</ul>
-
-
-<h2>综合</h2>
-
-<ul>
-<li><a href="https://github.com/jverkoey/nimbus">nimbus</a> 一个替代THREE20的框架 功能集成了蛮多的</li>
-<li><a href="https://github.com/devinross/tapkulibrary">tapkulibrary</a> 封装了常用的UI控件和功能</li>
-<li><a href="https://github.com/soffes/sstoolkit">sstoolkit</a> 这个也比较知名 提供了很多常用的扩展和UI控件</li>
-</ul>
-
-
-<p>先想到这么多……有空再补充吧~</p>
 
 		
 		
