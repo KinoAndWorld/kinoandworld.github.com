@@ -34,6 +34,6 @@ categories: iOS
 
 参考资源：
 
-- [https://gist.github.com/ggshily/8594b69a266a410d82a0](https://gist.github.com/ggshily/8594b69a266a410d82a0/download#)
+- [https://gist.github.com/ggshily/8594b69a266a410d82a0](https://gist.github.com/ggshily/8594b69a266a410d82a0)
 
 - [http://blog.csdn.net/vieri_ch/article/details/45147027](http://blog.csdn.net/vieri_ch/article/details/45147027)
