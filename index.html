@@ -7,7 +7,26 @@
 	<meta name="author" content="Kino">
 
 	
-	<meta name="description" content="Jun 16th, 2015 iOS Comments iOS测试流程简化：通过脚本导出ipa包与上传到Fir 前言 在我们当前的开发流程中，大致分为 开发-测试-修复Bugs-测试反馈 这样的循环中，特别是在功能需求频繁修改和UI细节不断调整的节奏中，我们通常需要不停地在Xcode上build &hellip;">
+	<meta name="description" content="Apr 5th, 2016 iOS Comments 打造一个直观易复用的iOS设置菜单页 几乎每一个App都有一个设置菜单页，而且他们几乎都长这样： 反面教材 最简单最原始的做法是这样的： 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20 &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -94,6 +113,352 @@ var _hmt = _hmt || [];
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-04-05T16:09:14+08:00" data-updated="true" itemprop="datePublished">Apr 5<span>th</span>, 2016</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/ios/'>iOS</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2016/04/05/build-a-reusable-menu-setting-item-in-ios/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2016/04/05/build-a-reusable-menu-setting-item-in-ios/" itemprop="url">打造一个直观易复用的iOS设置菜单页</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>几乎每一个App都有一个设置菜单页，而且他们几乎都长这样：</p>
+
+<p><img src="/images/setting-page-shot.jpg"></p>
+
+<h2>反面教材</h2>
+
+<p>最简单最原始的做法是这样的：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+</span><span class='line'>  <span class="n">UITableViewCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier:</span><span class="s">@&quot;cell&quot;</span>
+</span><span class='line'>                                                          <span class="nl">forIndexPath:</span><span class="n">indexPath</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">switch</span> <span class="p">(</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+</span><span class='line'>          <span class="c1">// configure cell</span>
+</span><span class='line'>          <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+</span><span class='line'>          <span class="c1">// configure cell</span>
+</span><span class='line'>          <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+</span><span class='line'>          <span class="c1">// configure cell</span>
+</span><span class='line'>          <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">tableView</span> <span class="nl">deselectRowAtIndexPath:</span><span class="n">indexPath</span> <span class="nl">animated:</span><span class="n">YES</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">switch</span> <span class="p">(</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+</span><span class='line'>            <span class="c1">// click cell 0</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+</span><span class='line'>            <span class="c1">// click cell 1</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+</span><span class='line'>            <span class="c1">// click cell 2</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样做不仅违反了DRY原则，在菜单项比较多的情况下烦不胜烦，而且一旦需要修改某个菜单项的内容，或者插入或者删除，修改起来都是非常容易出错的，换句话说，可维护性非常差。</p>
+
+<h2>抽象、依赖转移</h2>
+
+<p>通过观察我们可以发现，这些列表的结构非常相似，那么很自然地我们可以想到建立一个通用的模型来表示一个菜单.</p>
+
+<figure class='code'><figcaption><span>KOSettingItem.h</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">@interface</span> <span class="nc">KOSettingItem</span> : <span class="nc">NSObject</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">copy</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">title</span><span class="p">;</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">strong</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">UIImage</span> <span class="o">*</span><span class="n">imageIcon</span><span class="p">;</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">assign</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">UITableViewCellAccessoryType</span> <span class="n">accessoryType</span><span class="p">;</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">copy</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="n">handleCallback</span><span class="p">)();</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span> <span class="nf">itemWithTitle:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">title</span>
+</span><span class='line'>                          <span class="nf">icon:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span> <span class="nf">itemWithTitle:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">title</span>
+</span><span class='line'>                          <span class="nf">icon:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span>
+</span><span class='line'>                         <span class="nf">block:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)())</span><span class="nv">handle</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">initWithTitle:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">title</span>
+</span><span class='line'>               <span class="nf">icon:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span>
+</span><span class='line'>              <span class="nf">block:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)())</span><span class="nv">handle</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  
+</span><span class='line'><span class="k">@end</span>   
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>KOSettingItem.m</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'> <span class="k">@implementation</span> <span class="nc">KOSettingItem</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="o">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span> <span class="nl">itemWithTitle:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">title</span>
+</span><span class='line'>                            <span class="nl">icon:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="n">image</span><span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="p">[[</span><span class="n">self</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">itemWithTitle:</span><span class="n">title</span> <span class="nl">icon:</span><span class="n">image</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="o">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span> <span class="nl">itemWithTitle:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">title</span>
+</span><span class='line'>                            <span class="nl">icon:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="n">image</span>
+</span><span class='line'>                            <span class="nl">block:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)())</span><span class="n">handle</span><span class="p">{</span>
+</span><span class='line'>      <span class="n">KOSettingItem</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="p">[[</span><span class="n">self</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle:</span><span class="n">title</span> <span class="nl">icon:</span><span class="n">image</span> <span class="nl">block:</span><span class="n">handle</span><span class="p">];</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">item</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="o">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nl">initWithTitle:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">title</span>
+</span><span class='line'>                 <span class="nl">icon:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="n">image</span>
+</span><span class='line'>                <span class="nl">block:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)())</span><span class="n">handle</span><span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="n">self</span> <span class="o">=</span> <span class="p">[</span><span class="n">super</span> <span class="n">init</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">self</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">self</span><span class="p">.</span><span class="n">imageIcon</span> <span class="o">=</span> <span class="n">image</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">self</span><span class="p">.</span><span class="n">handleCallback</span> <span class="o">=</span> <span class="n">handle</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">self</span><span class="p">.</span><span class="n">accessoryType</span> <span class="o">=</span> <span class="n">UITableViewCellAccessoryDisclosureIndicator</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">self</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">@end</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一个简单的模型就这样建好了，其中我们用block写了一个handleCallback用来处理表格的点击事件，接着我们来应用到TableView中，首先新增一个property <code>@property (strong, nonatomic) NSArray *settingItems;</code></p>
+
+<p>然后在ViewDidLoad中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">KOSettingItem</span> <span class="o">*</span><span class="n">item1</span> <span class="o">=</span> <span class="p">[</span><span class="n">KOSettingItem</span> <span class="nl">itemWithTitle:</span><span class="s">@&quot;菜单1&quot;</span> <span class="nl">icon:</span><span class="p">[</span><span class="n">UIImage</span> <span class="nl">imageNamed:</span><span class="s">@&quot;Carrot&quot;</span><span class="p">]];</span>
+</span><span class='line'><span class="p">[</span><span class="n">item1</span> <span class="nl">setHandleCallback:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;点击菜单1&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">KOSettingItem</span> <span class="o">*</span><span class="n">item2</span> <span class="o">=</span> <span class="p">[</span><span class="n">KOSettingItem</span> <span class="nl">itemWithTitle:</span><span class="s">@&quot;菜单2&quot;</span> <span class="nl">icon:</span><span class="p">[</span><span class="n">UIImage</span> <span class="nl">imageNamed:</span><span class="s">@&quot;Owl&quot;</span><span class="p">]];</span>
+</span><span class='line'><span class="p">[</span><span class="n">item1</span> <span class="nl">setHandleCallback:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;点击菜单2&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">KOSettingItem</span> <span class="o">*</span><span class="n">item3</span> <span class="o">=</span> <span class="p">[</span><span class="n">KOSettingItem</span> <span class="nl">itemWithTitle:</span><span class="s">@&quot;菜单3&quot;</span> <span class="nl">icon:</span><span class="p">[</span><span class="n">UIImage</span> <span class="nl">imageNamed:</span><span class="s">@&quot;Rubber-Duck&quot;</span><span class="p">]];</span>
+</span><span class='line'><span class="p">[</span><span class="n">item1</span> <span class="nl">setHandleCallback:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;点击菜单3&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">KOSettingItem</span> <span class="o">*</span><span class="n">item4</span> <span class="o">=</span> <span class="p">[</span><span class="n">KOSettingItem</span> <span class="nl">itemWithTitle:</span><span class="s">@&quot;菜单4&quot;</span> <span class="nl">icon:</span><span class="p">[</span><span class="n">UIImage</span> <span class="nl">imageNamed:</span><span class="s">@&quot;Snowman&quot;</span><span class="p">]];</span>
+</span><span class='line'><span class="p">[</span><span class="n">item1</span> <span class="nl">setHandleCallback:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;点击菜单4&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">self</span><span class="p">.</span><span class="n">settingItems</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">,</span> <span class="n">item3</span><span class="p">,</span> <span class="n">item4</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后修改一下TableView的Datasource和Delegate</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">numberOfRowsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">settingItems</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">44</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">UITableViewCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier:</span><span class="s">@&quot;cell&quot;</span>
+</span><span class='line'>                                                            <span class="nl">forIndexPath:</span><span class="n">indexPath</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">KOSettingItem</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">settingItems</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">cell</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">title</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">cell</span><span class="p">.</span><span class="n">imageView</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">imageIcon</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">cell</span><span class="p">.</span><span class="n">accessoryType</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">accessoryType</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">tableView</span> <span class="nl">deselectRowAtIndexPath:</span><span class="n">indexPath</span> <span class="nl">animated:</span><span class="n">YES</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">KOSettingItem</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">settingItems</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="n">handleCallback</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">item</span><span class="p">.</span><span class="n">handleCallback</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我们发现再也不需要冗长的switch语句，如果需要增删菜单项，只需要修改settingItems里面的item顺序，并且由于点击事件绑定到KOSettingItem里面，也不需要担心事件与item不对应的情况，除非有特殊的样式需求，我们可以几乎不用再更改UITableViewDataSource与UITableViewDelegate的实现。</p>
+
+<h2>尾声</h2>
+
+<p>文章只是提供了一个思路，而且出于简明的目的KOSettingItem的模型非常简单，实际上你可以通过添加变量达到更多的可定制化效果，比如分割线的offset，自定义的accessoryView等等，完整的demo可以戳<a href="https://github.com/KinoAndWorld/MenuSettingViewDemo">这里</a>。</p>
+
+<p>运行一下，最后的结果如图，虽然还是平淡无奇 ：）</p>
+
+<p><img src="/images/setting-page-finish.png"></p>
+
+<p>最后吐槽一下自己，真的好久没写博客了<em>(:з」∠)</em></p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -871,91 +1236,6 @@ CGFLOAT_IS_DOUBLE    64位下是1 否则0
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-03T09:49:23+08:00" data-updated="true" itemprop="datePublished">Dec 3<span>rd</span>, 2013</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/bi-ji/'>笔记</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2013/12/03/ios-interview-question/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2013/12/03/ios-interview-question/" itemprop="url">亲历的iOS面试题</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>上个星期在V2EX上看到一个酷工作然后挺心动的，俗话说心动不如行动，所以我二话不说当基(机)立断地把简历投了去~
-然后马不停蹄地跑去广州面试了~</p>
-
-<p>说实话面试官江哥给我感觉很亲切……完全没有紧张的氛围~当然内心还是有点小紧张的~
-好吧进入正题，主要是有几个问题我感觉自己理解的还是不够透彻，趁着面试暴露出来，现在就加深一下了解。</p>
-
-<h2>block到底是什么东西</h2>
-
-<p>按照我的理解，block类似一个函数指针，主要应用场景总结下就是：
-&ndash; 当调用其他的功能模块，或者自己写一个通用的功能模块的时候，代替delegate去做回调，这样的好处是不用再去声明回调函数，再去函数里面处理，而是直接把处理结果传进去，直接而优雅。
-&ndash; 使用多线程（GCD）的时候，因为GCD的语法是直接用block的，所以这两个好搭档可谓是天衣无缝，举个栗子：</p>
-
-<pre><code>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    //进行异步操作
-    dispatch_async(dispatch_get_main_queue(), ^{
-        //回到主线程
-    });
-});
-</code></pre>
-
-<p>短短几行代码就可以线程安全地玩转在新创建的线程和主线程之间，这种便利的愉悦是不言而喻的~</p>
-
-<p>因为我自己理解也不是很深~所以还需要慢慢学习</p>
-
-<p>关于语法描述 <a href="http://fuckingblocksyntax.com/">看这里</a>
-还有个很好地资料 <a href="http://onevcat.com/2011/11/objective-c%E4%B8%AD%E7%9A%84block/">看这里</a></p>
-
-<h2>多线程的几种实现方式</h2>
-
-<ul>
-<li><p>NSTheard</p></li>
-<li><p>NSOperation</p></li>
-<li><p>GCD</p></li>
-</ul>
-
-
-<p>具体使用栗子：<a href="http://www.uml.org.cn/mobiledev/201210262.asp">http://www.uml.org.cn/mobiledev/201210262.asp</a></p>
-
-<h2>页面动画的几种实现方式</h2>
-
-<ul>
-<li><p>UIView animation 动画</p></li>
-<li><p>CoreAnimation 动画  参考：<a href="http://www.dreamingwish.com/dream-2012/the-concept-of-coreanimation-programming-guide.html">iOS核心动画编程指南</a></p></li>
-<li><p>简单粗暴地用 OpenGL ES实现</p></li>
-</ul>
-
-
-<p>这是我的答案……不知道是否正确或者全面
-目前我也就第一个用得比较多，CoreAnimation还在慢慢学 ╮(╯▽╰)╭</p>
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -966,7 +1246,7 @@ CGFLOAT_IS_DOUBLE    64位下是1 否则0
 </nav></div>
 			</div>
 			<footer id="footer" class="inner"><p>
-  Copyright &copy; 2015 - Kino -
+  Copyright &copy; 2016 - Kino -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
