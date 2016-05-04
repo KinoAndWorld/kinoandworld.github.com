@@ -7,8 +7,8 @@
 	<meta name="author" content="Kino">
 
 	
-	<meta name="description" content="Dec 3rd, 2013 笔记 Comments 亲历的iOS面试题 上个星期在V2EX上看到一个酷工作然后挺心动的，俗话说心动不如行动，所以我二话不说当基(机)立断地把简历投了去~
-然后马不停蹄地跑去广州面试了~ 说实话面试官江哥给我感觉很亲切……完全没有紧张的氛围~当然内心还是有点小紧张的 &hellip;">
+	<meta name="description" content="Dec 13th, 2013 C++ Comments How to Use Delegate in Cocos2d X 近来弄了下Coco2d-X，这个框架真的很棒，让游戏开发变得简单多了，以至于让我这样搞应用的都能很快上手。
+熟悉objective- &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -95,6 +95,96 @@ var _hmt = _hmt || [];
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-13T09:49:23+08:00" data-updated="true" itemprop="datePublished">Dec 13<span>th</span>, 2013</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/c-plus-plus/'>C++</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2013/12/13/how-to-use-delegate-in-cocos2d-x/" itemprop="url">How to Use Delegate in Cocos2d X</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>近来弄了下Coco2d-X，这个框架真的很棒，让游戏开发变得简单多了，以至于让我这样搞应用的都能很快上手。
+熟悉objective-C编程的肯定都知道COCOA中的<code>protocol（协议）-delegate（委托）模式</code>
+习惯了这种编程方式，然后在写cocos2d-x的时候发现没相关语法，感觉不太爽儿~</p>
+
+<p>然后转念一想，原理其实很简单，可以自己去实现一个简陋的<code>protocol（协议）-delegate（委托）模式</code>。</p>
+
+<p>无非就是定义一个接口，然后给delegate类这个接口的约束。</p>
+
+<h3>C++的接口就是抽象类</h3>
+
+<pre><code>    /**
+     *  协议
+     */
+    class IBoardNumberClickDelegate {
+
+    public:
+        virtual ~IBoardNumberClickDelegate(){};
+        virtual void numberDidClick(int number) = 0;
+    };
+</code></pre>
+
+<p>就是介么简单！！！</p>
+
+<h3>C++通过多继承使用接口</h3>
+
+<pre><code>    class MathQuestionScene : public CCScene , public IBoardNumberClickDelegate{
+        //…… 为了节省篇幅我直接把实现写了
+        void numberDidClick(int number){
+            CCLOG("点击%d",number);
+        }
+    }
+</code></pre>
+
+<h3>然后另一个类调用</h3>
+
+<pre><code>    class NumberKeyBoard : public CCNode{
+    public:
+        IBoardNumberClickDelegate *delegate;
+    private:
+        void numberSelected(int number){
+            if (delegate) {
+                delegate-&gt;numberDidClick(number);
+            }
+        }
+    }
+</code></pre>
+
+<p>用的时候在MathQuestionScene内设置</p>
+
+<pre><code>    _numberKeyBoard = NumberKeyBoard::create();
+    _numberKeyBoard-&gt;delegate = this;
+</code></pre>
+
+<p>就OK了。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">

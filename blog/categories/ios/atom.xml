@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | Kinoの技术博客]]></title>
   <link href="http://KinoAndWorld.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://KinoAndWorld.github.io/"/>
-  <updated>2016-04-05T17:48:09+08:00</updated>
+  <updated>2016-05-04T15:25:31+08:00</updated>
   <id>http://KinoAndWorld.github.io/</id>
   <author>
     <name><![CDATA[Kino]]></name>
@@ -12,6 +12,163 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Runtime实践之打造易复用的iOS公共页面]]></title>
+    <link href="http://KinoAndWorld.github.io/blog/2016/05/03/build-a-reusable-common-page-in-ios/"/>
+    <updated>2016-05-03T18:04:23+08:00</updated>
+    <id>http://KinoAndWorld.github.io/blog/2016/05/03/build-a-reusable-common-page-in-ios</id>
+    <content type="html"><![CDATA[<p>相信我们开发的项目中，只要涉及到网络交互，都会遇到一个再普遍的不过的需求，那就是出于用户体验的需要，在请求开始的时候显示<code>加载页</code>，请求到空数据的时候显示<code>空内容页</code>，以及请求出错的时候显示的<code>错误或重试页</code>。这三类页面在一个项目中通常是一致的（至多会有图标和文案的变化），但却要求可能在每一个涉及网络请求的页面呈现。</p>
+
+<h2>(；′⌒`)</h2>
+
+<p>如果没有大局观，一开始接到需求就开始在某ViewController里面添加几个View用来展现。</p>
+
+<p>举个例子，如果要添加一个loading view，</p>
+
+<p><code>objc
+@property (strong, nonatomic) UIView *loadingView;
+@property (strong, nonatomic) UIImageView *loadingImageView;
+</code>
+然后增加方法，视图的初始化和配置就省略了
+```objc
+/<em>*
+ *  加载视图
+ </em>/
+&ndash; (void)startLoading{</p>
+
+<pre><code>[self.view addSubview:self.loadingView];
+[self.loadingImageView startAnimating];
+</code></pre>
+
+<p>}</p>
+
+<p>/<em>*
+ *  停止加载并消失
+ </em>/
+&ndash; (void)stopLoading{</p>
+
+<pre><code>[self.loadingImageView stopAnimating];
+[self.loadingView removeFromSuperview];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>OK，这样做实现上没问题，但是遇到下一个需要展示这些页面的ViewController，只能使用copy&amp;paste大法，把property和方法实现都搬到另一个ViewController，倘若有10个以上的页面，再加上万一需要修改页面的视图结构，你就会深刻的体会到
+<img src="/images/heart-tried.jpg"></p>
+
+<p>总所周知有个大原则叫做Don&rsquo;t repeat yourself。再运用上我们不为什么就很熟练的面向对象思维，自然而然可以想到，使用继承大法。</p>
+
+<h2>╮(╯_╰)╭</h2>
+
+<p>实现方法很简单</p>
+
+<ul>
+<li><p>首先创建一个BaseViewController，将几个property转移过来，并且展现方法也照搬，在.h文件暴露出来。</p></li>
+<li><p>然后把所有用到的Controller都继承自BaseViewController，调用的地方可以保持不变，会自动调用父类的方法。</p></li>
+</ul>
+
+
+<p>但是这样做还是不够好，因为这需要我们把所有的Viewcontroller的头文件都改一遍，引入BaseViewController并集成，就是所谓这是带有<code>侵入性</code>的。更致命的是，如果你的ViewController本身集成了另外的BaseController，由于Objective-C不支持多继承，你只能去修改另一个BaseController……有点悲伤。</p>
+
+<h2>╭(′▽`)╯</h2>
+
+<p>通过标题的剧透，我们知道最后的实现跟runtime有关，那么主角也该出场了。
+其实就是使用Category + runtime的对象关联。在上面的方案中，解决集成BaseViewController的侵入性的方案就是使用category为UIViewController添加方法，但是category是不能直接使用property保存私有变量的，于是引入runtime的AssociatedObject系列方法，可以动态为对象添加成员变量，这几乎是runtime最基础的应用。</p>
+
+<p>非常简单的，只用到两个方法，其实就是一个Setter和Getter</p>
+
+<p><code>id objc_getAssociatedObject(id object, const void *key)</code></p>
+
+<p><code>void objc_setAssociatedObject(id object, const void *key, id value, objc_AssociationPolicy policy)</code></p>
+
+<p>如果想深入探究一下，有人已经写得挺全面了，可以点击<a href="http://blog.leichunfeng.com/blog/2015/06/26/objective-c-associated-objects-implementation-principle/">这篇文章</a></p>
+
+<p>在本例中，用法大概是这样</p>
+
+<p>```objc</p>
+
+<h1>pragma mark &ndash; Getter</h1>
+
+<ul>
+<li><p>(UIView <em>)loadingView{
+  UIView </em>loadingView = objc_getAssociatedObject(self, &amp;PresnterLoadingViewKey);
+  if (!loadingView) {
+      loadingView = [[UIView alloc] initWithFrame:self.view.bounds];
+      objc_setAssociatedObject(self, &amp;PresnterLoadingViewKey, loadingView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</p>
+
+<pre><code>  loadingView.backgroundColor = [UIColor whiteColor];
+  [loadingView addSubview:self.loadingImageView];
+</code></pre>
+
+<p>  }
+  return loadingView;
+}</p></li>
+<li><p>(UIImageView <em>)loadingImageView{
+  UIImageView </em>imageView = objc_getAssociatedObject(self, &amp;PresnterLoadingImageViewKey);</p>
+
+<p>  if (!imageView) {
+      imageView = [[UIImageView alloc] initWithFrame:
+                       CGRectMake(self.view.bounds.size.width / 2 &ndash; 100, self.view.bounds.size.height/2 &ndash; 80, 200, 150)];</p>
+
+<pre><code>  NSMutableArray *tmpArr = [NSMutableArray array];
+  for (int i = 0; i &lt;= 80; i++) {
+      UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"01-progress00%02d.jpg",i]];
+      [tmpArr addObject:image];
+  }
+  [imageView setAnimationImages:[NSArray arrayWithArray:tmpArr]];
+  imageView.animationDuration = 2.0;
+
+  objc_setAssociatedObject(self, &amp;PresnterLoadingImageViewKey, imageView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+</code></pre>
+
+<p>  }</p>
+
+<p>  return imageView;
+}
+```</p></li>
+</ul>
+
+
+<p>把实例化放进Getter，这样实现方法可以同上保持不变</p>
+
+<p>```objc
+/<em>*
+ *  加载视图
+ </em>/
+&ndash; (void)startLoading{</p>
+
+<pre><code>[self.view addSubview:self.loadingView];
+[self.loadingImageView startAnimating];
+</code></pre>
+
+<p>}</p>
+
+<p>/<em>*
+ *  停止加载并消失
+ </em>/
+&ndash; (void)stopLoading{</p>
+
+<pre><code>[self.loadingImageView stopAnimating];
+[self.loadingView removeFromSuperview];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>最后只需要在你需要用到这些页面的ViewController引入UIViewController+Presenter.h
+然后展示就好
+<code>objc
+[self startLoading]; //加载完成后调用 [self stopLoading];
+</code></p>
+
+<p>具体的代码我写了个demo放在github上，地址在<a href="https://github.com/KinoAndWorld/RuntimePracticeDemo">这里</a>。</p>
+
+<p>另外实现了空白视图和失败重试视图的功能，跟loading页大同小异。
+如此一来，这些公共页面的展示逻辑基本被封装进了category中，而且当我们需要修改展示的页面时，也只需修改文件里面的实现，然后暴露出方法，简单高效。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[打造一个直观易复用的iOS设置菜单页]]></title>
@@ -419,101 +576,6 @@ NSMutableDictionary params = [NSMutableDictionary dictionary];
 如果两端的处理方法不一样，至少也该说明一下吧。</p>
 
 <hr />
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[我自己常常用到的第三方控件]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2013/08/20/userful-third-controls/"/>
-    <updated>2013-08-20T09:49:23+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2013/08/20/userful-third-controls</id>
-    <content type="html"><![CDATA[<ul>
-<li>EGOTableViewPullRefresh（下拉刷新控件)
-<a href="https://github.com/emreberge/EGOTableViewPullRefresh">Github地址</a></li>
-</ul>
-
-
-<p>只需要实现<code>PullTableViewDelegate</code>的这两个委托:</p>
-
-<pre><code>- (void)pullTableViewDidTriggerRefresh:(PullTableView *)pullTableView
-{
-    [self performSelector:@selector(refreshTable) withObject:nil afterDelay:3.0f];
-}
-
-- (void)pullTableViewDidTriggerLoadMore:(PullTableView *)pullTableView
-{
-    [self performSelector:@selector(loadMoreDataToTable) withObject:nil afterDelay:3.0f];
-}
-</code></pre>
-
-<p>这里面指向的具体方法是数据请求完成后进行处理和显示的操作，比如一般在里面reloadData之类：</p>
-
-<pre><code>- (void) refreshTable
-{
-    /*
-     Code to actually refresh goes here.
-     */
-    self.pullTableView.pullLastRefreshDate = [NSDate date];
-    self.pullTableView.pullTableIsRefreshing = NO;
-}
-
-- (void) loadMoreDataToTable
-{
-    /*
-     Code to actually load more data goes here.
-     */
-    self.pullTableView.pullTableIsLoadingMore = NO;
-}
-</code></pre>
-
-<p>几乎就这么多，在注释部分进行逻辑处理，就好了。
-注:这不是原版的，但我感觉是最完善的（上拉加载更多以及更自由的定制（背景颜色）等等），而且使用也更加简化。</p>
-
-<ul>
-<li>MMDrawerController(抽屉视图)
-<a href="https://github.com/mutualmobile/MMDrawerController">Github地址</a></li>
-</ul>
-
-
-<p>抽屉式布局一直很火，应用也很广泛，相关控件也很多，感觉这个控件封装得比较好，而且功能也强大的很。
-核心调用代码就几行：</p>
-
-<pre><code>UIViewController * leftDrawer = [[UIViewController alloc] init];
-UIViewController * center = [[UIViewController alloc] init];
-UIViewController * rightDrawer = [[UIViewController alloc] init];
-MMDrawerController * drawerController = [[MMDrawerController alloc]
-                                       initWithCenterViewController:center
-                                           leftDrawerViewController:leftDrawer
-                                           rightDrawerViewController:rightDrawer];
-</code></pre>
-
-<p>其他的下载官方的demo。十分灰常详细。</p>
-
-<ul>
-<li>EGOImageView(异步加载图片)</li>
-</ul>
-
-
-<p>这个控件的使用非常简单，不用介绍过多~
-而关于这个控件我有一篇专门的博客，可戳<a href="http://kinoandworld.github.io/2013/08/05/egoimage-addition/">这里</a></p>
-
-<ul>
-<li>PZPagingScrollView(延迟加载的滚动视图)
-[额……地址暂时找不到了。]</li>
-</ul>
-
-
-<p>用这个控件可以很方便地做一个相册，提供的委托挺多的，有点类似UITableView委托的写法：</p>
-
-<pre><code>- (Class)pagingScrollView:(PZPagingScrollView *)pagingScrollView classForIndex:(NSUInteger)index;
-- (NSUInteger)pagingScrollViewPagingViewCount:(PZPagingScrollView *)pagingScrollView;
-- (UIView *)pagingScrollView:(PZPagingScrollView *)pagingScrollView pageViewForIndex:(NSUInteger)index;
-- (void)pagingScrollView:(PZPagingScrollView *)pagingScrollView preparePageViewForDisplay:(UIView *)pageView forIndex:(NSUInteger)index;
-</code></pre>
-
-<p>对这个控件我也做了一些修改，具体使用还是看例子吧。我都集成好放进一个demo里面了~</p>
-
-<p>感兴趣的可以<a href="https://github.com/KinoAndWorld/UsefulThirdsControlsDemo">看看</a></p>
 ]]></content>
   </entry>
   
