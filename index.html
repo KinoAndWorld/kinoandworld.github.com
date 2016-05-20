@@ -7,7 +7,7 @@
 	<meta name="author" content="Kino">
 
 	
-	<meta name="description" content="May 3rd, 2016 iOS Comments Runtime实践之打造易复用的iOS公共页面 相信我们开发的项目中，只要涉及到网络交互，都会遇到一个再普遍的不过的需求，那就是出于用户体验的需要，在请求开始的时候显示加载页，请求到空数据的时候显示空内容页， &hellip;">
+	<meta name="description" content="May 20th, 2016 iOS Comments 在UICollectionView上实现StickyHeader效果 前几天在用UICollectionView实现组合式布局的时候，想到如果在CollectionView上要求sticky header（也就是header自动悬停置顶） &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -94,6 +94,254 @@ var _hmt = _hmt || [];
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-05-20T16:25:43+08:00" data-updated="true" itemprop="datePublished">May 20<span>th</span>, 2016</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/ios/'>iOS</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2016/05/20/uicollectionview-sticky-header-implement-principle/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2016/05/20/uicollectionview-sticky-header-implement-principle/" itemprop="url">在UICollectionView上实现StickyHeader效果</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>前几天在用UICollectionView实现组合式布局的时候，想到如果在CollectionView上要求sticky header（也就是header自动悬停置顶）的效果应当如何实现。
+我们都知道如果是在UITableView上实现非常简单，只要设置style为group然后多个section，headerView就会自动吸附在顶部。而collectionView虽然功能强大得多，但是原生并没有支持直接设置这个效果，所以需要自己实现。</p>
+
+<p>作为一个懒人，首先想到的自然是站在巨人的肩膀上，<a href="https://github.com/jamztang/CSStickyHeaderFlowLayout">CSStickyHeaderFlowLayout</a>是一个比较知名的CollectionView布局控件，它支持sticky header效果以及头部的视差滚动效果，效果很赞。但是感觉稍微重了些，需要做更多的设置以及修改基类等。</p>
+
+<p>然后我又找到了一篇文章，虽然已经是3年前的文章，但是写得非常简明清晰，而且阅读完有豁然开朗的感觉。</p>
+
+<p>文章很短，全文如下：<a href="http://blog.radi.ws/post/32905838158/sticky-headers-for-uicollectionview-using">http://blog.radi.ws/post/32905838158/sticky-headers-for-uicollectionview-using</a></p>
+
+<p>核心原理就是三句话：</p>
+
+<ul>
+<li><code>The header should be positioned so it can never go further up than one header height above the first cell in the section.</code></li>
+<li><code>The header should be positioned so it can never go further down than one header header height above the lower bounds of the last cell in the section.</code></li>
+<li><code>The header should be positioned so it usually stays around the top edge, referencing the content offset of the collection view.</code></li>
+</ul>
+
+
+<p>代码也很简单，只需要在UICollectionViewFlowLayout实现<code>layoutAttributesForElementsInRect</code>和<code>shouldInvalidateLayoutForBoundsChange</code>两个方法。</p>
+
+<p>接着我附上文中源代码以及自己写的注释，穿插了一些对文章初略的翻译。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">NSArray</span> <span class="o">*</span><span class="p">)</span><span class="nf">layoutAttributesForElementsInRect:</span><span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">rect</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     *  返回当前显示区域的所有布局信息</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">answer</span> <span class="o">=</span> <span class="p">[[</span><span class="n">super</span> <span class="nl">layoutAttributesForElementsInRect:</span><span class="n">rect</span><span class="p">]</span> <span class="n">mutableCopy</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">UICollectionView</span> <span class="o">*</span> <span class="k">const</span> <span class="n">cv</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">collectionView</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">CGPoint</span> <span class="k">const</span> <span class="n">contentOffset</span> <span class="o">=</span> <span class="n">cv</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">NSMutableIndexSet</span> <span class="o">*</span><span class="n">missingSections</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableIndexSet</span> <span class="n">indexSet</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     *  找出所有UICollectionElementCategoryCell类型的cell</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">layoutAttributes</span> <span class="k">in</span> <span class="n">answer</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">representedElementCategory</span> <span class="o">==</span> <span class="n">UICollectionElementCategoryCell</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="p">[</span><span class="n">missingSections</span> <span class="nl">addIndex:</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     *  再从里面删除所有UICollectionElementKindSectionHeader类型的cell</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">layoutAttributes</span> <span class="k">in</span> <span class="n">answer</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">([</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">representedElementKind</span> <span class="nl">isEqualToString:</span><span class="n">UICollectionElementKindSectionHeader</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>            <span class="p">[</span><span class="n">missingSections</span> <span class="nl">removeIndex:</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     *  默认情况下，为missingSections手动插入attributes，应该是为rect外的section生成attributes</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">missingSections</span> <span class="nl">enumerateIndexesUsingBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSUInteger</span> <span class="n">idx</span><span class="p">,</span> <span class="kt">BOOL</span> <span class="o">*</span><span class="n">stop</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">NSIndexPath</span> <span class="o">*</span><span class="n">indexPath</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSIndexPath</span> <span class="nl">indexPathForItem:</span><span class="mi">0</span> <span class="nl">inSection:</span><span class="n">idx</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">layoutAttributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nl">layoutAttributesForSupplementaryViewOfKind:</span><span class="n">UICollectionElementKindSectionHeader</span> <span class="nl">atIndexPath:</span><span class="n">indexPath</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="p">[</span><span class="n">answer</span> <span class="nl">addObject:</span><span class="n">layoutAttributes</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">layoutAttributes</span> <span class="k">in</span> <span class="n">answer</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="cm">/**</span>
+</span><span class='line'><span class="cm">         *  从answer中储存的布局信息中，针对UICollectionElementKindSectionHeader...</span>
+</span><span class='line'><span class="cm">         */</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">([</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">representedElementKind</span> <span class="nl">isEqualToString:</span><span class="n">UICollectionElementKindSectionHeader</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">NSInteger</span> <span class="n">section</span> <span class="o">=</span> <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">NSInteger</span> <span class="n">numberOfItemsInSection</span> <span class="o">=</span> <span class="p">[</span><span class="n">cv</span> <span class="nl">numberOfItemsInSection:</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="cm">/**</span>
+</span><span class='line'><span class="cm">             *  为什么需要firstCellIndexPath和lastCellIndexPath呢？</span>
+</span><span class='line'><span class="cm">             *  header应当保持着距离本section第一个cell的最大距离，简单来说就是header在置顶之前要贴着cell</span>
+</span><span class='line'><span class="cm">             *  同理，header应当保持着与最后一个cell的最小距离，</span>
+</span><span class='line'><span class="cm">             *  最后，在不违反上面两则约束的前提下，通过collection view的offset与header的高度来使header处于 origin.y = 0 的状态。</span>
+</span><span class='line'><span class="cm">             */</span>
+</span><span class='line'>            <span class="n">NSIndexPath</span> <span class="o">*</span><span class="n">firstCellIndexPath</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSIndexPath</span> <span class="nl">indexPathForItem:</span><span class="mi">0</span> <span class="nl">inSection:</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>            <span class="n">NSIndexPath</span> <span class="o">*</span><span class="n">lastCellIndexPath</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSIndexPath</span> <span class="nl">indexPathForItem:</span><span class="n">MAX</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">numberOfItemsInSection</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="nl">inSection:</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="cm">/**</span>
+</span><span class='line'><span class="cm">             *  针对当前layoutAttributes的section， 找出第一个和最后一个普通cell的位置</span>
+</span><span class='line'><span class="cm">             */</span>
+</span><span class='line'>            <span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">firstCellAttrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nl">layoutAttributesForItemAtIndexPath:</span><span class="n">firstCellIndexPath</span><span class="p">];</span>
+</span><span class='line'>            <span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">lastCellAttrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nl">layoutAttributesForItemAtIndexPath:</span><span class="n">lastCellIndexPath</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="cm">/**</span>
+</span><span class='line'><span class="cm">             *  获取当前处理header的高度和位置，然后通过firstCellAttrs和lastCellAttrs确定header是否置顶</span>
+</span><span class='line'><span class="cm">             */</span>
+</span><span class='line'>            <span class="n">CGFloat</span> <span class="n">headerHeight</span> <span class="o">=</span> <span class="n">CGRectGetHeight</span><span class="p">(</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">frame</span><span class="p">);</span>
+</span><span class='line'>            <span class="n">CGPoint</span> <span class="n">origin</span> <span class="o">=</span> <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">MIN</span><span class="p">(</span>
+</span><span class='line'>                           <span class="n">MAX</span><span class="p">(</span>
+</span><span class='line'>                               <span class="n">contentOffset</span><span class="p">.</span><span class="n">y</span><span class="p">,</span>
+</span><span class='line'>                               <span class="p">(</span><span class="n">CGRectGetMinY</span><span class="p">(</span><span class="n">firstCellAttrs</span><span class="p">.</span><span class="n">frame</span><span class="p">)</span> <span class="o">-</span> <span class="n">headerHeight</span><span class="p">)</span>
+</span><span class='line'>                               <span class="p">),</span>
+</span><span class='line'>                           <span class="p">(</span><span class="n">CGRectGetMaxY</span><span class="p">(</span><span class="n">lastCellAttrs</span><span class="p">.</span><span class="n">frame</span><span class="p">)</span> <span class="o">-</span> <span class="n">headerHeight</span><span class="p">)</span>
+</span><span class='line'>                           <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">zIndex</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="n">CGRect</span><span class="p">){</span>
+</span><span class='line'>                <span class="p">.</span><span class="n">origin</span> <span class="o">=</span> <span class="n">origin</span><span class="p">,</span>
+</span><span class='line'>                <span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span>
+</span><span class='line'>            <span class="p">};</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">answer</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span> <span class="nf">shouldInvalidateLayoutForBoundsChange:</span><span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">newBound</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">YES</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>感觉又涨了姿势，撒花。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1242,120 +1490,6 @@ CGFLOAT_IS_DOUBLE    64位下是1 否则0
 
 <p>这时候,脑海里回响着片头的那句话:
 &ldquo;我们要记住思想,而不是记住人,因为人可能会失败.他可能会被捕,被杀死,被遗忘.但400年以后,思想仍可改变世界.&rdquo;</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-17T09:49:23+08:00" data-updated="true" itemprop="datePublished">Dec 17<span>th</span>, 2013</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/bi-ji/'>笔记</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2013/12/17/some-ios-question-study/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2013/12/17/some-ios-question-study/" itemprop="url">一些iOS面试题的探索</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>其实就是因为cocosachina的<a href="http://www.cocoachina.com/gamedev/misc/2013/1209/7499.html">一篇文章</a>
-看了之后发现自己好多objective-C的细节都没弄清楚，所以记录一下，会的不会的都写一下~</p>
-
-<h3>==题目==</h3>
-
-<p>1、假设有三个对象，一个父类的父类，一个父类和一个子类。父类的父类持有父类的引用（retain），父类持有子类的引用（retain），子类持有父类的引用（retain）。父类的父类释放（release）父类，解释下会发生什么。</p>
-
-<pre><code>`父类被父类的父类释放掉以后，父类的引用计数-1，而因为子类拥有父类的计数，父类并未销毁。`
-</code></pre>
-
-<p>2、当一个空指针（nil pointer）调用了一个方法会发生什么？</p>
-
-<pre><code>`安然无恙 —— 这是oc自带的消息机制，nil也能发送消息，而不会报错`
-</code></pre>
-
-<p>3、为什么retainCount绝对不能用在发布的代码中？请给出两个相对独立的解释。</p>
-
-<pre><code>- retainCount受到时间和framework的影响太大，不能准确反映内存的引用计数
-- retainCount很容易迷惑人，采取规范的内存管理才是正道
-</code></pre>
-
-<p>4、请说明一下你查找或者解决内存泄露的处理过程。</p>
-
-<pre><code>`使用instruments作为动态分析的手段，还有Xcode的静态内存分析`
-</code></pre>
-
-<p>5、解释下自动回收池(autorelease pool)在程序运行时是如何运作的.</p>
-
-<pre><code>`xcode为开发者写的代码外层包了一层NSAutoreleasePool。建立一个回收池堆栈(Stack)每次对象发送autorelease消息时，对象的引用计数并不真正变化，而是向pool中添加一条记录，记下对象的这种要求。最后当pool发送drain或release消息时，池中的所有对象的这种要求一一被执行。顺便说下使用场景：`
-</code></pre>
-
-<ul>
-<li>应用不是基于”Application Kit”，像”Command-line tool”，因为它并没有内置的”autorelease pools”的支持。</li>
-<li>创建线程，你必需在线程开始时创建一个”Autorelease Pool”实例。反之，会造成内存池露（会在以后的文章详细说明线程与池的技巧）。</li>
-<li>一个循环内创建了太多的临时对象，你应该为他们创建一个”Autorelease Pool”对象，并在下次循还前销毁它们。</li>
-</ul>
-
-
-<p>6、当处理属性申明的时候，原子（atomic）跟 非原子（non-atomic）属性有什么区别？</p>
-
-<pre><code>`事关多线程，原子（atomic）可以说是线程安全的，也就是在读取这个属性的变量的时候，会进行一些额外的操作（比如锁）.所以说，atomic会比较安全但是比较耗时。`
-</code></pre>
-
-<p>7、在C语言中，你如何能用尽可能短的时间来倒转一个字符串？</p>
-
-<pre><code>`这个我真不知道有什么高效的方法~`  [有篇文章可参考](http://www.cnblogs.com/JCSU/articles/1305401.html)
-</code></pre>
-
-<p>8、遍历一个NSArray和一个NSSet，哪一个更快？</p>
-
-<pre><code>`其实意思是问，遍历一个链表和哈希表，哪个更快？`
-[参考一下](http://maccrazy.diandian.com/post/2011-10-09/5671451) 结论在最后
-</code></pre>
-
-<p>9、Objective-C中的posing指的是什么？</p>
-
-<pre><code>[参考](http://blog.csdn.net/tenfyguo/article/details/9220535)
-</code></pre>
-
-<p>10、copy跟retain有什么区别？</p>
-
-<pre><code>`一个是复制内容，一个引用计数+1，（nsstring比较特殊，两个的功能几乎一样）需要注意的是，自定义的类需要重写一个方法以实现自己的深复制：`
-
-    -(id) copyWithZone:(NSZone *) Zone{
-        grandSuper * scCopy;
-        scCopy=[[[self class] allocWithZone:Zone]init];
-        return scCopy;
-    }
-</code></pre>
-
-<p>11、执行如下的代码会发生什么情况？</p>
-
-<pre><code>    Ball *ball = [[[[Ball alloc] init] autorelease] autorelease]; 
-</code></pre>
-
-<p>&mdash;&mdash;&mdash;崩溃，因为重复释放，在自动回收池下一次进行回收时崩溃</p>
-
-<p>很多地方理解可能还是有问题~继续努力吧 ↖(^ω^)↗</p>
 
 		
 		

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | Kinoの技术博客]]></title>
   <link href="http://KinoAndWorld.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://KinoAndWorld.github.io/"/>
-  <updated>2016-05-04T15:25:31+08:00</updated>
+  <updated>2016-05-20T17:39:27+08:00</updated>
   <id>http://KinoAndWorld.github.io/</id>
   <author>
     <name><![CDATA[Kino]]></name>
@@ -12,6 +12,138 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[在UICollectionView上实现StickyHeader效果]]></title>
+    <link href="http://KinoAndWorld.github.io/blog/2016/05/20/uicollectionview-sticky-header-implement-principle/"/>
+    <updated>2016-05-20T16:25:43+08:00</updated>
+    <id>http://KinoAndWorld.github.io/blog/2016/05/20/uicollectionview-sticky-header-implement-principle</id>
+    <content type="html"><![CDATA[<p>前几天在用UICollectionView实现组合式布局的时候，想到如果在CollectionView上要求sticky header（也就是header自动悬停置顶）的效果应当如何实现。
+我们都知道如果是在UITableView上实现非常简单，只要设置style为group然后多个section，headerView就会自动吸附在顶部。而collectionView虽然功能强大得多，但是原生并没有支持直接设置这个效果，所以需要自己实现。</p>
+
+<p>作为一个懒人，首先想到的自然是站在巨人的肩膀上，<a href="https://github.com/jamztang/CSStickyHeaderFlowLayout">CSStickyHeaderFlowLayout</a>是一个比较知名的CollectionView布局控件，它支持sticky header效果以及头部的视差滚动效果，效果很赞。但是感觉稍微重了些，需要做更多的设置以及修改基类等。</p>
+
+<p>然后我又找到了一篇文章，虽然已经是3年前的文章，但是写得非常简明清晰，而且阅读完有豁然开朗的感觉。</p>
+
+<p>文章很短，全文如下：<a href="http://blog.radi.ws/post/32905838158/sticky-headers-for-uicollectionview-using">http://blog.radi.ws/post/32905838158/sticky-headers-for-uicollectionview-using</a></p>
+
+<p>核心原理就是三句话：</p>
+
+<ul>
+<li><code>The header should be positioned so it can never go further up than one header height above the first cell in the section.</code></li>
+<li><code>The header should be positioned so it can never go further down than one header header height above the lower bounds of the last cell in the section.</code></li>
+<li><code>The header should be positioned so it usually stays around the top edge, referencing the content offset of the collection view.</code></li>
+</ul>
+
+
+<p>代码也很简单，只需要在UICollectionViewFlowLayout实现<code>layoutAttributesForElementsInRect</code>和<code>shouldInvalidateLayoutForBoundsChange</code>两个方法。</p>
+
+<p>接着我附上文中源代码以及自己写的注释，穿插了一些对文章初略的翻译。</p>
+
+<p>```objc
+&ndash; (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {</p>
+
+<pre><code>/**
+ *  返回当前显示区域的所有布局信息
+ */
+NSMutableArray *answer = [[super layoutAttributesForElementsInRect:rect] mutableCopy];
+UICollectionView * const cv = self.collectionView;
+CGPoint const contentOffset = cv.contentOffset;
+
+NSMutableIndexSet *missingSections = [NSMutableIndexSet indexSet];
+
+/**
+ *  找出所有UICollectionElementCategoryCell类型的cell
+ */
+for (UICollectionViewLayoutAttributes *layoutAttributes in answer) {
+    if (layoutAttributes.representedElementCategory == UICollectionElementCategoryCell) {
+        [missingSections addIndex:layoutAttributes.indexPath.section];
+    }
+}
+/**
+ *  再从里面删除所有UICollectionElementKindSectionHeader类型的cell
+ */
+for (UICollectionViewLayoutAttributes *layoutAttributes in answer) {
+    if ([layoutAttributes.representedElementKind isEqualToString:UICollectionElementKindSectionHeader]) {
+        [missingSections removeIndex:layoutAttributes.indexPath.section];
+    }
+}
+
+/**
+ *  默认情况下，为missingSections手动插入attributes，应该是为rect外的section生成attributes
+ */
+[missingSections enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:idx];
+
+    UICollectionViewLayoutAttributes *layoutAttributes = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader atIndexPath:indexPath];
+
+    [answer addObject:layoutAttributes];
+
+}];
+
+
+for (UICollectionViewLayoutAttributes *layoutAttributes in answer) {
+
+    /**
+     *  从answer中储存的布局信息中，针对UICollectionElementKindSectionHeader...
+     */
+    if ([layoutAttributes.representedElementKind isEqualToString:UICollectionElementKindSectionHeader]) {
+
+        NSInteger section = layoutAttributes.indexPath.section;
+        NSInteger numberOfItemsInSection = [cv numberOfItemsInSection:section];
+
+        /**
+         *  为什么需要firstCellIndexPath和lastCellIndexPath呢？
+         *  header应当保持着距离本section第一个cell的最大距离，简单来说就是header在置顶之前要贴着cell
+         *  同理，header应当保持着与最后一个cell的最小距离，
+         *  最后，在不违反上面两则约束的前提下，通过collection view的offset与header的高度来使header处于 origin.y = 0 的状态。
+         */
+        NSIndexPath *firstCellIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
+        NSIndexPath *lastCellIndexPath = [NSIndexPath indexPathForItem:MAX(0, (numberOfItemsInSection - 1)) inSection:section];
+
+        /**
+         *  针对当前layoutAttributes的section， 找出第一个和最后一个普通cell的位置
+         */
+        UICollectionViewLayoutAttributes *firstCellAttrs = [self layoutAttributesForItemAtIndexPath:firstCellIndexPath];
+        UICollectionViewLayoutAttributes *lastCellAttrs = [self layoutAttributesForItemAtIndexPath:lastCellIndexPath];
+
+        /**
+         *  获取当前处理header的高度和位置，然后通过firstCellAttrs和lastCellAttrs确定header是否置顶
+         */
+        CGFloat headerHeight = CGRectGetHeight(layoutAttributes.frame);
+        CGPoint origin = layoutAttributes.frame.origin;
+        origin.y = MIN(
+                       MAX(
+                           contentOffset.y,
+                           (CGRectGetMinY(firstCellAttrs.frame) - headerHeight)
+                           ),
+                       (CGRectGetMaxY(lastCellAttrs.frame) - headerHeight)
+                       );
+
+        layoutAttributes.zIndex = 1024;
+        layoutAttributes.frame = (CGRect){
+            .origin = origin,
+            .size = layoutAttributes.frame.size
+        };
+    }
+}
+return answer;
+</code></pre>
+
+<p>}</p>
+
+<ul>
+<li>(BOOL) shouldInvalidateLayoutForBoundsChange:(CGRect)newBound {
+  return YES;
+}
+```</li>
+</ul>
+
+
+<p>感觉又涨了姿势，撒花。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Runtime实践之打造易复用的iOS公共页面]]></title>
@@ -505,77 +637,6 @@ if (NSNotFound == foundIndex) {
 <p>64位下，foundIndex因为超过表示范围会被截断成-1，因此它!=NSNotFound。</p>
 
 <p>类似的还有很多，我们应该多多jump到源码，即使只是头文件，也能发现关于Objective-C的一些底层细节。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[微信支付的小坑]]></title>
-    <link href="http://KinoAndWorld.github.io/blog/2014/09/17/weixinpayforios/"/>
-    <updated>2014-09-17T00:08:59+08:00</updated>
-    <id>http://KinoAndWorld.github.io/blog/2014/09/17/weixinpayforios</id>
-    <content type="html"><![CDATA[<h2>先说点题外话</h2>
-
-<p>貌似很久很久没更新博客，有半年了吧，这半年忙着毕业的各种事情，忙着小或者比较大的项目，感受着初入职场的艰辛与喜悦，以及过着平淡无奇的小日子————好吧虽然这些都可以成为懒惰的理由，但是回顾一些自己这半年真的过于放松，许多学习的时间被游戏动漫日剧所占据，如果平时不用上班恐怕要变成废宅了吧╮(╯_╰)╭，so，确定一下今后的目标：<code>多写代码、多锻炼、多阅读、多写博客</code>，写博客主要为了思考，因为要在脑中整理语言，沉淀思想，一方面可以巩固记忆，另一方面也算是[热爱生活]的一种方式吧。</p>
-
-<h2>好吧主题其实是</h2>
-
-<p>其实有点为了写博客而写博客的意思，因为要分享的东西挺简单的，更像是吐槽……好吧其实我就是吐槽。</p>
-
-<ul>
-<li>吐槽1：微信支付为啥没有iOS的官方demo……实在想不通，服务端有，Android甚至WindowsPhone都有，微信这是对iOS平台歧视的节奏- &ndash;
-幸好我大天朝人才辈出，早有人根据<code>渣成翔</code>的官方文档写了微信支付的<a href="https://github.com/gbammc/WechatPayDemo">非官方demo</a></li>
-</ul>
-
-
-<p>里面用了cocoapods， 需要下载的话好好看下说明。</p>
-
-<ul>
-<li>吐槽2：微信官方文档
-虽然我知道，也理解 写代码的人一般比较讨厌写文档，但是毕竟你是一个支付组件，总有很多人需要仔细阅读的甚至copy文档里边的代码的，你可以写得很简单，但是不要犯一些低级错误好吗 (#‵′)。说明含糊不清我就不提了（其实上面的github主页有吐槽），实例代码都写错这就有点。。。
-贴两段：</li>
-</ul>
-
-
-<p>``` objc</p>
-
-<pre><code>PayReq *request = [[[PayReq alloc] init] autorelease]; 
-request.partnerId = _pactnerid;
-request.prepayId= _prapayid;
-Request.package = _package;
-request.nonceStr= _noncestr;
-</code></pre>
-
-<p>```</p>
-
-<p>第三行好好的request突然变成Request了……当时看到整个人都不太好</p>
-
-<p>And</p>
-
-<p>``` objc</p>
-
-<pre><code>// 构造参数列表
-NSMutableDictionary params = [NSMutableDictionary dictionary]; 
-[params setObject:@"1234567" forKey:@"appid"];
-</code></pre>
-
-<p>```</p>
-
-<p>NSMutableDictionary params。。。原来NSMutableDictionary不是引用类型啊T.T</p>
-
-<p>有些文档看了真的会哭。</p>
-
-<ul>
-<li>吐槽3：微信支付SDK</li>
-</ul>
-
-
-<p>处于安全便捷考虑，几乎所有的操作都在服务端完成，然后今天服务端给出API，也跟Android调通了。我本以为既然Android端都OK了，那iOS端应该也没多大问题……但是，我错了，我发现iOS端调用微信支付不成功，马上弹回原应用，拿到的是<code>errCode = -1</code>的错误。这些我就思密达了，然后一直在找是不是自己哪里调用不对。弄了一个多小时，未果。
-然后很郁闷地吃了个饭，回去之后我跟服务端一步步联调……才发现问题出在PayReq的<code>sign</code>变量和<code>package</code>变量不对应。</p>
-
-<p>再深入纠结原因，发现原来Android的文档或者SDK和iOS的处理是不一样的，而服务端是参考了Android的文档来做，我当场就呵呵了。
-如果两端的处理方法不一样，至少也该说明一下吧。</p>
-
-<hr />
 ]]></content>
   </entry>
   

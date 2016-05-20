@@ -1,0 +1,376 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>在UICollectionView上实现StickyHeader效果 - Kinoの技术博客</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="在UICollectionView上实现StickyHeader效果 前几天在用UICollectionView实现组合式布局的时候，想到如果在CollectionView上要求sticky header（也就是header自动悬停置顶）的效果应当如何实现。 &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Kinoの技术博客" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.io/blog/2016/05/20/uicollectionview-sticky-header-implement-principle/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?cf1125831693ae208e5e3993116c42db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">Kinoの技术博客</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<!-- <hgroup>
+  <h1><a href="/">Kinoの技术博客</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+ -->
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">在UICollectionView上实现StickyHeader效果</h1>
+	<div class="entry-content" itemprop="articleBody"><p>前几天在用UICollectionView实现组合式布局的时候，想到如果在CollectionView上要求sticky header（也就是header自动悬停置顶）的效果应当如何实现。
+我们都知道如果是在UITableView上实现非常简单，只要设置style为group然后多个section，headerView就会自动吸附在顶部。而collectionView虽然功能强大得多，但是原生并没有支持直接设置这个效果，所以需要自己实现。</p>
+
+<p>作为一个懒人，首先想到的自然是站在巨人的肩膀上，<a href="https://github.com/jamztang/CSStickyHeaderFlowLayout">CSStickyHeaderFlowLayout</a>是一个比较知名的CollectionView布局控件，它支持sticky header效果以及头部的视差滚动效果，效果很赞。但是感觉稍微重了些，需要做更多的设置以及修改基类等。</p>
+
+<p>然后我又找到了一篇文章，虽然已经是3年前的文章，但是写得非常简明清晰，而且阅读完有豁然开朗的感觉。</p>
+
+<p>文章很短，全文如下：<a href="http://blog.radi.ws/post/32905838158/sticky-headers-for-uicollectionview-using">http://blog.radi.ws/post/32905838158/sticky-headers-for-uicollectionview-using</a></p>
+
+<p>核心原理就是三句话：</p>
+
+<ul>
+<li><code>The header should be positioned so it can never go further up than one header height above the first cell in the section.</code></li>
+<li><code>The header should be positioned so it can never go further down than one header header height above the lower bounds of the last cell in the section.</code></li>
+<li><code>The header should be positioned so it usually stays around the top edge, referencing the content offset of the collection view.</code></li>
+</ul>
+
+
+<p>代码也很简单，只需要在UICollectionViewFlowLayout实现<code>layoutAttributesForElementsInRect</code>和<code>shouldInvalidateLayoutForBoundsChange</code>两个方法。</p>
+
+<p>接着我附上文中源代码以及自己写的注释，穿插了一些对文章初略的翻译。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">NSArray</span> <span class="o">*</span><span class="p">)</span><span class="nf">layoutAttributesForElementsInRect:</span><span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">rect</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     *  返回当前显示区域的所有布局信息</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">answer</span> <span class="o">=</span> <span class="p">[[</span><span class="n">super</span> <span class="nl">layoutAttributesForElementsInRect:</span><span class="n">rect</span><span class="p">]</span> <span class="n">mutableCopy</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">UICollectionView</span> <span class="o">*</span> <span class="k">const</span> <span class="n">cv</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">collectionView</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">CGPoint</span> <span class="k">const</span> <span class="n">contentOffset</span> <span class="o">=</span> <span class="n">cv</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">NSMutableIndexSet</span> <span class="o">*</span><span class="n">missingSections</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableIndexSet</span> <span class="n">indexSet</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     *  找出所有UICollectionElementCategoryCell类型的cell</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">layoutAttributes</span> <span class="k">in</span> <span class="n">answer</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">representedElementCategory</span> <span class="o">==</span> <span class="n">UICollectionElementCategoryCell</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="p">[</span><span class="n">missingSections</span> <span class="nl">addIndex:</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     *  再从里面删除所有UICollectionElementKindSectionHeader类型的cell</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">layoutAttributes</span> <span class="k">in</span> <span class="n">answer</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">([</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">representedElementKind</span> <span class="nl">isEqualToString:</span><span class="n">UICollectionElementKindSectionHeader</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>            <span class="p">[</span><span class="n">missingSections</span> <span class="nl">removeIndex:</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     *  默认情况下，为missingSections手动插入attributes，应该是为rect外的section生成attributes</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">missingSections</span> <span class="nl">enumerateIndexesUsingBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSUInteger</span> <span class="n">idx</span><span class="p">,</span> <span class="kt">BOOL</span> <span class="o">*</span><span class="n">stop</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">NSIndexPath</span> <span class="o">*</span><span class="n">indexPath</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSIndexPath</span> <span class="nl">indexPathForItem:</span><span class="mi">0</span> <span class="nl">inSection:</span><span class="n">idx</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">layoutAttributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nl">layoutAttributesForSupplementaryViewOfKind:</span><span class="n">UICollectionElementKindSectionHeader</span> <span class="nl">atIndexPath:</span><span class="n">indexPath</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="p">[</span><span class="n">answer</span> <span class="nl">addObject:</span><span class="n">layoutAttributes</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">layoutAttributes</span> <span class="k">in</span> <span class="n">answer</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="cm">/**</span>
+</span><span class='line'><span class="cm">         *  从answer中储存的布局信息中，针对UICollectionElementKindSectionHeader...</span>
+</span><span class='line'><span class="cm">         */</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">([</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">representedElementKind</span> <span class="nl">isEqualToString:</span><span class="n">UICollectionElementKindSectionHeader</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">NSInteger</span> <span class="n">section</span> <span class="o">=</span> <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">NSInteger</span> <span class="n">numberOfItemsInSection</span> <span class="o">=</span> <span class="p">[</span><span class="n">cv</span> <span class="nl">numberOfItemsInSection:</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="cm">/**</span>
+</span><span class='line'><span class="cm">             *  为什么需要firstCellIndexPath和lastCellIndexPath呢？</span>
+</span><span class='line'><span class="cm">             *  header应当保持着距离本section第一个cell的最大距离，简单来说就是header在置顶之前要贴着cell</span>
+</span><span class='line'><span class="cm">             *  同理，header应当保持着与最后一个cell的最小距离，</span>
+</span><span class='line'><span class="cm">             *  最后，在不违反上面两则约束的前提下，通过collection view的offset与header的高度来使header处于 origin.y = 0 的状态。</span>
+</span><span class='line'><span class="cm">             */</span>
+</span><span class='line'>            <span class="n">NSIndexPath</span> <span class="o">*</span><span class="n">firstCellIndexPath</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSIndexPath</span> <span class="nl">indexPathForItem:</span><span class="mi">0</span> <span class="nl">inSection:</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>            <span class="n">NSIndexPath</span> <span class="o">*</span><span class="n">lastCellIndexPath</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSIndexPath</span> <span class="nl">indexPathForItem:</span><span class="n">MAX</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">numberOfItemsInSection</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="nl">inSection:</span><span class="n">section</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="cm">/**</span>
+</span><span class='line'><span class="cm">             *  针对当前layoutAttributes的section， 找出第一个和最后一个普通cell的位置</span>
+</span><span class='line'><span class="cm">             */</span>
+</span><span class='line'>            <span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">firstCellAttrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nl">layoutAttributesForItemAtIndexPath:</span><span class="n">firstCellIndexPath</span><span class="p">];</span>
+</span><span class='line'>            <span class="n">UICollectionViewLayoutAttributes</span> <span class="o">*</span><span class="n">lastCellAttrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nl">layoutAttributesForItemAtIndexPath:</span><span class="n">lastCellIndexPath</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="cm">/**</span>
+</span><span class='line'><span class="cm">             *  获取当前处理header的高度和位置，然后通过firstCellAttrs和lastCellAttrs确定header是否置顶</span>
+</span><span class='line'><span class="cm">             */</span>
+</span><span class='line'>            <span class="n">CGFloat</span> <span class="n">headerHeight</span> <span class="o">=</span> <span class="n">CGRectGetHeight</span><span class="p">(</span><span class="n">layoutAttributes</span><span class="p">.</span><span class="n">frame</span><span class="p">);</span>
+</span><span class='line'>            <span class="n">CGPoint</span> <span class="n">origin</span> <span class="o">=</span> <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">MIN</span><span class="p">(</span>
+</span><span class='line'>                           <span class="n">MAX</span><span class="p">(</span>
+</span><span class='line'>                               <span class="n">contentOffset</span><span class="p">.</span><span class="n">y</span><span class="p">,</span>
+</span><span class='line'>                               <span class="p">(</span><span class="n">CGRectGetMinY</span><span class="p">(</span><span class="n">firstCellAttrs</span><span class="p">.</span><span class="n">frame</span><span class="p">)</span> <span class="o">-</span> <span class="n">headerHeight</span><span class="p">)</span>
+</span><span class='line'>                               <span class="p">),</span>
+</span><span class='line'>                           <span class="p">(</span><span class="n">CGRectGetMaxY</span><span class="p">(</span><span class="n">lastCellAttrs</span><span class="p">.</span><span class="n">frame</span><span class="p">)</span> <span class="o">-</span> <span class="n">headerHeight</span><span class="p">)</span>
+</span><span class='line'>                           <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">zIndex</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="n">CGRect</span><span class="p">){</span>
+</span><span class='line'>                <span class="p">.</span><span class="n">origin</span> <span class="o">=</span> <span class="n">origin</span><span class="p">,</span>
+</span><span class='line'>                <span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">layoutAttributes</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span>
+</span><span class='line'>            <span class="p">};</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">answer</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span> <span class="nf">shouldInvalidateLayoutForBoundsChange:</span><span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">newBound</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">YES</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>感觉又涨了姿势，撒花。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2016 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.io/blog/2016/05/20/uicollectionview-sticky-header-implement-principle/';
+        var disqus_url = 'http://KinoAndWorld.github.io/blog/2016/05/20/uicollectionview-sticky-header-implement-principle/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>
