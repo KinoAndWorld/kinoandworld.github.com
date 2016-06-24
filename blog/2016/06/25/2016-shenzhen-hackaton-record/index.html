@@ -1,0 +1,199 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>深圳2016-hackathon记录 - Kinoの技术博客</title>
+	<meta name="author" content="Kino">
+
+	
+	<meta name="description" content="深圳2016-hackathon记录 初来乍到 知道这个活动是一个在佛山的小伙伴邀请我一起参加，以前对黑客马拉松一直神往但总没机会尝试，于是抱着有些事现在不做就一辈子都不会做了的心态，我跟他还有另外两个95后小伙伴相约一起，朝深圳粗发。
+从广州到深圳，我第一次体验顺风车， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Kinoの技术博客" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://KinoAndWorld.github.io/blog/2016/06/25/2016-shenzhen-hackaton-record/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?cf1125831693ae208e5e3993116c42db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("kinoandworld@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">Kinoの技术博客</a></h1>
+<p class="subtitle">我唯一所知即是我一无所知</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		<a class="weibo" href="http://www.weibo.com/1878504510" title="Weibo">Weibo</a>
+		
+		
+		
+		
+		
+		<a class="github" href="https://github.com/KinoAndWorld" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<!-- <hgroup>
+  <h1><a href="/">Kinoの技术博客</a></h1>
+  
+    <h2>我唯一所知即是我一无所知</h2>
+  
+</hgroup>
+ -->
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">深圳2016-hackathon记录</h1>
+	<div class="entry-content" itemprop="articleBody"><h3>初来乍到</h3>
+
+<p>知道这个活动是一个在佛山的小伙伴邀请我一起参加，以前对黑客马拉松一直神往但总没机会尝试，于是抱着有些事现在不做就一辈子都不会做了的心态，我跟他还有另外两个95后小伙伴相约一起，朝深圳粗发。
+从广州到深圳，我第一次体验顺风车，直接到会场而且价格比高铁便宜很多，很赞。</p>
+
+<h3>头脑风暴</h3>
+
+<p>题目是这样：url
+拿到题目，我们4个人迅速头脑风暴了一下。
+想到达芬奇，最耳熟能详的当然就是那副名画《蒙娜丽莎的微笑》，然后很迅速地，我想到一个idea。就是通过人脸识别，把自拍或者照片的笑脸替换成蒙娜丽莎的微笑，蜜汁喜感。但是考虑到实现的话，我们一时之间没有多大头绪，因为这需要动态的图形拼贴等处理，我们并不精于此道。好在得到这个灵感，我们迅速想到了另一个idea——做一个自拍表情PK的App。大致原理就是，通过表情识别，我们可以为一张照片评出他的情绪以及程度，这时候我们让两个人上传他们的自拍，然后对决PK，通过识别结果判断胜负。在我们一致认可这个idea之后，我给这次的项目取了个名字 FaceBattle。</p>
+
+<h3>开始coding</h3>
+
+<p>在丰盛的午餐以及下午茶的陪伴下，我们开始迅速讨论作战方案，由于我们4个人刚好是一个iOS，一个Android，一个UWP（😄情怀），还有一个服务端，简直一不小心就全平台了😂。当然，在开发之前，我们在纸上讨论了大致了原型以及需要的接口，然后负责WP的超哥也有模有样地迅速撸了几个界面。大家都像打了鸡血一样，争分夺秒这个词无比恰当地装饰着周遭的气氛中。</p>
+
+<h3>不眠之夜</h3>
+
+<p>俗话说得好，人生不如意之事十之八九。随着时间的推进，疲惫使我们渐渐力有未逮，而且在服务端与微软的表情识别接口的联调上也出现了一些问题，直到晚上，我们的进度开始捉襟见肘。吃完了棒呆的夜宵，困意如约而至，而我们唯有用意志对抗阻力，注定在这个不眠不夜继续开发与调试。
+在我们的努力“马拉松”下，终于把APP完成了八九不离十的程度，小憩一会之后，太阳冉冉升起，晨曦笼罩了大地。</p>
+
+<h3>路演</h3>
+
+<p>到了中午就是“是骡子是马拉出来溜溜”的路演环节了，这次一共有12支队伍参赛，有一些经验十足的队伍，还有几个外国友人组成的队伍，说实话还是蛮有压力的。轮到我们解说作品的时候，我先扯了我们作品与文艺复兴的关系（因为这次马拉松的主题和参赛题目都跟文艺复兴有关），然后演示了在不同平台上进行battle的场景，当我看到在场的观众因为我们的新意而感到好奇和愉悦的时候，顿时觉得无论得奖与否，我们的作品已经发挥了应有的价值：）
+最后出乎意料地，我们拿到了二等奖，并且与最佳人气奖只有一票之差，第一次参加能有这样的成绩说实话我已经非常知足了（果然抱对了大腿的感觉）。</p>
+
+<h3>尾声</h3>
+
+<p>我想这次经历无论对我还是另外几个小伙伴，都是宝贵的人生财富，而且我们本身也学到了很多。当然对我来说，更值得高兴的是又交到了几个志同道合的朋友。
+最后，把我们的些许劳动成果开源一下，虽然时间有限可能质量并不是很好。</p>
+
+<p><a href="https://github.com/JuniperPhoton/FaceBattleUWP">https://github.com/JuniperPhoton/FaceBattleUWP</a> （WP版，里面还有设计稿）
+<a href="https://github.com/KinoAndWorld/FaceBattle">https://github.com/KinoAndWorld/FaceBattle</a> （iOS版）</p>
+
+<p>还有 微软的<a href="%E7%89%9B%E6%B4%A5%E8%AE%A1%E5%88%92">https://www.azure.cn/cognitive-services</a>是很棒的东西。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+	
+	<a class="addthis_button_sinaweibo"></a>
+	
+	
+	
+	
+	
+	<a class="addthis_button_compact"></a>
+	<a class="addthis_counter addthis_bubble_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2016 - Kino -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'kinoHasABlog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://KinoAndWorld.github.io/blog/2016/06/25/2016-shenzhen-hackaton-record/';
+        var disqus_url = 'http://KinoAndWorld.github.io/blog/2016/06/25/2016-shenzhen-hackaton-record/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>

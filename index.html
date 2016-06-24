@@ -7,7 +7,7 @@
 	<meta name="author" content="Kino">
 
 	
-	<meta name="description" content="May 20th, 2016 iOS Comments 在UICollectionView上实现StickyHeader效果 前几天在用UICollectionView实现组合式布局的时候，想到如果在CollectionView上要求sticky header（也就是header自动悬停置顶） &hellip;">
+	<meta name="description" content="Jun 25th, 2016 iOS Comments 深圳2016-hackathon记录 初来乍到 知道这个活动是一个在佛山的小伙伴邀请我一起参加，以前对黑客马拉松一直神往但总没机会尝试，于是抱着有些事现在不做就一辈子都不会做了的心态，我跟他还有另外两个95后小伙伴相约一起，朝深圳粗发。 &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -94,6 +94,76 @@ var _hmt = _hmt || [];
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-06-25T02:55:23+08:00" data-updated="true" itemprop="datePublished">Jun 25<span>th</span>, 2016</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/ios/'>iOS</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2016/06/25/2016-shenzhen-hackaton-record/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2016/06/25/2016-shenzhen-hackaton-record/" itemprop="url">深圳2016-hackathon记录</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<h3>初来乍到</h3>
+
+<p>知道这个活动是一个在佛山的小伙伴邀请我一起参加，以前对黑客马拉松一直神往但总没机会尝试，于是抱着有些事现在不做就一辈子都不会做了的心态，我跟他还有另外两个95后小伙伴相约一起，朝深圳粗发。
+从广州到深圳，我第一次体验顺风车，直接到会场而且价格比高铁便宜很多，很赞。</p>
+
+<h3>头脑风暴</h3>
+
+<p>题目是这样：url
+拿到题目，我们4个人迅速头脑风暴了一下。
+想到达芬奇，最耳熟能详的当然就是那副名画《蒙娜丽莎的微笑》，然后很迅速地，我想到一个idea。就是通过人脸识别，把自拍或者照片的笑脸替换成蒙娜丽莎的微笑，蜜汁喜感。但是考虑到实现的话，我们一时之间没有多大头绪，因为这需要动态的图形拼贴等处理，我们并不精于此道。好在得到这个灵感，我们迅速想到了另一个idea——做一个自拍表情PK的App。大致原理就是，通过表情识别，我们可以为一张照片评出他的情绪以及程度，这时候我们让两个人上传他们的自拍，然后对决PK，通过识别结果判断胜负。在我们一致认可这个idea之后，我给这次的项目取了个名字 FaceBattle。</p>
+
+<h3>开始coding</h3>
+
+<p>在丰盛的午餐以及下午茶的陪伴下，我们开始迅速讨论作战方案，由于我们4个人刚好是一个iOS，一个Android，一个UWP（😄情怀），还有一个服务端，简直一不小心就全平台了😂。当然，在开发之前，我们在纸上讨论了大致了原型以及需要的接口，然后负责WP的超哥也有模有样地迅速撸了几个界面。大家都像打了鸡血一样，争分夺秒这个词无比恰当地装饰着周遭的气氛中。</p>
+
+<h3>不眠之夜</h3>
+
+<p>俗话说得好，人生不如意之事十之八九。随着时间的推进，疲惫使我们渐渐力有未逮，而且在服务端与微软的表情识别接口的联调上也出现了一些问题，直到晚上，我们的进度开始捉襟见肘。吃完了棒呆的夜宵，困意如约而至，而我们唯有用意志对抗阻力，注定在这个不眠不夜继续开发与调试。
+在我们的努力“马拉松”下，终于把APP完成了八九不离十的程度，小憩一会之后，太阳冉冉升起，晨曦笼罩了大地。</p>
+
+<h3>路演</h3>
+
+<p>到了中午就是“是骡子是马拉出来溜溜”的路演环节了，这次一共有12支队伍参赛，有一些经验十足的队伍，还有几个外国友人组成的队伍，说实话还是蛮有压力的。轮到我们解说作品的时候，我先扯了我们作品与文艺复兴的关系（因为这次马拉松的主题和参赛题目都跟文艺复兴有关），然后演示了在不同平台上进行battle的场景，当我看到在场的观众因为我们的新意而感到好奇和愉悦的时候，顿时觉得无论得奖与否，我们的作品已经发挥了应有的价值：）
+最后出乎意料地，我们拿到了二等奖，并且与最佳人气奖只有一票之差，第一次参加能有这样的成绩说实话我已经非常知足了（果然抱对了大腿的感觉）。</p>
+
+<h3>尾声</h3>
+
+<p>我想这次经历无论对我还是另外几个小伙伴，都是宝贵的人生财富，而且我们本身也学到了很多。当然对我来说，更值得高兴的是又交到了几个志同道合的朋友。
+最后，把我们的些许劳动成果开源一下，虽然时间有限可能质量并不是很好。</p>
+
+<p><a href="https://github.com/JuniperPhoton/FaceBattleUWP">https://github.com/JuniperPhoton/FaceBattleUWP</a> （WP版，里面还有设计稿）
+<a href="https://github.com/KinoAndWorld/FaceBattle">https://github.com/KinoAndWorld/FaceBattle</a> （iOS版）</p>
+
+<p>还有 微软的<a href="%E7%89%9B%E6%B4%A5%E8%AE%A1%E5%88%92">https://www.azure.cn/cognitive-services</a>是很棒的东西。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1429,67 +1499,6 @@ CGFLOAT_IS_DOUBLE    64位下是1 否则0
 		<h2>经过三番几次的努力- -终于成功迁移。</h2>
 
 <p>噢，就这么多。</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-02-28T09:49:23+08:00" data-updated="true" itemprop="datePublished">Feb 28<span>th</span>, 2014</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/mo-ji/'>墨迹</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2014/02/28/v-for-vendetta-comment/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2014/02/28/v-for-vendetta-comment/" itemprop="url">V for Vendetta Comment</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<h2>每个人心里都有抗争的种子(V字仇杀队 影评)</h2>
-
-<p>单从标题来看,这是一部关于仇恨(vendetta 仇杀,正是V字头)的故事,而整部影片,也确实在讲述一个失败的病毒实验体,或者说受害者V的复仇故事. V潇洒,凌然而深邃,永远戴着一副小丑似的玩世不恭的面具,而隐藏在背后的确是伤痕累累的心,和如同深渊一般噬骨的仇恨.</p>
-
-<p>当他一步一步成功实施他的一揽子复仇计划,将警探玩弄于鼓掌之间,这是V的仇恨,但他不是杀人魔,枪炮与玫瑰同在.V心中最柔软的地方借着女主展现了出来,以略显残酷的方式,而现实本身也是如此残酷.</p>
-
-<p>V最后决定和最后的敌人同归于尽,我想是他想亲手结束这一切吧,这一切罪孽,他们的和他自己的.</p>
-
-<p>载着他的尸体和炸药一起撞向大楼,伴随着宏伟的交响乐,夜空炸开了绚烂的焰火,这一切显得隆重而激昂,带着对V的悲伤和叹为观止的爆炸画面感,思绪也随之炸开,伴着因焰火而亮如白昼的冥空.</p>
-
-<p>亿万人们涌上街头,全部戴着V的面具.
-或许是因为面具的掩饰人们毫无保留的肆意,
-或许是V的面具给了人们巨大的力量和勇气,
-而毫无疑问的是,V给了一个伟大的救赎.
-他解救的不只是他自己,还有恐怖统治下的每一个人.
-而我们每一个人,心中其实都有一个V,是对压迫的仇,对剥削的杀.</p>
-
-<p>敌人都消失了,而其实,敌人一直都在.
-只要这个世界还存在压迫,斗争便绝不停息.
-只要这个世界还存在硝烟,玫瑰也愈加鲜艳.</p>
-
-<p>V死了,却留下了什么.</p>
-
-<p>这时候,脑海里回响着片头的那句话:
-&ldquo;我们要记住思想,而不是记住人,因为人可能会失败.他可能会被捕,被杀死,被遗忘.但400年以后,思想仍可改变世界.&rdquo;</p>
 
 		
 		
