@@ -4,7 +4,7 @@
   <title><![CDATA[Kinoの技术博客]]></title>
   <link href="http://KinoAndWorld.github.io/atom.xml" rel="self"/>
   <link href="http://KinoAndWorld.github.io/"/>
-  <updated>2016-06-25T02:59:06+08:00</updated>
+  <updated>2016-06-25T03:13:18+08:00</updated>
   <id>http://KinoAndWorld.github.io/</id>
   <author>
     <name><![CDATA[Kino]]></name>
@@ -25,7 +25,7 @@
 
 <h3>头脑风暴</h3>
 
-<p>题目是这样：url
+<p>题目是这样：<a href="https://shimo.im/doc/MyY7ltlPPo4F6YSo">https://shimo.im/doc/MyY7ltlPPo4F6YSo</a>
 拿到题目，我们4个人迅速头脑风暴了一下。
 想到达芬奇，最耳熟能详的当然就是那副名画《蒙娜丽莎的微笑》，然后很迅速地，我想到一个idea。就是通过人脸识别，把自拍或者照片的笑脸替换成蒙娜丽莎的微笑，蜜汁喜感。但是考虑到实现的话，我们一时之间没有多大头绪，因为这需要动态的图形拼贴等处理，我们并不精于此道。好在得到这个灵感，我们迅速想到了另一个idea——做一个自拍表情PK的App。大致原理就是，通过表情识别，我们可以为一张照片评出他的情绪以及程度，这时候我们让两个人上传他们的自拍，然后对决PK，通过识别结果判断胜负。在我们一致认可这个idea之后，我给这次的项目取了个名字 FaceBattle。</p>
 
@@ -48,8 +48,9 @@
 <p>我想这次经历无论对我还是另外几个小伙伴，都是宝贵的人生财富，而且我们本身也学到了很多。当然对我来说，更值得高兴的是又交到了几个志同道合的朋友。
 最后，把我们的些许劳动成果开源一下，虽然时间有限可能质量并不是很好。</p>
 
-<p><a href="https://github.com/JuniperPhoton/FaceBattleUWP">https://github.com/JuniperPhoton/FaceBattleUWP</a> （WP版，里面还有设计稿）
-<a href="https://github.com/KinoAndWorld/FaceBattle">https://github.com/KinoAndWorld/FaceBattle</a> （iOS版）</p>
+<p><a href="https://github.com/JuniperPhoton/FaceBattleUWP">https://github.com/JuniperPhoton/FaceBattleUWP</a> （WP版，里面还有设计稿）</p>
+
+<p><a href="https://github.com/KinoAndWorld/FaceBattle">https://github.com/KinoAndWorld/FaceBattle</a> （iOS版）</p>
 
 <p>还有 微软的<a href="%E7%89%9B%E6%B4%A5%E8%AE%A1%E5%88%92">https://www.azure.cn/cognitive-services</a>是很棒的东西。</p>
 ]]></content>
