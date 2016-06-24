@@ -1,0 +1,21 @@
+/Users/Kino/.rvm/rubies/ruby-2.2.1/bin/ruby -r ./siteconf20160625-28312-14i37y9.rb extconf.rb
+creating Makefile
+
+make "DESTDIR=" clean
+
+make "DESTDIR="
+compiling posix-spawn.c
+In file included from posix-spawn.c:14:
+In file included from /Users/Kino/.rvm/rubies/ruby-2.2.1/include/ruby-2.2.0/ruby.h:33:
+In file included from /Users/Kino/.rvm/rubies/ruby-2.2.1/include/ruby-2.2.0/ruby/ruby.h:24:
+/Users/Kino/.rvm/rubies/ruby-2.2.1/include/ruby-2.2.0/x86_64-darwin15/ruby/config.h:17:9: warning: '_GNU_SOURCE' macro redefined [-Wmacro-redefined]
+#define _GNU_SOURCE 1
+        ^
+posix-spawn.c:3:9: note: previous definition is here
+#define _GNU_SOURCE
+        ^
+1 warning generated.
+linking shared-object posix_spawn_ext.bundle
+
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 posix_spawn_ext.bundle ./.gem.20160625-28312-1l70uj1
