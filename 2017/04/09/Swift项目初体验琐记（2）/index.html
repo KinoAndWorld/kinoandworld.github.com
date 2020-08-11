@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Swift项目初体验琐记（2） |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Swift项目初体验琐记（2）"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Swift项目初体验琐记（2）
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2017/04/09/Swift%E9%A1%B9%E7%9B%AE%E5%88%9D%E4%BD%93%E9%AA%8C%E7%90%90%E8%AE%B0%EF%BC%882%EF%BC%89/" class="article-date">
+  <time datetime="2017-04-08T16:04:35.000Z" itemprop="datePublished">2017-04-09</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">1.1k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">4 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="Swift上的常用第三方框架"><a href="#Swift上的常用第三方框架" class="headerlink" title="Swift上的常用第三方框架"></a>Swift上的常用第三方框架</h3><ul>
+<li><p>Alamofire<br>  相当于OC上的AFNetWorking，毕竟作者也是同一个人😂。不过在Swift上，一般还会搭配其他框架封装在一起。这个等会一起介绍。</p>
+</li>
+<li><p>RxSwift<br>  相对于ReactiveCocoa的swift版本来说，RxSwift似乎更“血统纯正”一些，就我个人的使用而言，与ReactiveCocoa的基本用法还是非常相似的。RxSwift的教程也很多，就不展开了。</p>
+</li>
+<li><p>SnapKit<br>对应Objective-C上的masorny，同一家写的，语法几乎一样~</p>
+</li>
+<li><p>Kingfisher<br>喵神写的，对应于SDWebImage 或者 YYWebImage</p>
+</li>
+<li><p>HandyJSON：<br>阿里巴巴团队开源的Json自动转model框架，现有的Json转model的第三方库基本都是用到了上篇文章提到的<code>Mirror</code>（反射）把model所有字段映射出来然后匹配，但是似乎都不能支持像Objective-C的一些库可以不用写映射自动用变量名匹配字段名。而HandyJson用了一个很高端的<code>内存位移映射</code>的办法来实现变量名匹配和赋值，可以让你不用重载任何mapping方法就能自动转成Model。（对原理感兴趣的可以戳<a target="_blank" rel="noopener" href="http://www.jianshu.com/p/eac4a92b44ef">这里</a>）</p>
+</li>
+</ul>
+<h3 id="Moya-RxSwift-HandyJSON"><a href="#Moya-RxSwift-HandyJSON" class="headerlink" title="Moya + RxSwift + HandyJSON"></a>Moya + RxSwift + HandyJSON</h3><p>在App中我们最常打交道的或许就是网络模块了，虽然Alomfire写得非常棒，但是我们在项目中一般不会直接使用，而是再通过一个网络层封装，得以对接我们的具体业务和配置，懒惰如我，四处搜寻一个好的网络层解决方案，然后发现<a target="_blank" rel="noopener" href="https://github.com/Moya/Moya">Moya</a>这个第三方网络中间件，我将在本文着重介绍。</p>
+<p>首先，他的基础用法和扩展<a target="_blank" rel="noopener" href="https://blog.callmewhy.com/2015/11/01/moya-rxswift-argo-lets-go/">这篇文章</a>已经写得很清楚了，不过我们这里没有用argo，而是用了上面提到的HandyJSON</p>
+<p>OK，还是用实例说话，首先我们新增一个可重用的extension</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ObservableType</span> <span class="title">where</span> <span class="title">E</span> == <span class="title">Moya</span>.<span class="title">Response</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">preOrderCheck</span><span class="params">(response: Response)</span></span> <span class="keyword">throws</span> -&gt; <span class="type">JSON</span> &#123;</span><br><span class="line">        <span class="comment">// check http status</span></span><br><span class="line">        <span class="keyword">guard</span> ((<span class="number">200</span>...<span class="number">209</span>) ~= response.statusCode) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="type">ServiceError</span>.<span class="type">NotSuccessfulHTTP</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// unwrap biz json shell</span></span><br><span class="line">        <span class="keyword">let</span> json = <span class="type">JSON</span>.<span class="keyword">init</span>(data: response.data)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// check biz status</span></span><br><span class="line">        <span class="keyword">let</span> code = json[<span class="type">RESULT_CODE</span>].stringValue</span><br><span class="line">        <span class="keyword">if</span> code == <span class="type">BizStatus</span>.<span class="type">BizSuccess</span>.rawValue &#123;</span><br><span class="line">            <span class="keyword">return</span> json[<span class="type">RESULT_DATA</span>]</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="type">ServiceError</span>.<span class="type">OtherError</span>(resultCode: json[<span class="type">RESULT_CODE</span>].stringValue, resultMsg: json[<span class="type">RESULT_MSG</span>].stringValue)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">mapResponseToModel</span>&lt;T: HandyJSON&gt;<span class="params">(type: T.<span class="keyword">Type</span>)</span></span> -&gt; <span class="type">Observable</span>&lt;<span class="type">T</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">map</span>&#123; response <span class="keyword">in</span></span><br><span class="line">                <span class="keyword">do</span> &#123;</span><br><span class="line">                    <span class="keyword">let</span> respContent = <span class="keyword">try</span> <span class="keyword">self</span>.preOrderCheck(response: response)</span><br><span class="line">                    <span class="keyword">if</span> <span class="keyword">let</span> obj = <span class="type">T</span>.deserialize(from: respContent.rawString()) &#123;</span><br><span class="line">                        <span class="keyword">return</span> obj</span><br><span class="line">                    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="type">ServiceError</span>.<span class="type">CouldNotMakeObjectError</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> <span class="keyword">let</span> err <span class="keyword">as</span> <span class="type">ServiceError</span> &#123;</span><br><span class="line">                    <span class="keyword">throw</span> err</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">mapResponseToModelList</span>&lt;T: HandyJSON&gt;<span class="params">(type: T.<span class="keyword">Type</span>)</span></span> -&gt; <span class="type">Observable</span>&lt;[<span class="type">T</span>]&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">map</span>&#123; response <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">do</span> &#123;</span><br><span class="line">                <span class="keyword">let</span> respContent = <span class="keyword">try</span> <span class="keyword">self</span>.preOrderCheck(response: response)</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">let</span> objs = [<span class="type">T</span>].deserialize(from: respContent.rawString()) <span class="keyword">as</span>? [<span class="type">T</span>] &#123;</span><br><span class="line">                    <span class="keyword">return</span> objs</span><br><span class="line">                &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="type">ServiceError</span>.<span class="type">CouldNotMakeObjectError</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> <span class="keyword">let</span> err <span class="keyword">as</span> <span class="type">ServiceError</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> err</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们就可以很轻松地写出这样的请求：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">MovieProvider</span>.request(<span class="type">MovieApi</span>.cityList)</span><br><span class="line">    .mapResponseToModelList(type: <span class="type">MovieCity</span>.<span class="keyword">self</span>)</span><br><span class="line">    .subscribe(onNext: &#123; movieCitys <span class="keyword">in</span></span><br><span class="line">        </span><br><span class="line">    &#125;, onError: &#123; error <span class="keyword">in</span></span><br><span class="line">        <span class="built_in">print</span>(error)</span><br><span class="line">    &#125;).addDisposableTo(disposebag)</span><br></pre></td></tr></table></figure>
+<p>非常简洁且高度可扩展，而且因为用了泛型，甚至可以不用做过多转换，得到的model list是直接可用的。</p>
+<p>另外，值得一提的是，得益于Moya的灵活和扩展性，我们可以给Moya的provider做很多定制化，比如我这里的MovieProvider其实是这样的：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="type">MovieProvider</span> = <span class="type">RxMoyaProvider</span>&lt;<span class="type">MovieApi</span>&gt;(</span><br><span class="line">    endpointClosure: normalEndpointClosure(),</span><br><span class="line">    plugins: [<span class="type">NetworkLoggerPlugin</span>(verbose: <span class="literal">true</span>, cURL: <span class="literal">true</span>,responseDataFormatter: <span class="type">JSONResponseDataFormatter</span>)]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><code>plugins</code>中Moya提供了打印网络请求参数的<code>NetworkLoggerPlugin</code>和网络状态控制的<code>NetworkActivityPlugin</code>，当然你也可以自己写一个Plugin</p>
+<p><code>endpointClosure</code>这里可以去定制化一些http参数，比如header和common param，我写了一个比较共用的方法大概这样：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> headerFields: <span class="type">Dictionary</span>&lt;<span class="type">String</span>, <span class="type">String</span>&gt; = [</span><br><span class="line">    <span class="string">&quot;platform&quot;</span>: <span class="string">&quot;iOS&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Auth-Token&quot;</span>: <span class="string">&quot;get some token from your code&quot;</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> headerFieldsWithoutToken: <span class="type">Dictionary</span>&lt;<span class="type">String</span>, <span class="type">String</span>&gt; = [</span><br><span class="line">    <span class="string">&quot;platform&quot;</span>: <span class="string">&quot;iOS&quot;</span></span><br><span class="line">]</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">normalEndpointClosure</span>&lt;T: TargetType&gt;<span class="params">()</span></span> -&gt; ( (<span class="number">_</span> target: <span class="type">T</span>) -&gt; <span class="type">Endpoint</span>&lt;<span class="type">T</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; (target: <span class="type">T</span>) -&gt; <span class="type">Endpoint</span>&lt;<span class="type">T</span>&gt; <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">let</span> appendedParams: <span class="type">Dictionary</span>&lt;<span class="type">String</span>, <span class="type">AnyObject</span>&gt; = [<span class="string">&quot;key&quot;</span> : <span class="string">&quot;somekey&quot;</span> <span class="keyword">as</span> <span class="type">AnyObject</span>]</span><br><span class="line">        <span class="keyword">let</span> fields:<span class="type">Dictionary</span>&lt;<span class="type">String</span>, <span class="type">String</span>&gt; = headerFields</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="type">Endpoint</span>&lt;<span class="type">T</span>&gt;(url: url(target), sampleResponseClosure: &#123;.networkResponse(<span class="number">200</span>, target.sampleData)&#125;, method: target.method, parameters: target.parameters)</span><br><span class="line">            .adding(newParameters: appendedParams)</span><br><span class="line">            .adding(newHTTPHeaderFields: fields)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如登录之后，可能需要在请求头加token或者每个请求参数带个token，就可以在这里统一添加。</p>
+<p>嗯~大概就这么多。我会把总结的这部分内容写成一个<a target="_blank" rel="noopener" href="https://github.com/KinoAndWorld/KONetworkLayerDemo">小demo</a>，算是一个小小的学习成果吧。</p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          Donate
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://kinoandworld.github.io/2017/04/09/Swift%E9%A1%B9%E7%9B%AE%E5%88%9D%E4%BD%93%E9%AA%8C%E7%90%90%E8%AE%B0%EF%BC%882%EF%BC%89/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Swift/" rel="tag">Swift</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2018/07/23/iOS%E4%B8%AD%E4%BD%BF%E7%94%A8WKWebview%E6%94%AF%E6%8C%81h5%E8%B7%B3%E8%BD%AC%E6%94%AF%E4%BB%98%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            iOS中使用WKWebview支持h5跳转支付客户端
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2017/04/04/Swift%E9%A1%B9%E7%9B%AE%E5%88%9D%E4%BD%93%E9%AA%8C%E7%90%90%E8%AE%B0%EF%BC%881%EF%BC%89/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Swift项目初体验琐记（1）</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2020
+        <i class="ri-heart-fill heart_icon"></i> Kino
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/avatar.png" alt="Kino的自留地"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2020/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+  </div>
+</body>
+
+</html>
