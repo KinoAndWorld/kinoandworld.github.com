@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://kinoandworld.github.io').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":"disqus | valine","storage":true,"lazyload":true,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="##二维码扫描库ZXingObjC功能完善 对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。还有不知道什么原因，ZXing的iOS库在最新发布版本不见了。 还是我找不到？总之因为种种原因，ZXingObjC 作为良好的替代方案粗线了。 顺带一提，支持 cocoapods &#x3D;&gt; ‘ZXingObjC’, ‘~&gt; 2.2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZXingObjC-addition">
+<meta property="og:url" content="http://kinoandworld.github.io/2014/03/20/2014-03-20-zxingobjc-addition/index.html">
+<meta property="og:site_name" content="Kino的自留地">
+<meta property="og:description" content="##二维码扫描库ZXingObjC功能完善 对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。还有不知道什么原因，ZXing的iOS库在最新发布版本不见了。 还是我找不到？总之因为种种原因，ZXingObjC 作为良好的替代方案粗线了。 顺带一提，支持 cocoapods &#x3D;&gt; ‘ZXingObjC’, ‘~&gt; 2.2">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2014-03-20T08:10:20.000Z">
+<meta property="article:modified_time" content="2025-10-28T09:01:11.516Z">
+<meta property="article:author" content="Kino">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://kinoandworld.github.io/2014/03/20/2014-03-20-zxingobjc-addition/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>ZXingObjC-addition | Kino的自留地</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kino的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-desktop"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about.html" rel="section"><i class="fa fa-fw fa-user-circle-o"></i>About</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://kinoandworld.github.io/2014/03/20/2014-03-20-zxingobjc-addition/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Kino">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kino的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ZXingObjC-addition
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2014-03-20 16:10:20" itemprop="dateCreated datePublished" datetime="2014-03-20T16:10:20+08:00">2014-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-28 17:01:11" itemprop="dateModified" datetime="2025-10-28T17:01:11+08:00">2025-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" itemprop="url" rel="index">
+                    <span itemprop="name">技术杂谈</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2014/03/20/2014-03-20-zxingobjc-addition/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2014/03/20/2014-03-20-zxingobjc-addition/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>##二维码扫描库ZXingObjC功能完善</p>
+<p>对于做过二维码扫描的大概都对ZXing这个库不陌生，然而这个库由于跨平台，代码文件过于臃肿，而且各种步骤非常麻烦。。。<br>还有不知道什么原因，ZXing的iOS库在最新发布版本不见了。 <code>还是我找不到？</code><br>总之因为种种原因，<a href="%22https://github.com/TheLevelUp/ZXingObjC%22">ZXingObjC</a> 作为良好的替代方案粗线了。</p>
+<p>顺带一提，支持 cocoapods =&gt; ‘ZXingObjC’, ‘~&gt; 2.2.6’</p>
+<p>好吧，现在进入主题，这个库很好用，但是我们在做二维码的时候一般会有一个需求，让二维码进入一个区域方才扫描，即是<code>扫描区域</code><br>让我比较郁闷的是，这么完善的库居然貌似没有实现这个很常见的功能。</p>
+<p>然后上GitHub上看了一下这个<a href="%22https://github.com/TheLevelUp/ZXingObjC/issues/100%22">Issue</a> , 以为终于找到解决方案……却发现是个坑。具体怎么坑就不说了……也许是我不会用吧。</p>
+<p>然后重新阅读了源码，发现了一个更简单的设置裁剪区域的方法。</p>
+<p>–</p>
+<p>###Let’s go</p>
+<p>首先，进入<code>ZXCapture.h</code> ，添加一个property</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) <span class="built_in">CGRect</span> scanCrop;</span><br></pre></td></tr></table></figure>
+
+
+<p>然后进入<code>ZXCapture.m</code> 的这个方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  - (<span class="keyword">void</span>)captureOutput:(ZXCaptureOutput *)captureOutput</span><br><span class="line">ZXQT(didOutputVideoFrame:(CVImageBufferRef)videoFrame</span><br><span class="line">     withSampleBuffer:(QTSampleBuffer *)sampleBuffer)</span><br><span class="line">ZXAV(didOutputSampleBuffer:(<span class="built_in">CMSampleBufferRef</span>)sampleBuffer)</span><br><span class="line">       fromConnection:(ZXCaptureConnection *)connection;</span><br></pre></td></tr></table></figure>
+
+<p>将大概570行位置的代码修改为</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CGImageRef</span> videoFrameImage = <span class="literal">NULL</span> ;</span><br><span class="line">     <span class="keyword">if</span>(<span class="built_in">CGRectEqualToRect</span>(<span class="keyword">self</span>.scanCrop,<span class="built_in">CGRectZero</span>))&#123;</span><br><span class="line">         videoFrameImage = [ZXCGImageLuminanceSource createImageFromBuffer:videoFrame];</span><br><span class="line">     &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">         videoFrameImage = [ZXCGImageLuminanceSource createImageFromBuffer:videoFrame</span><br><span class="line">                                                                      left:_scanCrop.origin.x</span><br><span class="line">                                                                       top:_scanCrop.origin.y</span><br><span class="line">                                                                     width:_scanCrop.size.width</span><br><span class="line">                                                                    height:_scanCrop.size.height];</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+<p>就这么简单。。。最后只要在客户端做类似这样的设置就好</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">self</span>.capture.scanCrop = <span class="built_in">CGRectMake</span>(_scanImageView.frame.origin.y,</span><br><span class="line">                                      _scanImageView.frame.origin.x,</span><br><span class="line">                                      _scanImageView.frame.size.width,</span><br><span class="line">                                      _scanImageView.frame.size.height);</span><br></pre></td></tr></table></figure>
+
+<p>唯一需要注意的是，这个frame的 x 和 y 需要颠倒，具体原因应该跟capture的rotation有关。</p>
+<p>暂时这么多吧- -虽然没人看~默默记录。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Kino
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://kinoandworld.github.io/2014/03/20/2014-03-20-zxingobjc-addition/" title="ZXingObjC-addition">http://kinoandworld.github.io/2014/03/20/2014-03-20-zxingobjc-addition/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2014/02/28/2014-02-28-v-for-vendetta-comment/" rel="prev" title="V字仇杀队 影评">
+      <i class="fa fa-chevron-left"></i> V字仇杀队 影评
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2014/09/17/2014-09-17-weixinpayforios/" rel="next" title="微信支付的小坑">
+      微信支付的小坑 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kino"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Kino</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinoandworld" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinoandworld" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinoandworld@gmail.com" title="E-Mail → mailto:kinoandworld@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/kinoandworld0113" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;kinoandworld0113" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kino</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://kinosblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "http://kinoandworld.github.io/2014/03/20/2014-03-20-zxingobjc-addition/",
+            identifier: "2014/03/20/2014-03-20-zxingobjc-addition/",
+            title: "ZXingObjC-addition"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kinosblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

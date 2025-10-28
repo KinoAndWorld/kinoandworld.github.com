@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://kinoandworld.github.io').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":"disqus | valine","storage":true,"lazyload":true,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="初来乍到知道这个活动是一个在佛山的小伙伴邀请我一起参加，以前对黑客马拉松一直神往但总没机会尝试，于是抱着有些事现在不做就一辈子都不会做了的心态，我跟他还有另外两个95后小伙伴相约一起，朝深圳粗发。从广州到深圳，我第一次体验顺风车，直接到会场而且价格比高铁便宜很多，很赞。 头脑风暴题目是这样：url拿到题目，我们4个人迅速头脑风暴了一下。想到达芬奇，最耳熟能详的当然就是那副名画《蒙娜丽莎的微笑》，然">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深圳2016-hackathon记录">
+<meta property="og:url" content="http://kinoandworld.github.io/2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/index.html">
+<meta property="og:site_name" content="Kino的自留地">
+<meta property="og:description" content="初来乍到知道这个活动是一个在佛山的小伙伴邀请我一起参加，以前对黑客马拉松一直神往但总没机会尝试，于是抱着有些事现在不做就一辈子都不会做了的心态，我跟他还有另外两个95后小伙伴相约一起，朝深圳粗发。从广州到深圳，我第一次体验顺风车，直接到会场而且价格比高铁便宜很多，很赞。 头脑风暴题目是这样：url拿到题目，我们4个人迅速头脑风暴了一下。想到达芬奇，最耳熟能详的当然就是那副名画《蒙娜丽莎的微笑》，然">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-06-24T18:55:23.000Z">
+<meta property="article:modified_time" content="2025-10-28T09:01:11.517Z">
+<meta property="article:author" content="Kino">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://kinoandworld.github.io/2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>深圳2016-hackathon记录 | Kino的自留地</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kino的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-desktop"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about.html" rel="section"><i class="fa fa-fw fa-user-circle-o"></i>About</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://kinoandworld.github.io/2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Kino">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kino的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深圳2016-hackathon记录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-06-25 02:55:23" itemprop="dateCreated datePublished" datetime="2016-06-25T02:55:23+08:00">2016-06-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-28 17:01:11" itemprop="dateModified" datetime="2025-10-28T17:01:11+08:00">2025-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="初来乍到"><a href="#初来乍到" class="headerlink" title="初来乍到"></a>初来乍到</h3><p>知道这个活动是一个在佛山的小伙伴邀请我一起参加，以前对黑客马拉松一直神往但总没机会尝试，于是抱着有些事现在不做就一辈子都不会做了的心态，我跟他还有另外两个95后小伙伴相约一起，朝深圳粗发。<br>从广州到深圳，我第一次体验顺风车，直接到会场而且价格比高铁便宜很多，很赞。</p>
+<h3 id="头脑风暴"><a href="#头脑风暴" class="headerlink" title="头脑风暴"></a>头脑风暴</h3><p>题目是这样：url<br>拿到题目，我们4个人迅速头脑风暴了一下。<br>想到达芬奇，最耳熟能详的当然就是那副名画《蒙娜丽莎的微笑》，然后很迅速地，我想到一个idea。就是通过人脸识别，把自拍或者照片的笑脸替换成蒙娜丽莎的微笑，蜜汁喜感。但是考虑到实现的话，我们一时之间没有多大头绪，因为这需要动态的图形拼贴等处理，我们并不精于此道。好在得到这个灵感，我们迅速想到了另一个idea——做一个自拍表情PK的App。大致原理就是，通过表情识别，我们可以为一张照片评出他的情绪以及程度，这时候我们让两个人上传他们的自拍，然后对决PK，通过识别结果判断胜负。在我们一致认可这个idea之后，我给这次的项目取了个名字 FaceBattle。</p>
+<h3 id="开始coding"><a href="#开始coding" class="headerlink" title="开始coding"></a>开始coding</h3><p>在丰盛的午餐以及下午茶的陪伴下，我们开始迅速讨论作战方案，由于我们4个人刚好是一个iOS，一个Android，一个UWP（😄情怀），还有一个服务端，简直一不小心就全平台了😂。当然，在开发之前，我们在纸上讨论了大致了原型以及需要的接口，然后负责WP的超哥也有模有样地迅速撸了几个界面。大家都像打了鸡血一样，争分夺秒这个词无比恰当地装饰着周遭的气氛中。</p>
+<h3 id="不眠之夜"><a href="#不眠之夜" class="headerlink" title="不眠之夜"></a>不眠之夜</h3><p>俗话说得好，人生不如意之事十之八九。随着时间的推进，疲惫使我们渐渐力有未逮，而且在服务端与微软的表情识别接口的联调上也出现了一些问题，直到晚上，我们的进度开始捉襟见肘。吃完了棒呆的夜宵，困意如约而至，而我们唯有用意志对抗阻力，注定在这个不眠不夜继续开发与调试。<br>在我们的努力“马拉松”下，终于把APP完成了八九不离十的程度，小憩一会之后，太阳冉冉升起，晨曦笼罩了大地。</p>
+<h3 id="路演"><a href="#路演" class="headerlink" title="路演"></a>路演</h3><p>到了中午就是“是骡子是马拉出来溜溜”的路演环节了，这次一共有12支队伍参赛，有一些经验十足的队伍，还有几个外国友人组成的队伍，说实话还是蛮有压力的。轮到我们解说作品的时候，我先扯了我们作品与文艺复兴的关系（因为这次马拉松的主题和参赛题目都跟文艺复兴有关），然后演示了在不同平台上进行battle的场景，当我看到在场的观众因为我们的新意而感到好奇和愉悦的时候，顿时觉得无论得奖与否，我们的作品已经发挥了应有的价值：）<br>最后出乎意料地，我们拿到了二等奖，并且与最佳人气奖只有一票之差，第一次参加能有这样的成绩说实话我已经非常知足了（果然抱对了大腿的感觉）。</p>
+<h3 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h3><p>我想这次经历无论对我还是另外几个小伙伴，都是宝贵的人生财富，而且我们本身也学到了很多。当然对我来说，更值得高兴的是又交到了几个志同道合的朋友。<br>最后，把我们的些许劳动成果开源一下，虽然时间有限可能质量并不是很好。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/JuniperPhoton/FaceBattleUWP">https://github.com/JuniperPhoton/FaceBattleUWP</a> （WP版，里面还有设计稿）</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/KinoAndWorld/FaceBattle">https://github.com/KinoAndWorld/FaceBattle</a> （iOS版）</p>
+<p>还有 微软的<a href="%E7%89%9B%E6%B4%A5%E8%AE%A1%E5%88%92">https://www.azure.cn/cognitive-services</a>是很棒的东西。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Kino
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://kinoandworld.github.io/2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/" title="深圳2016-hackathon记录">http://kinoandworld.github.io/2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/06/11/%E6%9C%BA%E5%99%A8%E4%B8%8E%E5%BF%83%E2%80%94%E2%80%94%E8%AF%BB%E3%80%8A%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%9F%AD%E7%AF%87%E5%85%A8%E9%9B%86%E3%80%8B/" rel="prev" title="机器与心——读《机器人短篇全集》">
+      <i class="fa fa-chevron-left"></i> 机器与心——读《机器人短篇全集》
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/08/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%881%EF%BC%89-Scrapy%E7%88%AC%E8%99%AB/" rel="next" title="从零开始开发一个App（1）- Scrapy爬虫">
+      从零开始开发一个App（1）- Scrapy爬虫 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E6%9D%A5%E4%B9%8D%E5%88%B0"><span class="nav-number">1.</span> <span class="nav-text">初来乍到</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4"><span class="nav-number">2.</span> <span class="nav-text">头脑风暴</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8Bcoding"><span class="nav-number">3.</span> <span class="nav-text">开始coding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E7%9C%A0%E4%B9%8B%E5%A4%9C"><span class="nav-number">4.</span> <span class="nav-text">不眠之夜</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E6%BC%94"><span class="nav-number">5.</span> <span class="nav-text">路演</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0"><span class="nav-number">6.</span> <span class="nav-text">尾声</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kino"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Kino</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinoandworld" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinoandworld" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinoandworld@gmail.com" title="E-Mail → mailto:kinoandworld@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/kinoandworld0113" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;kinoandworld0113" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kino</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://kinosblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "http://kinoandworld.github.io/2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/",
+            identifier: "2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/",
+            title: "深圳2016-hackathon记录"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kinosblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://kinoandworld.github.io').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":"disqus | valine","storage":true,"lazyload":true,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="其实就是因为cocosachina的一篇文章看了之后发现自己好多objective-C的细节都没弄清楚，所以记录一下，会的不会的都写一下~ &#x3D;&#x3D;题目&#x3D;&#x3D;1、假设有三个对象，一个父类的父类，一个父类和一个子类。父类的父类持有父类的引用（retain），父类持有子类的引用（retain），子类持有父类的引用（retain）。父类的父类释放（release）父类，解释下会发生什么。    父类被父类的父">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一些iOS面试题的探索">
+<meta property="og:url" content="http://kinoandworld.github.io/2013/12/17/2013-12-17-some-ios-question-study/index.html">
+<meta property="og:site_name" content="Kino的自留地">
+<meta property="og:description" content="其实就是因为cocosachina的一篇文章看了之后发现自己好多objective-C的细节都没弄清楚，所以记录一下，会的不会的都写一下~ &#x3D;&#x3D;题目&#x3D;&#x3D;1、假设有三个对象，一个父类的父类，一个父类和一个子类。父类的父类持有父类的引用（retain），父类持有子类的引用（retain），子类持有父类的引用（retain）。父类的父类释放（release）父类，解释下会发生什么。    父类被父类的父">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2013-12-17T01:49:23.000Z">
+<meta property="article:modified_time" content="2025-10-28T09:01:11.516Z">
+<meta property="article:author" content="Kino">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://kinoandworld.github.io/2013/12/17/2013-12-17-some-ios-question-study/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>一些iOS面试题的探索 | Kino的自留地</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kino的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-desktop"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about.html" rel="section"><i class="fa fa-fw fa-user-circle-o"></i>About</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://kinoandworld.github.io/2013/12/17/2013-12-17-some-ios-question-study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Kino">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kino的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一些iOS面试题的探索
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2013-12-17 09:49:23" itemprop="dateCreated datePublished" datetime="2013-12-17T09:49:23+08:00">2013-12-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-28 17:01:11" itemprop="dateModified" datetime="2025-10-28T17:01:11+08:00">2025-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9E%97%E4%B8%AD%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">林中笔记</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2013/12/17/2013-12-17-some-ios-question-study/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2013/12/17/2013-12-17-some-ios-question-study/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>其实就是因为cocosachina的<a target="_blank" rel="noopener" href="http://www.cocoachina.com/gamedev/misc/2013/1209/7499.html">一篇文章</a><br>看了之后发现自己好多objective-C的细节都没弄清楚，所以记录一下，会的不会的都写一下~</p>
+<h3 id="题目"><a href="#题目" class="headerlink" title="==题目=="></a>==题目==</h3><p>1、假设有三个对象，一个父类的父类，一个父类和一个子类。父类的父类持有父类的引用（retain），父类持有子类的引用（retain），子类持有父类的引用（retain）。父类的父类释放（release）父类，解释下会发生什么。<br>    <code>父类被父类的父类释放掉以后，父类的引用计数-1，而因为子类拥有父类的计数，父类并未销毁。</code></p>
+<p>2、当一个空指针（nil pointer）调用了一个方法会发生什么？<br>    <code>安然无恙 —— 这是oc自带的消息机制，nil也能发送消息，而不会报错</code></p>
+<p>3、为什么retainCount绝对不能用在发布的代码中？请给出两个相对独立的解释。</p>
+<pre><code>- retainCount受到时间和framework的影响太大，不能准确反映内存的引用计数
+- retainCount很容易迷惑人，采取规范的内存管理才是正道</code></pre>
+<p>4、请说明一下你查找或者解决内存泄露的处理过程。<br>    <code>使用instruments作为动态分析的手段，还有Xcode的静态内存分析</code></p>
+<p>5、解释下自动回收池(autorelease pool)在程序运行时是如何运作的.<br>    <code>xcode为开发者写的代码外层包了一层NSAutoreleasePool。建立一个回收池堆栈(Stack)每次对象发送autorelease消息时，对象的引用计数并不真正变化，而是向pool中添加一条记录，记下对象的这种要求。最后当pool发送drain或release消息时，池中的所有对象的这种要求一一被执行。顺便说下使用场景：</code></p>
+<ul>
+<li>应用不是基于”Application Kit”，像”Command-line tool”，因为它并没有内置的”autorelease pools”的支持。</li>
+<li>创建线程，你必需在线程开始时创建一个”Autorelease Pool”实例。反之，会造成内存池露（会在以后的文章详细说明线程与池的技巧）。</li>
+<li>一个循环内创建了太多的临时对象，你应该为他们创建一个”Autorelease Pool”对象，并在下次循还前销毁它们。</li>
+</ul>
+<p>6、当处理属性申明的时候，原子（atomic）跟 非原子（non-atomic）属性有什么区别？<br>    <code>事关多线程，原子（atomic）可以说是线程安全的，也就是在读取这个属性的变量的时候，会进行一些额外的操作（比如锁）.所以说，atomic会比较安全但是比较耗时。</code></p>
+<p>7、在C语言中，你如何能用尽可能短的时间来倒转一个字符串？<br>    <code>这个我真不知道有什么高效的方法~</code>  <a target="_blank" rel="noopener" href="http://www.cnblogs.com/JCSU/articles/1305401.html">有篇文章可参考</a></p>
+<p>8、遍历一个NSArray和一个NSSet，哪一个更快？<br>    <code>其实意思是问，遍历一个链表和哈希表，哪个更快？</code><br>    <a target="_blank" rel="noopener" href="http://maccrazy.diandian.com/post/2011-10-09/5671451">参考一下</a> 结论在最后</p>
+<p>9、Objective-C中的posing指的是什么？<br>    <a target="_blank" rel="noopener" href="http://blog.csdn.net/tenfyguo/article/details/9220535">参考</a></p>
+<p>10、copy跟retain有什么区别？<br>    <code>一个是复制内容，一个引用计数+1，（nsstring比较特殊，两个的功能几乎一样）需要注意的是，自定义的类需要重写一个方法以实现自己的深复制：</code></p>
+<pre><code>    -(id) copyWithZone:(NSZone *) Zone&#123;
+        grandSuper * scCopy;
+        scCopy=[[[self class] allocWithZone:Zone]init];
+        return scCopy;
+    &#125;</code></pre>
+<p>11、执行如下的代码会发生什么情况？</p>
+<pre><code>    Ball *ball = [[[[Ball alloc] init] autorelease] autorelease]; </code></pre>
+<p>——崩溃，因为重复释放，在自动回收池下一次进行回收时崩溃</p>
+<p>很多地方理解可能还是有问题~继续努力吧 ↖(^ω^)↗</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Kino
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://kinoandworld.github.io/2013/12/17/2013-12-17-some-ios-question-study/" title="一些iOS面试题的探索">http://kinoandworld.github.io/2013/12/17/2013-12-17-some-ios-question-study/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2013/12/13/2013-12-13-how-to-use-delegate-in-cocos2d-x/" rel="prev" title="how to use delegate in cocos2d x">
+      <i class="fa fa-chevron-left"></i> how to use delegate in cocos2d x
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2014/02/28/2014-02-28-v-for-vendetta-comment/" rel="next" title="V字仇杀队 影评">
+      V字仇杀队 影评 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">&#x3D;&#x3D;题目&#x3D;&#x3D;</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kino"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Kino</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinoandworld" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinoandworld" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinoandworld@gmail.com" title="E-Mail → mailto:kinoandworld@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/kinoandworld0113" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;kinoandworld0113" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kino</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://kinosblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "http://kinoandworld.github.io/2013/12/17/2013-12-17-some-ios-question-study/",
+            identifier: "2013/12/17/2013-12-17-some-ios-question-study/",
+            title: "一些iOS面试题的探索"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kinosblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

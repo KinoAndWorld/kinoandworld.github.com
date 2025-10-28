@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://kinoandworld.github.io').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":"disqus | valine","storage":true,"lazyload":true,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="闲来无事，上codecademy学下Ruby。尊贵的红宝石，美好而瑰丽，让人不忍一睹风采……好吧我太废话了。根据codecademy的介绍，Ruby的特性非常明显:  高级语言（High-level） 解释型语言（Interpreted） 面向对象（Object-oriented） 简单易用（Easy to use）  当然……作为一种面向对象的语言，这些特点几乎是必须的……话说……我不知道rub">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ruby学习笔记-初步涉猎">
+<meta property="og:url" content="http://kinoandworld.github.io/2013/06/29/2013-06-29-ruby-study-note-01/index.html">
+<meta property="og:site_name" content="Kino的自留地">
+<meta property="og:description" content="闲来无事，上codecademy学下Ruby。尊贵的红宝石，美好而瑰丽，让人不忍一睹风采……好吧我太废话了。根据codecademy的介绍，Ruby的特性非常明显:  高级语言（High-level） 解释型语言（Interpreted） 面向对象（Object-oriented） 简单易用（Easy to use）  当然……作为一种面向对象的语言，这些特点几乎是必须的……话说……我不知道rub">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2013-06-29T01:49:23.000Z">
+<meta property="article:modified_time" content="2025-10-28T09:01:11.515Z">
+<meta property="article:author" content="Kino">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://kinoandworld.github.io/2013/06/29/2013-06-29-ruby-study-note-01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Ruby学习笔记-初步涉猎 | Kino的自留地</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kino的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-desktop"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about.html" rel="section"><i class="fa fa-fw fa-user-circle-o"></i>About</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://kinoandworld.github.io/2013/06/29/2013-06-29-ruby-study-note-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Kino">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kino的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ruby学习笔记-初步涉猎
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2013-06-29 09:49:23" itemprop="dateCreated datePublished" datetime="2013-06-29T09:49:23+08:00">2013-06-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-28 17:01:11" itemprop="dateModified" datetime="2025-10-28T17:01:11+08:00">2025-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9E%97%E4%B8%AD%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">林中笔记</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2013/06/29/2013-06-29-ruby-study-note-01/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2013/06/29/2013-06-29-ruby-study-note-01/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>闲来无事，上codecademy学下Ruby。<br>尊贵的红宝石，美好而瑰丽，让人不忍一睹风采……好吧我太废话了。<br>根据codecademy的介绍，Ruby的特性非常明显:</p>
+<ul>
+<li>高级语言（High-level）</li>
+<li>解释型语言（Interpreted）</li>
+<li>面向对象（Object-oriented）</li>
+<li>简单易用（Easy to use）</li>
+</ul>
+<p>当然……作为一种面向对象的语言，这些特点几乎是必须的……<br>话说……我不知道ruby算不算脚本语言。</p>
+<p>–<br>##变量<br>ruby的变量定义和数据类型真是轻便快捷，比较类似javascript吧，弱类型。<br>变量是无需定义的，抑或称之为动态数据类型吧。<br>比如</p>
+<pre><code>i = 1
+s = &quot;string&quot;
+arr = [1,2,3]</code></pre>
+<p>真是方便得要死。=_=</p>
+<p>跟其他面向对象语言类似，ruby的所有数据类型都是对象。</p>
+<p>##操作符<br>操作符基本跟其他语言相似。有几个不同的地方，记录一下：<br>10 ** 2  #相当于10的2次方 这种写法也挺好的</p>
+<p>##字符串（string）<br>有两种形式： <code>&quot;string&quot;</code> 和 <code>&#39;string&#39;</code><br>比较方便的是，字符串内变量的引用：</p>
+<pre><code>favorite_language = &quot;Ruby&quot;
+puts &quot;My favorite language is #&#123;favorite_language&#125;!&quot;
+My favorite language is Ruby!</code></pre>
+<p>另外，字符串带了很多函数，可以方便的对字符串进行各类操作：</p>
+<pre><code>my_name = &quot;eric&quot;
+my_name.upcase #转换大小写
+=&gt; &quot;ERIC&quot;
+my_name.capitalize
+=&gt; &quot;Eric&quot;
+my_name.reverse #反转
+=&gt; &quot;cire&quot;</code></pre>
+<p>puts（put string的简写）和print的区别：</p>
+<pre><code>3.times &#123; puts &quot;Hello!&quot; &#125;
+Hello!
+Hello!
+Hello!
+3.times &#123; print &quot;Hello!&quot; &#125;
+Hello!Hello!Hello!</code></pre>
+<p>也就是一个是带换行的一个不带。</p>
+<p>#逻辑运算</p>
+<p>我发现Ruby的很多基本语句都要以<code>End</code>结尾的……感觉似乎不太有必要吧。</p>
+<p>最基本的IF语句：</p>
+<pre><code>if condition
+  # Do something
+end</code></pre>
+<p>除了elsif比较奇怪外……其他的还是很规矩</p>
+<pre><code>if x &gt; y
+  puts &quot;x is greater than y!&quot;
+elsif x &lt; y
+  puts &quot;x is less than y!&quot;
+else
+  puts &quot;x equals y!&quot;
+end</code></pre>
+<p>然后是比较奇特的unless语法</p>
+<pre><code>unless x == 10   #其实就等同于 if x!=10 感觉没少几个字- -不解为什么要加入这个语法。
+  puts &quot;I get printed!&quot;
+end</code></pre>
+<p>##方法<br>方法定义跟其他语言也大同小异</p>
+<pre><code>def method_name(arguments)
+  # Code to be executed
+end</code></pre>
+<p>比较困惑的是返回值的问题，不过找到了<a target="_blank" rel="noopener" href="http://imshanks.com/ruby-methods-return-valu/">答案</a></p>
+<p>##循环语句<br>ruby的循环方式还是很多的：<br>-while</p>
+<pre><code>while true
+  puts &quot;I&#39;m an infinite loop!&quot;
+end</code></pre>
+<p>-until</p>
+<pre><code>until counter == 0
+  puts &quot;Counter currently at #&#123;counter&#125;.&quot;
+  counter -= 1
+end</code></pre>
+<p>-for</p>
+<pre><code>for number in (0..5) #这里，..表示包括5，...表示不包括
+  puts number
+end</code></pre>
+<p>还有遍历数组</p>
+<pre><code>for item in my_array
+  puts item
+end</code></pre>
+<p>-.times</p>
+<pre><code>3.times &#123; puts &quot;Chunky bacon!&quot; &#125;</code></pre>
+<p>这样就实现了输出三个字符串，方便得要死</p>
+<p>-.each</p>
+<pre><code>one_to_ten.each do |num|
+  print (num**2).to_s + &quot; &quot;
+end</code></pre>
+<p>##其他</p>
+<p>-数组的操作：</p>
+<pre><code>y.push(&quot;cartoon foxes&quot;) #增加一个元素
+
+z = Array.new(3, &quot;Matz!&quot;) #构造方法更灵活地创建数组</code></pre>
+<p>-哈希（hash）</p>
+<pre><code>my_hash = &#123;
+  :key1 =&gt; &quot;First value!&quot;,
+  :key2 =&gt; &quot;Second value!&quot;,
+  :key3 =&gt; &quot;Third value!&quot;
+&#125;
+my_hash[:key2]
+=&gt; &quot;Second value!&quot;</code></pre>
+<p>所谓哈希……其实就是字典吧，键值对的数据结构。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Kino
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://kinoandworld.github.io/2013/06/29/2013-06-29-ruby-study-note-01/" title="Ruby学习笔记-初步涉猎">http://kinoandworld.github.io/2013/06/29/2013-06-29-ruby-study-note-01/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2013/07/12/2013-07-12-ruby-study-note-02/" rel="next" title="Ruby学习笔记-杂记">
+      Ruby学习笔记-杂记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kino"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Kino</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinoandworld" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinoandworld" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinoandworld@gmail.com" title="E-Mail → mailto:kinoandworld@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/kinoandworld0113" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;kinoandworld0113" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kino</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://kinosblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "http://kinoandworld.github.io/2013/06/29/2013-06-29-ruby-study-note-01/",
+            identifier: "2013/06/29/2013-06-29-ruby-study-note-01/",
+            title: "Ruby学习笔记-初步涉猎"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kinosblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

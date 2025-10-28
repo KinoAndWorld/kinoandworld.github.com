@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://kinoandworld.github.io').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":"disqus | valine","storage":true,"lazyload":true,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="前言最近我体验了一次全栈（伪）开发App的经历，获益良多，我想把过程记录一下，一是回顾与巩固，二是抛砖引玉，如有谬误以求大神指点。 首先，我们需要明确我们最终的目标是什么。比如现在我要做一个简单的游戏评测资讯的App。那么我首先需要【数据来源】然后需要一个提供数据接口的【服务端】，我将先完成这二者，然后才开始App的开发。 因此我将分为三步[Python爬虫]-&gt;[Ruby服务端]-&gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零开始开发一个App（1）- Scrapy爬虫">
+<meta property="og:url" content="http://kinoandworld.github.io/2016/08/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%881%EF%BC%89-Scrapy%E7%88%AC%E8%99%AB/index.html">
+<meta property="og:site_name" content="Kino的自留地">
+<meta property="og:description" content="前言最近我体验了一次全栈（伪）开发App的经历，获益良多，我想把过程记录一下，一是回顾与巩固，二是抛砖引玉，如有谬误以求大神指点。 首先，我们需要明确我们最终的目标是什么。比如现在我要做一个简单的游戏评测资讯的App。那么我首先需要【数据来源】然后需要一个提供数据接口的【服务端】，我将先完成这二者，然后才开始App的开发。 因此我将分为三步[Python爬虫]-&gt;[Ruby服务端]-&gt;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/25038-3289227b3c31677b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/25038-c322d36580a526ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/25038-5309230be55509fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="article:published_time" content="2016-08-01T10:18:42.000Z">
+<meta property="article:modified_time" content="2025-10-28T09:01:11.519Z">
+<meta property="article:author" content="Kino">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/25038-3289227b3c31677b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+<link rel="canonical" href="http://kinoandworld.github.io/2016/08/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%881%EF%BC%89-Scrapy%E7%88%AC%E8%99%AB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>从零开始开发一个App（1）- Scrapy爬虫 | Kino的自留地</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kino的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-desktop"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about.html" rel="section"><i class="fa fa-fw fa-user-circle-o"></i>About</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://kinoandworld.github.io/2016/08/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%881%EF%BC%89-Scrapy%E7%88%AC%E8%99%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Kino">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kino的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从零开始开发一个App（1）- Scrapy爬虫
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 18:18:42" itemprop="dateCreated datePublished" datetime="2016-08-01T18:18:42+08:00">2016-08-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-28 17:01:11" itemprop="dateModified" datetime="2025-10-28T17:01:11+08:00">2025-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" itemprop="url" rel="index">
+                    <span itemprop="name">技术杂谈</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2016/08/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%881%EF%BC%89-Scrapy%E7%88%AC%E8%99%AB/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/01/从零开始开发一个App（1）-Scrapy爬虫/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近我体验了一次全栈（伪）开发App的经历，获益良多，我想把过程记录一下，一是回顾与巩固，二是抛砖引玉，如有谬误以求大神指点。</p>
+<p>首先，我们需要明确我们最终的目标是什么。<br>比如现在我要做一个简单的游戏评测资讯的App。<br>那么我首先需要【数据来源】然后需要一个提供数据接口的【服务端】，我将先完成这二者，然后才开始App的开发。</p>
+<p>因此我将分为三步[Python爬虫]-&gt;[Ruby服务端]-&gt;[iOS客户端]来完成这个App。</p>
+<p>而爬虫技术，将作为先遣部队，为我们攻下第一个数据堡垒。</p>
+<h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>许多语言都有成熟的爬虫框架，我选择的是使用Python语言的Scrapy框架，这是一个非常完善而且功能强大的爬虫框架，我们只需要用到最基础的功能。Scrapy拥有非常棒的<a target="_blank" rel="noopener" href="http://scrapy-chs.readthedocs.io/zh_CN/0.24/index.html">中文文档</a> 安装和入门教程文档一应俱全，我就不赘述了。</p>
+<p>安装好之后，我们打开终端，开始创建令人激动的爬虫</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">scrapy startproject yxReview</span><br><span class="line"></span><br><span class="line">cd yxReview </span><br><span class="line"></span><br><span class="line">scrapy genspider yx_review www.ali213.net&#x2F;news&#x2F;pingce</span><br></pre></td></tr></table></figure>
+
+<p>完成后结构大致如图<br><img src="http://upload-images.jianshu.io/upload_images/25038-3289227b3c31677b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="k"></p>
+<p>就这样，基础的框架和代码已经被生成了，接着我们用编辑器打开yxReview目录，首先在<code>items.py</code>文件下新建一个item。<br>我们可以先打开网页<a target="_blank" rel="noopener" href="http://www.ali213.net/news/pingce/">游侠评测</a>分析一下</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/25038-c322d36580a526ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="游侠评测"></p>
+<p>简单起见，我们目前只抓取4个属性，创建代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleItem</span>(<span class="params">scrapy.Item</span>):</span></span><br><span class="line">    title = scrapy.Field()</span><br><span class="line">    cover_image = scrapy.Field()</span><br><span class="line">    summary = scrapy.Field()</span><br><span class="line">    score = scrapy.Field()</span><br></pre></td></tr></table></figure>
+
+<p>然后我们进入目录下的spiders文件夹，打开<code>yx_review.py</code><br>如下编辑</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> yxReview.items <span class="keyword">import</span> ArticleItem</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">YxReviewSpider</span>(<span class="params">scrapy.Spider</span>):</span></span><br><span class="line">    name = <span class="string">&quot;yx_review&quot;</span></span><br><span class="line">    allowed_domains = [<span class="string">&quot;www.ali213.net&quot;</span>]</span><br><span class="line">    start_urls = (</span><br><span class="line">        <span class="string">&#x27;http://www.ali213.net/news/pingce/&#x27;</span>,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span>(<span class="params">self, response</span>):</span></span><br><span class="line">        items = []</span><br><span class="line">        <span class="keyword">for</span> sel <span class="keyword">in</span> response.xpath(<span class="string">&#x27;//div[@class=&quot;t3_l_one_l&quot;]&#x27;</span>):</span><br><span class="line">            item = ArticleItem()</span><br><span class="line">            item[<span class="string">&quot;cover_image&quot;</span>] = sel.xpath(<span class="string">&quot;div[@class=&#x27;one_l_pic&#x27;]/a/img/@src&quot;</span>).extract()</span><br><span class="line">            item[<span class="string">&quot;title&quot;</span>] =   sel.xpath(<span class="string">&quot;div[@class=&#x27;one_l_con&#x27;]/div[@class=&#x27;one_l_con_tit&#x27;]/a/text()&quot;</span>).extract()</span><br><span class="line">            item[<span class="string">&quot;summary&quot;</span>] = sel.xpath(<span class="string">&quot;div[@class=&#x27;one_l_con&#x27;]/div[@class=&#x27;one_l_con_con&#x27;]/text()&quot;</span>).extract()</span><br><span class="line">            items.append(item)</span><br><span class="line"></span><br><span class="line">        index = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> scoreSel <span class="keyword">in</span> response.xpath(<span class="string">&#x27;//div[@class = &quot;t3_l_one_r&quot;]&#x27;</span>):</span><br><span class="line">            item = items[index]</span><br><span class="line">            item[<span class="string">&quot;score&quot;</span>] = scoreSel.xpath(<span class="string">&quot;div/span/text()&quot;</span>).extract()</span><br><span class="line">            index = index + <span class="number">1</span></span><br><span class="line">            <span class="keyword">yield</span> item</span><br><span class="line"></span><br><span class="line">        <span class="keyword">print</span> items</span><br></pre></td></tr></table></figure>
+<p>这里主要是parse方法，返回请求到的HTML然后解析出我们需要的数据装进ArticleItem里，然后将items传输到<code>pipeline</code>中。</p>
+<h3 id="传输管道"><a href="#传输管道" class="headerlink" title="传输管道"></a>传输管道</h3><p>在爬虫scrapy中，pipeline是一个重要的概念，它相当于一个“加工器”，可以连接多个自定义的pipeline，完成数据的后续处理工作，比如进行筛选分类，或者持久化到本地等等，按优先级串连。</p>
+<p>在本例中，为了简便，我将创建一个管道将数据简单处理并保存到本地文件中。</p>
+<p>打开<code>pipelines.py</code>，编辑如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> signals</span><br><span class="line"><span class="keyword">from</span> scrapy.contrib.exporter <span class="keyword">import</span> JsonItemExporter</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">YxreviewPipeline</span>(<span class="params">object</span>):</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">from_crawler</span>(<span class="params">cls, crawler</span>):</span></span><br><span class="line">         pipeline = cls()</span><br><span class="line">         crawler.signals.connect(pipeline.spider_opened, signals.spider_opened)</span><br><span class="line">         crawler.signals.connect(pipeline.spider_closed, signals.spider_closed)</span><br><span class="line">         <span class="keyword">return</span> pipeline</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">spider_opened</span>(<span class="params">self, spider</span>):</span></span><br><span class="line">        self.file = open(<span class="string">&#x27;items.json&#x27;</span>, <span class="string">&#x27;wb&#x27;</span>)</span><br><span class="line">        self.exporter = JsonItemExporter(self.file)</span><br><span class="line">        self.exporter.start_exporting()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">spider_closed</span>(<span class="params">self, spider</span>):</span></span><br><span class="line">        self.exporter.finish_exporting()</span><br><span class="line">        self.file.close()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_item</span>(<span class="params">self, item, spider</span>):</span></span><br><span class="line">        self.checkData(item, <span class="string">&quot;title&quot;</span>)</span><br><span class="line">        self.checkData(item, <span class="string">&quot;summary&quot;</span>)</span><br><span class="line">        self.checkData(item, <span class="string">&quot;cover_image&quot;</span>)</span><br><span class="line">        self.checkData(item, <span class="string">&quot;score&quot;</span>)</span><br><span class="line"></span><br><span class="line">        self.exporter.export_item(item)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">checkData</span>(<span class="params">self ,item, field</span>):</span></span><br><span class="line">        <span class="keyword">if</span> len(item[field]) &gt; <span class="number">0</span>:</span><br><span class="line">            newText = item[field][<span class="number">0</span>].encode(<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line">            item[field] = newText.strip()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            item[field] = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>前面三个方法，相当于给当前的pipeline提供了一个JsonItemExporter的插件，用于将所有爬取的item导出为JSON格式的文件之中。</p>
+<p>另外需要说明的是，这里自定义了一个<code>checkData</code>方法，作为一个简单的数据类型验证，以及将之前解析的内容转换成字符串并且进行了utf-8编码的转码，保障中文内容的正确显示。</p>
+<p>完成后，打开工程目录下的<code>items.json</code>文件，可以看到数据已经以JSON格式保存了下来。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/25038-5309230be55509fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="items.json"></p>
+<h3 id="告一段落"><a href="#告一段落" class="headerlink" title="告一段落"></a>告一段落</h3><p>至此，爬虫的任务可以告一段落，当然，在实际应用中还需要解决更多的问题，比如分页爬取，反爬虫的应对等等，迫于文章篇幅暂且不表，算作扩展阅读吧 ：）</p>
+<p>下一篇，我们将使用ruby on rails编写服务端，提供移动端的REST API接口。</p>
+<hr>
+<p><strong>系列链接</strong></p>
+<a href="/2016/08/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%881%EF%BC%89-Scrapy%E7%88%AC%E8%99%AB/" title="从零开始开发一个App（1）- Scrapy爬虫">从零开始开发一个App（1）- Scrapy爬虫</a>
+<a href="/2016/08/03/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%882%EF%BC%89-%E7%AE%80%E6%98%93REST-API%E6%9C%8D%E5%8A%A1%E7%AB%AF/" title="从零开始开发一个App（2）- 简易REST API服务端">从零开始开发一个App（2）- 简易REST API服务端</a>
+<a href="/2016/08/05/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%883%EF%BC%89-iOS%E5%AE%A2%E6%88%B7%E7%AB%AF/" title="从零开始开发一个App（3）- iOS客户端">从零开始开发一个App（3）- iOS客户端</a>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Kino
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://kinoandworld.github.io/2016/08/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%881%EF%BC%89-Scrapy%E7%88%AC%E8%99%AB/" title="从零开始开发一个App（1）- Scrapy爬虫">http://kinoandworld.github.io/2016/08/01/从零开始开发一个App（1）-Scrapy爬虫/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/06/25/2016-06-25-2016-shenzhen-hackaton-record/" rel="prev" title="深圳2016-hackathon记录">
+      <i class="fa fa-chevron-left"></i> 深圳2016-hackathon记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/08/03/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%882%EF%BC%89-%E7%AE%80%E6%98%93REST-API%E6%9C%8D%E5%8A%A1%E7%AB%AF/" rel="next" title="从零开始开发一个App（2）- 简易REST API服务端">
+      从零开始开发一个App（2）- 简易REST API服务端 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B"><span class="nav-number">2.</span> <span class="nav-text">开始</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E7%AE%A1%E9%81%93"><span class="nav-number">3.</span> <span class="nav-text">传输管道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%8A%E4%B8%80%E6%AE%B5%E8%90%BD"><span class="nav-number">4.</span> <span class="nav-text">告一段落</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kino"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Kino</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinoandworld" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinoandworld" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinoandworld@gmail.com" title="E-Mail → mailto:kinoandworld@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/kinoandworld0113" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;kinoandworld0113" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kino</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://kinosblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "http://kinoandworld.github.io/2016/08/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAApp%EF%BC%881%EF%BC%89-Scrapy%E7%88%AC%E8%99%AB/",
+            identifier: "2016/08/01/从零开始开发一个App（1）-Scrapy爬虫/",
+            title: "从零开始开发一个App（1）- Scrapy爬虫"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kinosblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

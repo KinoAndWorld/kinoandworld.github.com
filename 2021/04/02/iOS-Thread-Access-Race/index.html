@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://kinoandworld.github.io').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":"disqus | valine","storage":true,"lazyload":true,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="Swift多线程读写中的内存竞争问题内存竞争首先，我们有一段这样的代码： 12345678910111213141516private var progressMap: [String: Double] &#x3D; [:]private let accessQueue &#x3D; DispatchQueue(label: &quot;com.ThreadRWTest&quot;, qos: .default, a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift多线程读写中的内存竞争问题">
+<meta property="og:url" content="http://kinoandworld.github.io/2021/04/02/iOS-Thread-Access-Race/index.html">
+<meta property="og:site_name" content="Kino的自留地">
+<meta property="og:description" content="Swift多线程读写中的内存竞争问题内存竞争首先，我们有一段这样的代码： 12345678910111213141516private var progressMap: [String: Double] &#x3D; [:]private let accessQueue &#x3D; DispatchQueue(label: &quot;com.ThreadRWTest&quot;, qos: .default, a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/04/01/25yf1hAsrXDRHKI.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/01/RFK1p3dDnaOG75v.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/04/01/YyU36nKwQhiDsfS.png">
+<meta property="article:published_time" content="2021-04-02T07:58:51.000Z">
+<meta property="article:modified_time" content="2025-10-28T09:01:11.518Z">
+<meta property="article:author" content="Kino">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/04/01/25yf1hAsrXDRHKI.png">
+
+<link rel="canonical" href="http://kinoandworld.github.io/2021/04/02/iOS-Thread-Access-Race/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Swift多线程读写中的内存竞争问题 | Kino的自留地</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kino的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-desktop"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about.html" rel="section"><i class="fa fa-fw fa-user-circle-o"></i>About</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://kinoandworld.github.io/2021/04/02/iOS-Thread-Access-Race/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Kino">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kino的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift多线程读写中的内存竞争问题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-02 15:58:51" itemprop="dateCreated datePublished" datetime="2021-04-02T15:58:51+08:00">2021-04-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-28 17:01:11" itemprop="dateModified" datetime="2025-10-28T17:01:11+08:00">2025-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/02/iOS-Thread-Access-Race/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/02/iOS-Thread-Access-Race/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Swift多线程读写中的内存竞争问题"><a href="#Swift多线程读写中的内存竞争问题" class="headerlink" title="Swift多线程读写中的内存竞争问题"></a>Swift多线程读写中的内存竞争问题</h1><h2 id="内存竞争"><a href="#内存竞争" class="headerlink" title="内存竞争"></a>内存竞争</h2><p>首先，我们有一段这样的代码：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> progressMap: [<span class="type">String</span>: <span class="type">Double</span>] = [:]</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">let</span> accessQueue = <span class="type">DispatchQueue</span>(label: <span class="string">&quot;com.ThreadRWTest&quot;</span>, qos: .<span class="keyword">default</span>, attributes: .concurrent, autoreleaseFrequency: .inherit, target: .<span class="keyword">none</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> idx <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">1000</span> &#123;</span><br><span class="line">        accessQueue.async(group: .<span class="keyword">none</span>, qos: .<span class="keyword">default</span>, flags: .assignCurrentContext) &#123; [<span class="keyword">self</span>] <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">let</span> str = <span class="string">&quot;\(idx)&quot;</span></span><br><span class="line">            progressMap[str] = <span class="number">0.0</span></span><br><span class="line">            <span class="type">DispatchQueue</span>.main.async &#123;</span><br><span class="line">                <span class="built_in">print</span>(str)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是一段很常见的代码，我们创建1000个任务（可以粗略理解为创建1000个子线程，当然系统似乎会控制最大线程数量），异步地给progressMap这个字典赋值（写操作），然后切换到主线程展示（这里直接简化为print）。<br>稍微有点经验的可能一眼就看出了代码的异样：在异步多线程写同一个变量。这是内存异常的罪魁祸首之一。</p>
+<p>我们执行以下，以身试法</p>
+<p><img src="https://i.loli.net/2021/04/01/25yf1hAsrXDRHKI.png" alt="WX20210401-174903@2x.png"></p>
+<p>噢，果然崩溃了。</p>
+<p>但是为什么会崩溃呢？或者说如果想知道崩溃发生的细节该如何调试？</p>
+<p>万幸的是，苹果Xcode已经为我们提供了一个非常简单而强大的工具<em>Thread Sanitizer</em><br>在<code>edit scheme</code>选项卡中，勾选中<code>Diagnostics</code>中的<code>Thread Sanitizer</code></p>
+<p><img src="https://i.loli.net/2021/04/01/RFK1p3dDnaOG75v.jpg" alt="1_kBqRpigF7nwCMBK3H3cGKw.jpeg"></p>
+<p>然后重新运行，可以发现，Xcode会直接在控制台打印出一堆分析日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">WARNING: ThreadSanitizer: Swift access race (pid&#x3D;76516)</span><br><span class="line">  Modifying access of Swift variable at 0x7b5c00000350 by thread T9:</span><br><span class="line">    #0 ViewController.progressMap.modify ViewController.swift (ThreadRWTest:x86_64+0x100002f34)</span><br><span class="line">    #1 closure #1 in ViewController.viewDidLoad() ViewController.swift:28 (ThreadRWTest:x86_64+0x1000041ce)</span><br><span class="line">    #2 partial apply for closure #1 in ViewController.viewDidLoad() &lt;compiler-generated&gt; (ThreadRWTest:x86_64+0x1000044e5)</span><br><span class="line">    #3 thunk for @escaping @callee_guaranteed () -&gt; () &lt;compiler-generated&gt; (ThreadRWTest:x86_64+0x1000047a3)</span><br><span class="line">    #4 _dispatch_client_callout &lt;null&gt;:2 (libdispatch.dylib:x86_64+0x39c7)</span><br><span class="line">    #5 _dispatch_client_callout &lt;null&gt;:2 (libdispatch.dylib:x86_64+0x39c7)</span><br><span class="line"></span><br><span class="line">  Previous modifying access of Swift variable at 0x7b5c00000350 by thread T5:</span><br><span class="line">    #0 ViewController.progressMap.modify ViewController.swift (ThreadRWTest:x86_64+0x100002f34)</span><br><span class="line">    #1 closure #1 in ViewController.viewDidLoad() ViewController.swift:28 (ThreadRWTest:x86_64+0x1000041ce)</span><br><span class="line">    #2 partial apply for closure #1 in ViewController.viewDidLoad() &lt;compiler-generated&gt; (ThreadRWTest:x86_64+0x1000044e5)</span><br><span class="line">    #3 thunk for @escaping @callee_guaranteed () -&gt; () &lt;compiler-generated&gt; (ThreadRWTest:x86_64+0x1000047a3)</span><br><span class="line">    #4 _dispatch_client_callout &lt;null&gt;:2 (libdispatch.dylib:x86_64+0x39c7)</span><br><span class="line">    #5 _dispatch_client_callout &lt;null&gt;:2 (libdispatch.dylib:x86_64+0x39c7)</span><br></pre></td></tr></table></figure>
+<p>我们直接打开issue navigation的tab，然后选中runtime，也可以看到相关的线程信息</p>
+<p><img src="https://i.loli.net/2021/04/01/YyU36nKwQhiDsfS.png" alt="WX20210401-173616@2x.png"></p>
+<p>从这张图我们明细可以看到线程3和线程9同时调用了progressMap的modify方法，然后产生了<code>access race</code>问题。</p>
+<h2 id="线程同步"><a href="#线程同步" class="headerlink" title="线程同步"></a>线程同步</h2><p>我们现在大概知道问题发生的原因。<br>那么，遇到这种或者类似的问题应该如何解决呢。</p>
+<p>最简单的做法，我们把写操作隔离开，使用栅栏。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将 progressMap[str] = 0.0 修改为</span></span><br><span class="line">accessQueue.async(group: .<span class="keyword">none</span>, qos: .<span class="keyword">default</span>, flags: .barrier, execute: &#123;</span><br><span class="line">    progressMap[str] = <span class="number">0.0</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>重新运行，确实不会崩溃了<br>想一下barrier的作用，它阻塞了下一个任务，确保之前的任务执行完毕再执行下一个任务。<br>这里就起到了一个确保写操作是独占的，避免了多个线程同时修改一块内存的隐患。</p>
+<h2 id="变量加锁"><a href="#变量加锁" class="headerlink" title="变量加锁"></a>变量加锁</h2><p>值得注意的是，如果打算通过直接给map变量加锁的话，我们可以想到这样的方式：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">objc_sync_enter(progressMap)</span><br><span class="line">progressMap[str] = <span class="number">0.0</span></span><br><span class="line">objc_sync_exit(progressMap)</span><br></pre></td></tr></table></figure>
+
+<p>然而遗憾的是，这是不可行的，实际运行还是会崩溃。<br>通过一些<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/35084754/objc-sync-enter-objc-sync-exit-not-working-with-dispatch-queue-priority-low">资料</a>，我注意到这里的关键是因为，在swift中，map是值类型的。<br>因此，objc_sync_enter(progressMap)传递的只是progressMap的拷贝，相当于这些代码完全没生效！<br>（如果是引用类型应该是可行的，但是objc_sync_enter使用递归锁性能相对较差，建议也少用）</p>
+<p>如果想使用锁可以尝试直接使用<code>pthread_mutex_t</code>:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mutex = pthread_mutex_t()</span><br><span class="line">pthread_mutex_init(&amp;(<span class="keyword">self</span>.mutex), <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> start = <span class="type">CACurrentMediaTime</span>()</span><br><span class="line"><span class="keyword">for</span> idx <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">500</span> &#123;</span><br><span class="line">    accessQueue.async(group: .<span class="keyword">none</span>, qos: .<span class="keyword">default</span>, flags: .assignCurrentContext) &#123; [<span class="keyword">self</span>] <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">let</span> str = <span class="string">&quot;\(idx)&quot;</span></span><br><span class="line">        <span class="keyword">let</span> retCode = pthread_mutex_trylock(&amp;mutex)</span><br><span class="line">        <span class="keyword">if</span> retCode == <span class="number">0</span> &#123;</span><br><span class="line">            progressMap[str] = <span class="number">0.0</span></span><br><span class="line">            pthread_mutex_unlock(&amp;mutex)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者使用一个自己创建的串行队列也可以达到线程同步的效果。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>多线程同时读写同一变量可能导致内存问题</li>
+<li>使用<code>Thread Sanitizer</code>排查和分析</li>
+<li>使用<code>barrier</code>或者<code>pthread_mutex_t</code>线程锁或者串行队列都可以解锁或避免这个问题</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Kino
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://kinoandworld.github.io/2021/04/02/iOS-Thread-Access-Race/" title="Swift多线程读写中的内存竞争问题">http://kinoandworld.github.io/2021/04/02/iOS-Thread-Access-Race/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/23/iOS-Photo-Puzzle-4/" rel="prev" title="iOS突发奇想编程系列之 图片拼图(4)">
+      <i class="fa fa-chevron-left"></i> iOS突发奇想编程系列之 图片拼图(4)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/07/20/RecordScreenLiveSummary/" rel="next" title="APP内录屏直播的小结">
+      APP内录屏直播的小结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Swift%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%AF%BB%E5%86%99%E4%B8%AD%E7%9A%84%E5%86%85%E5%AD%98%E7%AB%9E%E4%BA%89%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">Swift多线程读写中的内存竞争问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AB%9E%E4%BA%89"><span class="nav-number">1.1.</span> <span class="nav-text">内存竞争</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5"><span class="nav-number">1.2.</span> <span class="nav-text">线程同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E5%8A%A0%E9%94%81"><span class="nav-number">1.3.</span> <span class="nav-text">变量加锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kino"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Kino</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinoandworld" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinoandworld" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinoandworld@gmail.com" title="E-Mail → mailto:kinoandworld@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/kinoandworld0113" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;kinoandworld0113" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kino</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://kinosblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "http://kinoandworld.github.io/2021/04/02/iOS-Thread-Access-Race/",
+            identifier: "2021/04/02/iOS-Thread-Access-Race/",
+            title: "Swift多线程读写中的内存竞争问题"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kinosblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://kinoandworld.github.io').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":"disqus | valine","storage":true,"lazyload":true,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="先说点题外话貌似很久很久没更新博客，有半年了吧，这半年忙着毕业的各种事情，忙着小或者比较大的项目，感受着初入职场的艰辛与喜悦，以及过着平淡无奇的小日子————好吧虽然这些都可以成为懒惰的理由，但是回顾一些自己这半年真的过于放松，许多学习的时间被游戏动漫日剧所占据，如果平时不用上班恐怕要变成废宅了吧╮(╯_╰)╭，so，确定一下今后的目标：多写代码、多锻炼、多阅读、多写博客，写博客主要为了思考，因为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微信支付的小坑">
+<meta property="og:url" content="http://kinoandworld.github.io/2014/09/17/2014-09-17-weixinpayforios/index.html">
+<meta property="og:site_name" content="Kino的自留地">
+<meta property="og:description" content="先说点题外话貌似很久很久没更新博客，有半年了吧，这半年忙着毕业的各种事情，忙着小或者比较大的项目，感受着初入职场的艰辛与喜悦，以及过着平淡无奇的小日子————好吧虽然这些都可以成为懒惰的理由，但是回顾一些自己这半年真的过于放松，许多学习的时间被游戏动漫日剧所占据，如果平时不用上班恐怕要变成废宅了吧╮(╯_╰)╭，so，确定一下今后的目标：多写代码、多锻炼、多阅读、多写博客，写博客主要为了思考，因为">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2014-09-16T16:08:59.000Z">
+<meta property="article:modified_time" content="2025-10-28T09:01:11.517Z">
+<meta property="article:author" content="Kino">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://kinoandworld.github.io/2014/09/17/2014-09-17-weixinpayforios/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>微信支付的小坑 | Kino的自留地</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kino的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-desktop"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about.html" rel="section"><i class="fa fa-fw fa-user-circle-o"></i>About</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://kinoandworld.github.io/2014/09/17/2014-09-17-weixinpayforios/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Kino">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kino的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微信支付的小坑
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2014-09-17 00:08:59" itemprop="dateCreated datePublished" datetime="2014-09-17T00:08:59+08:00">2014-09-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-28 17:01:11" itemprop="dateModified" datetime="2025-10-28T17:01:11+08:00">2025-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2014/09/17/2014-09-17-weixinpayforios/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2014/09/17/2014-09-17-weixinpayforios/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="先说点题外话"><a href="#先说点题外话" class="headerlink" title="先说点题外话"></a>先说点题外话</h2><p>貌似很久很久没更新博客，有半年了吧，这半年忙着毕业的各种事情，忙着小或者比较大的项目，感受着初入职场的艰辛与喜悦，以及过着平淡无奇的小日子————好吧虽然这些都可以成为懒惰的理由，但是回顾一些自己这半年真的过于放松，许多学习的时间被游戏动漫日剧所占据，如果平时不用上班恐怕要变成废宅了吧╮(╯_╰)╭，so，确定一下今后的目标：<code>多写代码、多锻炼、多阅读、多写博客</code>，写博客主要为了思考，因为要在脑中整理语言，沉淀思想，一方面可以巩固记忆，另一方面也算是[热爱生活]的一种方式吧。</p>
+<h2 id="好吧主题其实是"><a href="#好吧主题其实是" class="headerlink" title="好吧主题其实是"></a>好吧主题其实是</h2><p>其实有点为了写博客而写博客的意思，因为要分享的东西挺简单的，更像是吐槽……好吧其实我就是吐槽。</p>
+<ul>
+<li>吐槽1：微信支付为啥没有iOS的官方demo……实在想不通，服务端有，Android甚至WindowsPhone都有，微信这是对iOS平台歧视的节奏- -<br>幸好我大天朝人才辈出，早有人根据<code>渣成翔</code>的官方文档写了微信支付的<a target="_blank" rel="noopener" href="https://github.com/gbammc/WechatPayDemo">非官方demo</a></li>
+</ul>
+<p>里面用了cocoapods， 需要下载的话好好看下说明。</p>
+<ul>
+<li>吐槽2：微信官方文档<br>虽然我知道，也理解 写代码的人一般比较讨厌写文档，但是毕竟你是一个支付组件，总有很多人需要仔细阅读的甚至copy文档里边的代码的，你可以写得很简单，但是不要犯一些低级错误好吗 (#‵′)。说明含糊不清我就不提了（其实上面的github主页有吐槽），实例代码都写错这就有点。。。<br>贴两段：</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">    PayReq *request = [[[PayReq alloc] init] autorelease]; </span><br><span class="line">    request.partnerId = _pactnerid;</span><br><span class="line">    request.prepayId= _prapayid;</span><br><span class="line">    Request.package = _package;</span><br><span class="line">    request.nonceStr= _noncestr;</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">第三行好好的request突然变成Request了……当时看到整个人都不太好</span><br><span class="line"></span><br><span class="line">And</span><br><span class="line"></span><br><span class="line">``` objc</span><br><span class="line">    <span class="comment">// 构造参数列表</span></span><br><span class="line">    <span class="built_in">NSMutableDictionary</span> params = [<span class="built_in">NSMutableDictionary</span> dictionary]; </span><br><span class="line">    [params setObject:<span class="string">@&quot;1234567&quot;</span> forKey:<span class="string">@&quot;appid&quot;</span>];</span><br></pre></td></tr></table></figure>
+
+<p>NSMutableDictionary params。。。原来NSMutableDictionary不是引用类型啊T.T</p>
+<p>有些文档看了真的会哭。</p>
+<ul>
+<li>吐槽3：微信支付SDK</li>
+</ul>
+<p>处于安全便捷考虑，几乎所有的操作都在服务端完成，然后今天服务端给出API，也跟Android调通了。我本以为既然Android端都OK了，那iOS端应该也没多大问题……但是，我错了，我发现iOS端调用微信支付不成功，马上弹回原应用，拿到的是<code>errCode = -1</code>的错误。这些我就思密达了，然后一直在找是不是自己哪里调用不对。弄了一个多小时，未果。<br>然后很郁闷地吃了个饭，回去之后我跟服务端一步步联调……才发现问题出在PayReq的<code>sign</code>变量和<code>package</code>变量不对应。</p>
+<p>再深入纠结原因，发现原来Android的文档或者SDK和iOS的处理是不一样的，而服务端是参考了Android的文档来做，我当场就呵呵了。<br>如果两端的处理方法不一样，至少也该说明一下吧。</p>
+<hr>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Kino
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://kinoandworld.github.io/2014/09/17/2014-09-17-weixinpayforios/" title="微信支付的小坑">http://kinoandworld.github.io/2014/09/17/2014-09-17-weixinpayforios/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2014/03/20/2014-03-20-zxingobjc-addition/" rel="prev" title="ZXingObjC-addition">
+      <i class="fa fa-chevron-left"></i> ZXingObjC-addition
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2014/10/26/2014-10-26-jieyouzahuodian-book-review/" rel="next" title="关于救赎 ——《解忧杂货店》读记">
+      关于救赎 ——《解忧杂货店》读记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E8%AF%B4%E7%82%B9%E9%A2%98%E5%A4%96%E8%AF%9D"><span class="nav-number">1.</span> <span class="nav-text">先说点题外话</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A5%BD%E5%90%A7%E4%B8%BB%E9%A2%98%E5%85%B6%E5%AE%9E%E6%98%AF"><span class="nav-number">2.</span> <span class="nav-text">好吧主题其实是</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kino"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Kino</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinoandworld" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinoandworld" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinoandworld@gmail.com" title="E-Mail → mailto:kinoandworld@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/kinoandworld0113" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;kinoandworld0113" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kino</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://kinosblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "http://kinoandworld.github.io/2014/09/17/2014-09-17-weixinpayforios/",
+            identifier: "2014/09/17/2014-09-17-weixinpayforios/",
+            title: "微信支付的小坑"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kinosblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

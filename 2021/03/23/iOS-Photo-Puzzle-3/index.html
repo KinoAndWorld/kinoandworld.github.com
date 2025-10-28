@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://kinoandworld.github.io').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":"disqus | valine","storage":true,"lazyload":true,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="第三篇 拼接和吸附（手势处理有了碎片之后，我们可以尝试构造一个新的页面，在这个页面中，我们分为两个部分，碎片放置区，和拼图框区。琐碎的页面布局和数据粗略完成以下，变成了图下，我们在拼图框直接放个原图的浅透明，当作提示和区域说明。 然后，我们要做的，就是把下方区域的碎片通过手势拖拽到上方区域中。首先想到的是组合UILongPressGesture和PanGesture等组合手势，但是突然发现或许可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS突发奇想编程系列之 图片拼图(3)">
+<meta property="og:url" content="http://kinoandworld.github.io/2021/03/23/iOS-Photo-Puzzle-3/index.html">
+<meta property="og:site_name" content="Kino的自留地">
+<meta property="og:description" content="第三篇 拼接和吸附（手势处理有了碎片之后，我们可以尝试构造一个新的页面，在这个页面中，我们分为两个部分，碎片放置区，和拼图框区。琐碎的页面布局和数据粗略完成以下，变成了图下，我们在拼图框直接放个原图的浅透明，当作提示和区域说明。 然后，我们要做的，就是把下方区域的碎片通过手势拖拽到上方区域中。首先想到的是组合UILongPressGesture和PanGesture等组合手势，但是突然发现或许可以">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/03/23/c1CISfVKGpRsPlj.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/23/AGqg9of75LQSC8H.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/23/xV9qhBfToHsc8bA.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/23/JLyXhkcfAeFlr9T.png">
+<meta property="article:published_time" content="2021-03-23T02:46:55.000Z">
+<meta property="article:modified_time" content="2025-10-28T09:01:11.518Z">
+<meta property="article:author" content="Kino">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/03/23/c1CISfVKGpRsPlj.png">
+
+<link rel="canonical" href="http://kinoandworld.github.io/2021/03/23/iOS-Photo-Puzzle-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>iOS突发奇想编程系列之 图片拼图(3) | Kino的自留地</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kino的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-desktop"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about.html" rel="section"><i class="fa fa-fw fa-user-circle-o"></i>About</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://kinoandworld.github.io/2021/03/23/iOS-Photo-Puzzle-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Kino">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kino的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS突发奇想编程系列之 图片拼图(3)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-23 10:46:55" itemprop="dateCreated datePublished" datetime="2021-03-23T10:46:55+08:00">2021-03-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-28 17:01:11" itemprop="dateModified" datetime="2025-10-28T17:01:11+08:00">2025-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/23/iOS-Photo-Puzzle-3/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/23/iOS-Photo-Puzzle-3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="第三篇-拼接和吸附（手势处理"><a href="#第三篇-拼接和吸附（手势处理" class="headerlink" title="第三篇 拼接和吸附（手势处理"></a>第三篇 拼接和吸附（手势处理</h2><p>有了碎片之后，我们可以尝试构造一个新的页面，在这个页面中，我们分为两个部分，碎片放置区，和拼图框区。<br>琐碎的页面布局和数据粗略完成以下，变成了图下，我们在拼图框直接放个原图的浅透明，当作提示和区域说明。<br><img src="https://i.loli.net/2021/03/23/c1CISfVKGpRsPlj.png" alt="piece-arrange.png"></p>
+<p>然后，我们要做的，就是把下方区域的碎片通过手势拖拽到上方区域中。<br>首先想到的是组合UILongPressGesture和PanGesture等组合手势，但是突然发现或许可以直接使用iOS11新推出的Drag&amp;Drog手势来处理。正好学习一下新的技术应用。</p>
+<p><img src="https://i.loli.net/2021/03/23/AGqg9of75LQSC8H.png" alt="1501122-dc430560f58ee325.png"></p>
+<p>虽然其实这个手势更大的用途是在于APP之内的数据传输，但是我们可以稍微利用一下，</p>
+<p>简单地，我们给下方的listview（这里我用collectionView）添加一下手势</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">collectionView.dragInteractionEnabled = <span class="literal">true</span></span><br><span class="line">collectionView.dragDelegate = <span class="keyword">self</span></span><br></pre></td></tr></table></figure>
+
+<p>然后简单添加处理delegate</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">PuzzlePlayController</span>: <span class="title">UICollectionViewDragDelegate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath)</span></span> -&gt; [<span class="type">UIDragItem</span>] &#123;</span><br><span class="line">        <span class="keyword">let</span> itemProvider = <span class="type">NSItemProvider</span>(object: pieceImages[indexPath.item])</span><br><span class="line">        <span class="keyword">let</span> item = <span class="type">UIDragItem</span>(itemProvider: itemProvider)</span><br><span class="line">        <span class="keyword">self</span>.dragIndexPath = indexPath</span><br><span class="line">        <span class="keyword">return</span> [item]</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: UICollectionView, dragSessionIsRestrictedToDraggingApplication session: UIDragSession)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: UICollectionView, dragSessionAllowsMoveOperation session: UIDragSession)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个时候，长按collection中的拼图碎片，就可以成功抓取碎片，系统也会自动加上一些效果<br><img src="https://i.loli.net/2021/03/23/xV9qhBfToHsc8bA.png" alt="piece-drag.png"></p>
+<p>接着，我们直接实现view接收drog手势的处理</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">PuzzlePlayController</span>: <span class="title">UIDropInteractionDelegate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">dropInteraction</span><span class="params">(<span class="number">_</span> interaction: UIDropInteraction, canHandle session: UIDropSession)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">dropInteraction</span><span class="params">(<span class="number">_</span> interaction: UIDropInteraction, performDrop session: UIDropSession)</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> pt = session.location(<span class="keyword">in</span>: <span class="keyword">self</span>.view)</span><br><span class="line">        session.loadObjects(ofClass: <span class="type">UIImage</span>.<span class="keyword">self</span>) &#123; (image) <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">guard</span> <span class="keyword">let</span> img = image.first <span class="keyword">as</span>? <span class="type">UIImage</span> <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">self</span>.puzzleContainerView.frame.<span class="built_in">contains</span>(pt) &#123;</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;在区域内&quot;</span>)</span><br><span class="line">                <span class="keyword">let</span> imageV = <span class="type">UIImageView</span>(image: img)</span><br><span class="line">                imageV.frame = <span class="keyword">self</span>.currentHighlightRect(oriPt: pt)</span><br><span class="line">                <span class="keyword">self</span>.puzzleContainerView.addSubview(imageV)</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">let</span> adapter = <span class="type">PieceDragableAdapter</span>(view: imageV, image: img)</span><br><span class="line">                <span class="keyword">self</span>.pieceAdapters.append(adapter)</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">let</span> dragIdx = <span class="keyword">self</span>.dragIndexPath?.item &#123;</span><br><span class="line">                    <span class="keyword">self</span>.collectionView.performBatchUpdates &#123;</span><br><span class="line">                        <span class="keyword">self</span>.pieceImages.remove(at: dragIdx)</span><br><span class="line">                        <span class="keyword">self</span>.collectionView.deleteItems(at: [<span class="type">IndexPath</span>(item: dragIdx, section: <span class="number">0</span>)])</span><br><span class="line">                    &#125; completion: &#123; (done) <span class="keyword">in</span></span><br><span class="line">                        </span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;不在区域内&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">dropInteraction</span><span class="params">(<span class="number">_</span> interaction: UIDropInteraction, sessionDidUpdate session: UIDropSession)</span></span> -&gt; <span class="type">UIDropProposal</span> &#123;</span><br><span class="line">        <span class="comment">// Propose to the system to copy the item from the source app</span></span><br><span class="line">        <span class="keyword">let</span> pt = session.location(<span class="keyword">in</span>: <span class="keyword">self</span>.view)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;ori pt = \(pt)&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.puzzleContainerView.frame.<span class="built_in">contains</span>(pt) &#123;</span><br><span class="line">            <span class="keyword">let</span> retPt = view.convert(pt, to: <span class="keyword">self</span>.puzzleContainerView)</span><br><span class="line">            <span class="built_in">print</span>(retPt)</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 确定在哪个方格</span></span><br><span class="line">            <span class="keyword">let</span> rectWidth = puzzleContainerView.frame.width / <span class="type">CGFloat</span>(rowCount)</span><br><span class="line">            <span class="keyword">let</span> column = floor(retPt.x / rectWidth)</span><br><span class="line">            <span class="keyword">let</span> row = floor(retPt.y / rectWidth)</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">let</span> idx = <span class="type">Int</span>(column + row * <span class="type">CGFloat</span>(rowCount))</span><br><span class="line">            </span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;当前落在格子\(column)-\(row)， 对应方格-\(idx)&quot;</span>)</span><br><span class="line">            </span><br><span class="line">            lastHightlightFV?.isHidden = <span class="literal">true</span></span><br><span class="line">            tipsFrames[idx].isHidden = <span class="literal">false</span></span><br><span class="line">            lastHightlightFV = tipsFrames[idx]</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="type">UIDropProposal</span>(operation: .move)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里省略了<code>一点点</code>细节，为了方便处理和提升交互，我们在框内添加了N*N个”边框View”，当拼图移动到对应的区域内，则显示边框，否则隐藏。松开后，同样判断当前移动坐落在哪个格子内，然后放置。</p>
+<p>初始化边框代码：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setupPuzzleRect</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> pieceSize: <span class="type">CGFloat</span> = <span class="number">300.0</span> / <span class="type">CGFloat</span>(rowCount)</span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> <span class="number">0</span>..&lt;rowCount &#123;</span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">c</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;rowCount &#123;</span><br><span class="line">            <span class="keyword">let</span> frameV = <span class="type">UIView</span>(frame: <span class="type">CGRect</span>(x: <span class="type">CGFloat</span>(<span class="built_in">c</span>) * pieceSize,</span><br><span class="line">                                                y: <span class="type">CGFloat</span>(r) * pieceSize,</span><br><span class="line">                                                width: pieceSize, height: pieceSize))</span><br><span class="line">            frameV.layer.borderWidth = <span class="number">4</span></span><br><span class="line">            frameV.layer.borderColor = <span class="type">UIColor</span>.lightGray.cgColor</span><br><span class="line">            </span><br><span class="line">            frameV.isHidden = <span class="literal">true</span></span><br><span class="line">            tipsFrames.append(frameV)</span><br><span class="line">            </span><br><span class="line">            puzzleContainerView.addSubview(frameV)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>移动到对应方块上的高亮边框：<br><img src="https://i.loli.net/2021/03/23/JLyXhkcfAeFlr9T.png" alt="piece-drag-in.png"></p>
+<p>同时，我们在创建碎片摆在”棋盘”时，也要同时给碎片View增加拖拽手势，方便二次移动。我们新建一个<code>PieceDragableAdapter</code>来管理：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PieceDragableAdapter</span>: <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> bindView: <span class="type">UIView?</span></span><br><span class="line">    <span class="keyword">var</span> bindImage = <span class="type">UIImage</span>()</span><br><span class="line">    <span class="keyword">var</span> bindPt: <span class="type">CGPoint</span> = .zero</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> isVaild: <span class="type">Bool</span> = <span class="literal">true</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>(view: <span class="type">UIView</span>, image: <span class="type">UIImage</span>, loc: <span class="type">CGPoint</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>()</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">self</span>.bindView = view</span><br><span class="line">        <span class="keyword">self</span>.bindImage = image</span><br><span class="line">        <span class="keyword">self</span>.bindPt = loc</span><br><span class="line">        </span><br><span class="line">        commonInit()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">commonInit</span><span class="params">()</span></span> &#123;</span><br><span class="line">        bindView?.isUserInteractionEnabled = <span class="literal">true</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> dragInteract = <span class="type">UIDragInteraction</span>(delegate: <span class="keyword">self</span>)</span><br><span class="line">        bindView?.addInteraction(dragInteract)</span><br><span class="line">        dragInteract.isEnabled = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">PieceDragableAdapter</span>: <span class="title">UIDragInteractionDelegate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">dragInteraction</span><span class="params">(<span class="number">_</span> interaction: UIDragInteraction, itemsForBeginning session: UIDragSession)</span></span> -&gt; [<span class="type">UIDragItem</span>] &#123;</span><br><span class="line">        <span class="keyword">if</span> !isVaild &#123; <span class="keyword">return</span> [] &#125;</span><br><span class="line">        <span class="keyword">let</span> itemProvider = <span class="type">NSItemProvider</span>(object: bindImage)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> item = <span class="type">UIDragItem</span>(itemProvider: itemProvider)</span><br><span class="line">        session.localContext = (<span class="string">&quot;Piece-Frame&quot;</span>, <span class="keyword">self</span>.bindPt)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 半透明化原图</span></span><br><span class="line">        <span class="keyword">self</span>.bindView?.alpha = <span class="number">0.5</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> [item]</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">dragInteraction</span><span class="params">(<span class="number">_</span> interaction: UIDragInteraction, sessionAllowsMoveOperation session: UIDragSession)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">dragInteraction</span><span class="params">(<span class="number">_</span> interaction: UIDragInteraction, session: UIDragSession, willEndWith operation: UIDropOperation)</span></span> &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们再扩展一下<code>func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession)</code>方法，让其同时处理来自棋盘内部的拖拽</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断来源 如果是移动铺面的</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> context = session.localDragSession?.localContext <span class="keyword">as</span>? (<span class="type">String</span>, <span class="type">CGPoint</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> fromPt = context.<span class="number">1</span></span><br><span class="line">        <span class="comment">// 移动到新方块</span></span><br><span class="line">        <span class="keyword">let</span> newFrame = <span class="keyword">self</span>.currentHighlightRect(oriPt: pt)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> adapter = <span class="keyword">self</span>.adapterByLoc(pt: fromPt) &#123;</span><br><span class="line">            adapter.bindView?.frame = newFrame</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 更新pt</span></span><br><span class="line">            adapter.bindPt = <span class="keyword">self</span>.lastHighlightPt</span><br><span class="line">            <span class="comment">// 隐藏方块</span></span><br><span class="line">            <span class="keyword">self</span>.lastHightlightFV?.isHidden = <span class="literal">true</span></span><br><span class="line">            </span><br><span class="line">            <span class="keyword">self</span>.checkAdapterBindCorrect(adapter: adapter)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Kino
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://kinoandworld.github.io/2021/03/23/iOS-Photo-Puzzle-3/" title="iOS突发奇想编程系列之 图片拼图(3)">http://kinoandworld.github.io/2021/03/23/iOS-Photo-Puzzle-3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/23/iOS-Photo-Puzzle-2/" rel="prev" title="iOS突发奇想编程系列之 图片拼图(2)">
+      <i class="fa fa-chevron-left"></i> iOS突发奇想编程系列之 图片拼图(2)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/23/iOS-Photo-Puzzle-4/" rel="next" title="iOS突发奇想编程系列之 图片拼图(4)">
+      iOS突发奇想编程系列之 图片拼图(4) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%AF%87-%E6%8B%BC%E6%8E%A5%E5%92%8C%E5%90%B8%E9%99%84%EF%BC%88%E6%89%8B%E5%8A%BF%E5%A4%84%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">第三篇 拼接和吸附（手势处理</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kino"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Kino</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinoandworld" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinoandworld" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinoandworld@gmail.com" title="E-Mail → mailto:kinoandworld@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/kinoandworld0113" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;kinoandworld0113" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kino</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://kinosblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "http://kinoandworld.github.io/2021/03/23/iOS-Photo-Puzzle-3/",
+            identifier: "2021/03/23/iOS-Photo-Puzzle-3/",
+            title: "iOS突发奇想编程系列之 图片拼图(3)"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kinosblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

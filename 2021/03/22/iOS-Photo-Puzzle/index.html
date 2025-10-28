@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://kinoandworld.github.io').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":"disqus | valine","storage":true,"lazyload":true,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="第一篇 分析碎片切图拼图是一个老少咸宜的益智游戏，相信大家都玩过。有一天我突然看到街上的自定义照片的拼图，想到我能不能也做一个能自动把一张图片分割成拼图碎片，甚至还能手动拼回来的APP呢。听起来有点意思，闲暇之余，我也稍微认真思考了一下…… 分析首先，我们看下一个完整的拼图长啥样  可以看到，即使在这个相当简单的拼图中，拼图碎片的种类也非常多，我找了另一张图，可稍管中窥豹。 从这张图中我们发现，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS突发奇想编程系列之 图片拼图(1)">
+<meta property="og:url" content="http://kinoandworld.github.io/2021/03/22/iOS-Photo-Puzzle/index.html">
+<meta property="og:site_name" content="Kino的自留地">
+<meta property="og:description" content="第一篇 分析碎片切图拼图是一个老少咸宜的益智游戏，相信大家都玩过。有一天我突然看到街上的自定义照片的拼图，想到我能不能也做一个能自动把一张图片分割成拼图碎片，甚至还能手动拼回来的APP呢。听起来有点意思，闲暇之余，我也稍微认真思考了一下…… 分析首先，我们看下一个完整的拼图长啥样  可以看到，即使在这个相当简单的拼图中，拼图碎片的种类也非常多，我找了另一张图，可稍管中窥豹。 从这张图中我们发现，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/iTBjAXPytmWKv1p.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/r1KGBezn2Y7PmaM.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/q7h3guvDPxpTURM.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/4E76krn3TGDlfhe.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/lIWCvdJZNjLEczT.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/yj7KF6NC5sbzWwt.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/kYuUiLnbaSpTWAK.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/n2govAhsTMw6c9e.png">
+<meta property="article:published_time" content="2021-03-22T03:36:36.000Z">
+<meta property="article:modified_time" content="2025-10-28T09:01:11.518Z">
+<meta property="article:author" content="Kino">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/03/22/iTBjAXPytmWKv1p.jpg">
+
+<link rel="canonical" href="http://kinoandworld.github.io/2021/03/22/iOS-Photo-Puzzle/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>iOS突发奇想编程系列之 图片拼图(1) | Kino的自留地</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Kino的自留地" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kino的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-desktop"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about.html" rel="section"><i class="fa fa-fw fa-user-circle-o"></i>About</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://kinoandworld.github.io/2021/03/22/iOS-Photo-Puzzle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Kino">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kino的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS突发奇想编程系列之 图片拼图(1)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-22 11:36:36" itemprop="dateCreated datePublished" datetime="2021-03-22T11:36:36+08:00">2021-03-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-28 17:01:11" itemprop="dateModified" datetime="2025-10-28T17:01:11+08:00">2025-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/22/iOS-Photo-Puzzle/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/22/iOS-Photo-Puzzle/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="第一篇-分析碎片切图"><a href="#第一篇-分析碎片切图" class="headerlink" title="第一篇 分析碎片切图"></a>第一篇 分析碎片切图</h2><p>拼图是一个老少咸宜的益智游戏，相信大家都玩过。有一天我突然看到街上的自定义照片的拼图，想到我能不能也做一个能自动把一张图片分割成拼图碎片，甚至还能手动拼回来的APP呢。<br>听起来有点意思，闲暇之余，我也稍微认真思考了一下……</p>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>首先，我们看下一个完整的拼图长啥样</p>
+<p><img src="https://i.loli.net/2021/03/22/iTBjAXPytmWKv1p.jpg" alt="stock-vector-jigsaw-icon-241085644.jpg"></p>
+<p>可以看到，即使在这个相当简单的拼图中，拼图碎片的种类也非常多，我找了另一张图，可稍管中窥豹。<br><img src="https://i.loli.net/2021/03/22/r1KGBezn2Y7PmaM.jpg" alt="stock-vector-set-of-black-and-white-puzzle-pieces-isolated-on-white-background-vector-illustration-1171424941.jpg"></p>
+<p>从这张图中我们发现，一个拼图碎片其实就是一张大图通过比例均等切割后的矩形，再构造【凹】与【凸】两种形态，由此形成的排列组合。</p>
+<p>因为是矩形，所以是4个面，而每个面都有3种状态，<code>凸</code>、<code>凹</code>和<code>平</code>，<br>一共是3的4次方。</p>
+<p>当然，在实际拼图中，我们会制订一些规则，实际的碎片样式会少很多。这个是后话，暂且不表，我们先来研究一下，在iOS中如何切出不规则的拼图碎片。</p>
+<h4 id="拼图切割"><a href="#拼图切割" class="headerlink" title="拼图切割"></a>拼图切割</h4><p>第一步，我们先将大图平均分成多个小图。<br>这一步非常简单，我们只需要写一个扩展，就能将任意的一个view通过给定的frame裁剪出一个新的UIImage。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">asImage</span><span class="params">(rect: CGRect)</span></span> -&gt; <span class="type">UIImage</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> renderer = <span class="type">UIGraphicsImageRenderer</span>(bounds: rect)</span><br><span class="line">        <span class="keyword">return</span> renderer.image &#123; rendererContext <span class="keyword">in</span></span><br><span class="line">            layer.render(<span class="keyword">in</span>: rendererContext.cgContext)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看起来很简单，但是，这里有一个点我们需要注意的是，例如我们需要切割2x2的拼图方块，我们想当然地将图片切成宽高/2的4张图片，但是不要忘记我们的拼图是包括<code>凸</code>的形态，倘若使用这种均分的切割，无法很好地对碎片进行统一的处理。因此，我们会加大裁切的区域，我们以’凸出的长度’为半径，扩展截图区域，大概如图所示：<br><img src="https://i.loli.net/2021/03/22/q7h3guvDPxpTURM.png" alt="WX20210119-170425@2x.png"></p>
+<p>示例代码：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> canverWidth: <span class="type">CGFloat</span> = imageView.frame.width / <span class="number">2.0</span></span><br><span class="line">        </span><br><span class="line"><span class="keyword">for</span> idx <span class="keyword">in</span> <span class="number">0</span>...<span class="number">3</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> row: <span class="type">Int</span> = idx / <span class="number">2</span></span><br><span class="line">    <span class="keyword">let</span> column: <span class="type">Int</span> = idx % <span class="number">2</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> image = imageView.asImage(rect: <span class="type">CGRect</span>(x: canverWidth * <span class="type">CGFloat</span>(column) - <span class="type">PieceConfigure</span>.holeRadius * <span class="number">2</span>,</span><br><span class="line">                                                y: canverWidth * <span class="type">CGFloat</span>(row) - <span class="type">PieceConfigure</span>.holeRadius * <span class="number">2</span>,</span><br><span class="line">                                                width: canverWidth + <span class="type">PieceConfigure</span>.holeRadius * <span class="number">4</span>,</span><br><span class="line">                                                height: canverWidth + <span class="type">PieceConfigure</span>.holeRadius * <span class="number">4</span>))</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> imageV = <span class="type">UIImageView</span>(image: image)</span><br><span class="line">    imageV.backgroundColor = .lightGray</span><br><span class="line">    imageV.contentMode = .scaleAspectFill</span><br><span class="line">    view.addSubview(imageV)</span><br><span class="line">    </span><br><span class="line">    imageV.frame = <span class="type">CGRect</span>(x: (canverWidth + <span class="number">40</span>) * <span class="type">CGFloat</span>(column) + <span class="number">30</span>, y: (canverWidth + <span class="number">40</span>) * <span class="type">CGFloat</span>(row) + <span class="number">500</span>,</span><br><span class="line">                            width: imageView.frame.width / <span class="number">2.0</span> + <span class="type">PieceConfigure</span>.holeRadius * <span class="number">2</span>,</span><br><span class="line">                            height: imageView.frame.height / <span class="number">2.0</span> + <span class="type">PieceConfigure</span>.holeRadius * <span class="number">2</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/03/22/4E76krn3TGDlfhe.png" alt="rect-slice.png"></p>
+<p>可以看到，这个时候我们切的4张图，是相互重叠且带有边距的。这为我们下一步的拼图抠图，做足了准备。</p>
+<h4 id="凹凸不规则切割"><a href="#凹凸不规则切割" class="headerlink" title="凹凸不规则切割"></a>凹凸不规则切割</h4><p>根据前文所说我们看到，我们已经成功实现了一张大图的多图分割，并且应对各种情况留了裁切区域。前面我们也说过，每个面只有3种情况，平面、凹和凸，平面就是什么也不用做，我们主要看下凹和凸的实现。</p>
+<p>我们可以简单地用一个圆形的图形运算来模拟这个过程：</p>
+<p><img src="https://i.loli.net/2021/03/22/lIWCvdJZNjLEczT.png" alt="WX20210120-164821@2x.png"></p>
+<p>凹：通过对矩形和圆形进行顶层交集即可</p>
+<p><img src="https://i.loli.net/2021/03/22/yj7KF6NC5sbzWwt.png" alt="WX20210120-164831@2x.png"></p>
+<p>凸：通过图形并集可得</p>
+<p><img src="https://i.loli.net/2021/03/22/kYuUiLnbaSpTWAK.png" alt="WX20210120-164849@2x.png"></p>
+<p>在iOS的实现中，我通过直接使用UIBezierPath编辑路径，使用绘制圆弧的方式达到效果。<br>以一条边为例，绘制的代码如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> path = <span class="type">UIBezierPath</span>()</span><br><span class="line">path.move(to: <span class="type">CGPoint</span>(x: startX, y: startY))</span><br><span class="line"></span><br><span class="line"><span class="comment">// top</span></span><br><span class="line">path.addLine(to: <span class="type">CGPoint</span>(x: (width + startX) / <span class="number">2</span>  - <span class="type">PieceConfigure</span>.holeRadius, y: startY))</span><br><span class="line"><span class="keyword">if</span> topDraw == .outside &#123;</span><br><span class="line">    path.addArc(withCenter: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2</span>, y: startY - <span class="type">PieceConfigure</span>.holeRadius),</span><br><span class="line">                radius: <span class="type">PieceConfigure</span>.holeRadius,</span><br><span class="line">                startAngle: <span class="type">CGFloat</span>(<span class="number">180.0</span>).toRadians(),</span><br><span class="line">                endAngle: <span class="type">CGFloat</span>(<span class="number">0.0</span>).toRadians(),</span><br><span class="line">                clockwise: <span class="literal">true</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> topDraw == .inner &#123;</span><br><span class="line">    path.addArc(withCenter: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2</span>, y: startY + <span class="type">PieceConfigure</span>.holeRadius),</span><br><span class="line">                radius: <span class="type">PieceConfigure</span>.holeRadius,</span><br><span class="line">                startAngle: <span class="type">CGFloat</span>(<span class="number">180.0</span>).toRadians(),</span><br><span class="line">                endAngle: <span class="type">CGFloat</span>(<span class="number">0.0</span>).toRadians(),</span><br><span class="line">                clockwise: <span class="literal">false</span>)</span><br><span class="line">&#125;</span><br><span class="line">path.addLine(to: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2</span> + <span class="type">PieceConfigure</span>.holeRadius, y: startY))</span><br><span class="line">path.addLine(to: <span class="type">CGPoint</span>(x: width, y: startY))</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="封装一下"><a href="#封装一下" class="headerlink" title="封装一下"></a>封装一下</h3><p>OK，让我们整理一下，新建一个struct，命名为PieceSlicer，我们可以把切片的过程封装一下</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// 拼图切片机</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PieceSlicer</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">PathDrawType</span> </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> line</span><br><span class="line">        <span class="keyword">case</span> outside</span><br><span class="line">        <span class="keyword">case</span> inner</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">Direction</span> </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">left</span></span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">right</span></span><br><span class="line">        <span class="keyword">case</span> top</span><br><span class="line">        <span class="keyword">case</span> bottom</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> leftDraw: <span class="type">PathDrawType</span> = .line</span><br><span class="line">    <span class="keyword">var</span> topDraw: <span class="type">PathDrawType</span> = .line</span><br><span class="line">    <span class="keyword">var</span> rightDraw: <span class="type">PathDrawType</span> = .line</span><br><span class="line">    <span class="keyword">var</span> bottomDraw: <span class="type">PathDrawType</span> = .line</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> holeRadius: <span class="type">CGFloat</span> = <span class="number">6.0</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>(<span class="keyword">left</span>: <span class="type">PathDrawType</span>, top: <span class="type">PathDrawType</span>, <span class="keyword">right</span>: <span class="type">PathDrawType</span>, bottom: <span class="type">PathDrawType</span>) &#123;</span><br><span class="line">        leftDraw = <span class="keyword">left</span></span><br><span class="line">        topDraw = top</span><br><span class="line">        rightDraw = <span class="keyword">right</span></span><br><span class="line">        bottomDraw = bottom</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">draw</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> -&gt; <span class="type">UIBezierPath?</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> startX = rect.origin.x</span><br><span class="line">        <span class="keyword">let</span> startY = rect.origin.y</span><br><span class="line">        <span class="keyword">let</span> width = rect.size.width</span><br><span class="line">        <span class="keyword">let</span> height = rect.size.height</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> path = <span class="type">UIBezierPath</span>()</span><br><span class="line">        path.move(to: <span class="type">CGPoint</span>(x: startX, y: startY))</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 因为绘图区域上下颠倒，这里我们直接把上和下的配置交换赋值</span></span><br><span class="line">        <span class="comment">// top</span></span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: (width + startX) / <span class="number">2</span>  - holeRadius, y: startY))</span><br><span class="line">        <span class="keyword">if</span> bottomDraw == .outside &#123;</span><br><span class="line">            path.addArc(withCenter: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2</span>, y: startY - holeRadius),</span><br><span class="line">                        radius: holeRadius,</span><br><span class="line">                        startAngle: <span class="type">CGFloat</span>(<span class="number">180.0</span>).toRadians(),</span><br><span class="line">                        endAngle: <span class="type">CGFloat</span>(<span class="number">0.0</span>).toRadians(),</span><br><span class="line">                        clockwise: <span class="literal">true</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> bottomDraw == .inner &#123;</span><br><span class="line">            path.addArc(withCenter: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2</span>, y: startY + holeRadius),</span><br><span class="line">                        radius: holeRadius,</span><br><span class="line">                        startAngle: <span class="type">CGFloat</span>(<span class="number">180.0</span>).toRadians(),</span><br><span class="line">                        endAngle: <span class="type">CGFloat</span>(<span class="number">0.0</span>).toRadians(),</span><br><span class="line">                        clockwise: <span class="literal">false</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2</span> + holeRadius, y: startY))</span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: width, y: startY))</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// right</span></span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: width, y: height / <span class="number">2</span>))</span><br><span class="line">        <span class="keyword">if</span> rightDraw == .outside &#123;</span><br><span class="line">            path.addArc(withCenter: <span class="type">CGPoint</span>(x: width + holeRadius, y: height / <span class="number">2</span> + holeRadius),</span><br><span class="line">                        radius: holeRadius,</span><br><span class="line">                        startAngle: <span class="type">CGFloat</span>(<span class="number">270.0</span>).toRadians(),</span><br><span class="line">                        endAngle: <span class="type">CGFloat</span>(<span class="number">90.0</span>).toRadians(),</span><br><span class="line">                        clockwise: <span class="literal">true</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> rightDraw == .inner &#123;</span><br><span class="line">            path.addArc(withCenter: <span class="type">CGPoint</span>(x: width - holeRadius, y: height / <span class="number">2</span> + holeRadius),</span><br><span class="line">                        radius: holeRadius,</span><br><span class="line">                        startAngle: <span class="type">CGFloat</span>(<span class="number">270.0</span>).toRadians(),</span><br><span class="line">                        endAngle: <span class="type">CGFloat</span>(<span class="number">90.0</span>).toRadians(),</span><br><span class="line">                        clockwise: <span class="literal">false</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: width, y: height / <span class="number">2</span> + holeRadius * <span class="number">2</span>))</span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: width, y: height))</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="comment">// bottom</span></span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2</span> + holeRadius, y: height))</span><br><span class="line">        <span class="keyword">if</span> topDraw == .outside &#123;</span><br><span class="line">            path.addArc(withCenter: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2</span>, y: height + holeRadius),</span><br><span class="line">                        radius: holeRadius,</span><br><span class="line">                        startAngle: <span class="type">CGFloat</span>(<span class="number">0.0</span>).toRadians(),</span><br><span class="line">                        endAngle: <span class="type">CGFloat</span>(<span class="number">180.0</span>).toRadians(),</span><br><span class="line">                        clockwise: <span class="literal">true</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> topDraw == .inner &#123;</span><br><span class="line">            path.addArc(withCenter: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2</span>, y: height - holeRadius),</span><br><span class="line">                        radius: holeRadius,</span><br><span class="line">                        startAngle: <span class="type">CGFloat</span>(<span class="number">0.0</span>).toRadians(),</span><br><span class="line">                        endAngle: <span class="type">CGFloat</span>(<span class="number">180.0</span>).toRadians(),</span><br><span class="line">                        clockwise: <span class="literal">false</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: (width+startX) / <span class="number">2.0</span> - holeRadius, y: height))</span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: startX, y: height))</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="comment">// left</span></span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: startX, y: height / <span class="number">2</span> + startY))</span><br><span class="line">        <span class="keyword">if</span> leftDraw == .outside &#123;</span><br><span class="line">            path.addArc(withCenter: <span class="type">CGPoint</span>(x: startX - holeRadius, y: height / <span class="number">2</span> + holeRadius),</span><br><span class="line">                        radius: holeRadius,</span><br><span class="line">                        startAngle: <span class="type">CGFloat</span>(<span class="number">90.0</span>).toRadians(),</span><br><span class="line">                        endAngle: <span class="type">CGFloat</span>(<span class="number">270.0</span>).toRadians(),</span><br><span class="line">                        clockwise: <span class="literal">true</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> leftDraw == .inner &#123;</span><br><span class="line">            path.addArc(withCenter: <span class="type">CGPoint</span>(x: startX + holeRadius, y: height / <span class="number">2</span> + holeRadius),</span><br><span class="line">                        radius: holeRadius,</span><br><span class="line">                        startAngle: <span class="type">CGFloat</span>(<span class="number">90.0</span>).toRadians(),</span><br><span class="line">                        endAngle: <span class="type">CGFloat</span>(<span class="number">270.0</span>).toRadians(),</span><br><span class="line">                        clockwise: <span class="literal">false</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        path.addLine(to: <span class="type">CGPoint</span>(x: startX, y: height / <span class="number">2</span>))</span><br><span class="line">        <span class="comment">// done</span></span><br><span class="line">        path.close()</span><br><span class="line">        path.usesEvenOddFillRule = <span class="literal">true</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> path</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过简单的封装，我们已经完成了拼图切片状态的绘制代码，PathDrawType和Direction分别对应我们前文提到的切面类型和四个边，并且也是一一对应的。我们可以试一下：</p>
+<p>现在构造一个简单的2x2的拼图，我们需要描述4个碎片的结构</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">PieceSlicer</span>(<span class="keyword">left</span>: .line, top: .line, <span class="keyword">right</span>: .outside, bottom: .inner),</span><br><span class="line"><span class="type">PieceSlicer</span>(<span class="keyword">left</span>: .inner, top: .line, <span class="keyword">right</span>: .line, bottom: .outside),</span><br><span class="line"><span class="type">PieceSlicer</span>(<span class="keyword">left</span>: .line, top: .outside, <span class="keyword">right</span>: .inner, bottom: .line),</span><br><span class="line"><span class="type">PieceSlicer</span>(<span class="keyword">left</span>: .outside, top: .inner, <span class="keyword">right</span>: .line, bottom: .line),</span><br></pre></td></tr></table></figure>
+<p>运行效果如下：</p>
+<p><img src="https://i.loli.net/2021/03/22/n2govAhsTMw6c9e.png" alt="piece-slice.png"></p>
+<p>喔，有点像模像样了。就这样，我们的拼图切割已经初具雏形了。不过这样还很不灵活，接下来我们再看下，如何更自动和动态地生成拼图碎片。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Kino
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://kinoandworld.github.io/2021/03/22/iOS-Photo-Puzzle/" title="iOS突发奇想编程系列之 图片拼图(1)">http://kinoandworld.github.io/2021/03/22/iOS-Photo-Puzzle/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/22/Tenet-Braid/" rel="prev" title="《信条》与《时空幻境》的默契">
+      <i class="fa fa-chevron-left"></i> 《信条》与《时空幻境》的默契
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/23/iOS-Photo-Puzzle-2/" rel="next" title="iOS突发奇想编程系列之 图片拼图(2)">
+      iOS突发奇想编程系列之 图片拼图(2) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AF%87-%E5%88%86%E6%9E%90%E7%A2%8E%E7%89%87%E5%88%87%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">第一篇 分析碎片切图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">1.1.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%BC%E5%9B%BE%E5%88%87%E5%89%B2"><span class="nav-number">1.1.1.</span> <span class="nav-text">拼图切割</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%B9%E5%87%B8%E4%B8%8D%E8%A7%84%E5%88%99%E5%88%87%E5%89%B2"><span class="nav-number">1.1.2.</span> <span class="nav-text">凹凸不规则切割</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E8%A3%85%E4%B8%80%E4%B8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">封装一下</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kino"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Kino</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinoandworld" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinoandworld" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinoandworld@gmail.com" title="E-Mail → mailto:kinoandworld@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/kinoandworld0113" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;kinoandworld0113" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kino</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://kinosblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "http://kinoandworld.github.io/2021/03/22/iOS-Photo-Puzzle/",
+            identifier: "2021/03/22/iOS-Photo-Puzzle/",
+            title: "iOS突发奇想编程系列之 图片拼图(1)"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kinosblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
